@@ -1,0 +1,17 @@
+{
+  "headline": "Currency Movements Impact Semiconductor Revenue",
+  "description": "Fluctuations in currency exchange rates, particularly USD/TWD and USD/EUR, could affect the revenue and cost structures of global semiconductor companies like TSMC and ASML. A strong USD may pressure international sales but benefit cost efficiencies.",
+  "source_agent": "macro_agent",
+  "affected_companies": [
+    "TSM",
+    "ASML"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "mixed",
+  "id": "3279e41e",
+  "timestamp": "2026-02-09T18:18:37.908417",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

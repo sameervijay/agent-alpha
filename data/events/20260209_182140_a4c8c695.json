@@ -1,0 +1,16 @@
+{
+  "headline": "Cadence & Lightmatter Collaborate on AI Optical Connectivity",
+  "description": "Cadence Design Systems has partnered with Lightmatter to enhance optical connectivity for AI infrastructure. This collaboration aims to leverage photonic interconnects to improve AI system performance, potentially boosting Cadence's system design segment.",
+  "source_agent": "analyst_cdns",
+  "affected_companies": [
+    "CDNS"
+  ],
+  "affected_segments": [
+    "system_design"
+  ],
+  "severity": "medium",
+  "direction": "positive",
+  "id": "a4c8c695",
+  "timestamp": "2026-02-09T18:21:31.984771",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

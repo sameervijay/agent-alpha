@@ -1,0 +1,17 @@
+{
+  "headline": "Positive Spillover Expected for Semiconductor Supply Chain",
+  "description": "NVIDIA's strong datacenter performance may lead to increased demand for semiconductor manufacturing and design services, benefiting companies like TSMC and ASML that are integral to NVIDIA's supply chain.",
+  "source_agent": "stock_market_agent",
+  "affected_companies": [
+    "TSM",
+    "ASML"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "positive",
+  "id": "978928ae",
+  "timestamp": "2026-02-09T18:18:14.470293",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

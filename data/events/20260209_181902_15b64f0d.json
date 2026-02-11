@@ -1,0 +1,16 @@
+{
+  "headline": "NVIDIA Reports Record Q4 Datacenter Revenue",
+  "description": "NVIDIA has announced record revenue for its datacenter segment in Q4, driven by increased demand for AI and cloud computing solutions. This growth is likely supported by ongoing investments from major tech companies in AI infrastructure, as suggested by analyst comments on OpenAI spending.",
+  "source_agent": "analyst_nvda",
+  "affected_companies": [
+    "NVDA"
+  ],
+  "affected_segments": [
+    "datacenter"
+  ],
+  "severity": "high",
+  "direction": "positive",
+  "id": "15b64f0d",
+  "timestamp": "2026-02-09T18:18:41.488543",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

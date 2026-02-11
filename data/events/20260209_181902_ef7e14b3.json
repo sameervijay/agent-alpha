@@ -1,0 +1,17 @@
+{
+  "headline": "Pressure on Advanced Packaging Materials Supply",
+  "description": "NVIDIA's growth in the datacenter segment could lead to increased demand for advanced packaging materials such as substrates and underfill, potentially causing supply constraints and price hikes.",
+  "source_agent": "commodities_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSMC"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "negative",
+  "id": "ef7e14b3",
+  "timestamp": "2026-02-09T18:18:24.982706",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

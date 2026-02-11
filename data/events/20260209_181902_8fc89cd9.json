@@ -1,0 +1,18 @@
+{
+  "headline": "NVIDIA Achieves Record Datacenter Revenue",
+  "description": "NVIDIA's record Q4 datacenter revenue indicates strong demand for its AI accelerators and GPUs, driven by increased adoption of AI and machine learning workloads. This surge in demand may lead to higher orders for advanced process nodes and packaging technologies.",
+  "source_agent": "tech_publications_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSM",
+    "ASML"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "high",
+  "direction": "positive",
+  "id": "8fc89cd9",
+  "timestamp": "2026-02-09T18:18:31.764307",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

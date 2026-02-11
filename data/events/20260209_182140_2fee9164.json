@@ -1,0 +1,18 @@
+{
+  "headline": "Interest Rates and Valuations in Focus Amid Datacenter Growth",
+  "description": "The Federal Reserve's interest rate policy could impact the WACC and valuations of semiconductor companies, as higher rates may increase borrowing costs. However, strong datacenter revenue growth may offset some valuation pressures by boosting future cash flow expectations.",
+  "source_agent": "macro_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSM",
+    "ASML"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "mixed",
+  "id": "2fee9164",
+  "timestamp": "2026-02-09T18:21:22.875006",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

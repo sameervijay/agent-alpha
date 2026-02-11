@@ -1,0 +1,7 @@
+openai>=1.0
+python-dotenv
+openpyxl
+yfinance
+requests
+feedparser
+finvizfinance

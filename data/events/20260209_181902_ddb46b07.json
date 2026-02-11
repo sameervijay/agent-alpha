@@ -1,0 +1,18 @@
+{
+  "headline": "Potential Supply Constraints in Specialty Gases for Lithography",
+  "description": "The increased production of datacenter chips by NVIDIA may strain the supply of specialty gases like neon, krypton, and xenon, essential for lithography processes. This could impact production timelines if supply chains are not adjusted promptly.",
+  "source_agent": "commodities_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSMC",
+    "ASML"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "negative",
+  "id": "ddb46b07",
+  "timestamp": "2026-02-09T18:18:24.982680",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

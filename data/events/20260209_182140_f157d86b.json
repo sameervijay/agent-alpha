@@ -1,0 +1,17 @@
+{
+  "headline": "US-China Tensions Impact NVIDIA's Supply Chain",
+  "description": "NVIDIA's record Q4 datacenter revenue highlights its reliance on advanced semiconductor manufacturing, which is vulnerable to US-China trade tensions. Export controls and potential restrictions on AI chip exports to China could impact NVIDIA's future revenue growth.",
+  "source_agent": "politics_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSM"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "high",
+  "direction": "mixed",
+  "id": "f157d86b",
+  "timestamp": "2026-02-09T18:20:36.660568",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

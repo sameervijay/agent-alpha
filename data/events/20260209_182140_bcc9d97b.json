@@ -1,0 +1,16 @@
+{
+  "headline": "Cadence Could Benefit from Increased Chip Design Activity",
+  "description": "Cadence, which provides electronic design automation software, might experience a rise in demand as semiconductor companies ramp up design activities to meet the growing demand highlighted by NVIDIA's datacenter success.",
+  "source_agent": "stock_market_agent",
+  "affected_companies": [
+    "CDNS"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "positive",
+  "id": "bcc9d97b",
+  "timestamp": "2026-02-09T18:20:44.136606",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

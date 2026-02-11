@@ -1,0 +1,16 @@
+{
+  "headline": "CoreWeave Faces Investigation Over Data Center Delays",
+  "description": "Hagens Berman is investigating CoreWeave for alleged data center delays and concealed infrastructure risks. This could impact CoreWeave's ability to meet demand and affect its reputation in the cloud GPU market.",
+  "source_agent": "analyst_crwv",
+  "affected_companies": [
+    "CRWV"
+  ],
+  "affected_segments": [
+    "cloud_gpu"
+  ],
+  "severity": "high",
+  "direction": "negative",
+  "id": "320e5f56",
+  "timestamp": "2026-02-09T18:21:35.885000",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

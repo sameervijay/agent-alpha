@@ -1,0 +1,21 @@
+{
+  "mode": "test_analyst",
+  "ticker": "NVDA",
+  "timestamp": "20260209_183645",
+  "news_count": 20,
+  "analyst_summary": "NVIDIA reported record Q4 datacenter revenue, significantly exceeding estimates, and raised its FY2028 datacenter guidance. This indicates strong momentum in the datacenter segment, likely driven by increased demand for AI and cloud computing solutions.",
+  "analyst_confidence": 0.9,
+  "driver_updates": {
+    "datacenter_growth": {
+      "FY2028": 0.05
+    }
+  },
+  "rationale": {
+    "datacenter_growth": "The record Q4 datacenter revenue and raised FY2028 guidance suggest robust growth prospects in the datacenter segment, warranting an upward adjustment in revenue growth expectations for FY2028."
+  },
+  "baseline_price": 112.63631206120361,
+  "adjusted_price": 116.337134139129,
+  "current_price": 181.36,
+  "upside": -0.3585292559598092,
+  "alpha": 3.7008220779253946
+}

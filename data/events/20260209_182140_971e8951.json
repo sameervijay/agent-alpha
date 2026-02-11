@@ -1,0 +1,16 @@
+{
+  "headline": "Positive Spillover for TSMC from NVIDIA's Datacenter Success",
+  "description": "As a key supplier for NVIDIA, TSMC is likely to benefit from increased orders and production volumes driven by NVIDIA's strong datacenter performance. This could enhance TSMC's revenue outlook in the near term.",
+  "source_agent": "stock_market_agent",
+  "affected_companies": [
+    "TSM"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "positive",
+  "id": "971e8951",
+  "timestamp": "2026-02-09T18:20:44.136526",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

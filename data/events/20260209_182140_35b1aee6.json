@@ -1,0 +1,20 @@
+{
+  "headline": "Record Datacenter Revenue Boosts Semiconductor Demand",
+  "description": "NVIDIA's record Q4 datacenter revenue indicates robust demand for semiconductors in the data center segment. This growth is likely driven by increased investments from hyperscalers like AWS, Azure, and GCP, reflecting strong macroeconomic trends in cloud computing and AI adoption.",
+  "source_agent": "macro_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSM",
+    "ASML",
+    "CDNS",
+    "CRWV"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "high",
+  "direction": "positive",
+  "id": "35b1aee6",
+  "timestamp": "2026-02-09T18:21:22.874984",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

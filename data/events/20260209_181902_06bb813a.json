@@ -1,0 +1,19 @@
+{
+  "headline": "Interest Rate Environment Influences Semiconductor Valuations",
+  "description": "With the Federal Reserve maintaining higher interest rates, the weighted average cost of capital (WACC) for semiconductor companies remains elevated, impacting valuations. However, strong datacenter demand may offset some valuation pressures.",
+  "source_agent": "macro_agent",
+  "affected_companies": [
+    "NVDA",
+    "TSM",
+    "ASML",
+    "CDNS"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "mixed",
+  "id": "06bb813a",
+  "timestamp": "2026-02-09T18:18:37.908390",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}

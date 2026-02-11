@@ -1,0 +1,16 @@
+{
+  "headline": "Potential Upside for ASML from Increased Chip Demand",
+  "description": "ASML, a critical supplier of semiconductor manufacturing equipment, may see increased demand for its lithography machines as NVIDIA's record datacenter revenue suggests robust demand for advanced chips.",
+  "source_agent": "stock_market_agent",
+  "affected_companies": [
+    "ASML"
+  ],
+  "affected_segments": [
+    "datacenter_growth"
+  ],
+  "severity": "medium",
+  "direction": "positive",
+  "id": "584c7c49",
+  "timestamp": "2026-02-09T18:20:44.136566",
+  "raw_input": "NVIDIA reports record Q4 datacenter revenue"
+}
