@@ -1,10 +1,13 @@
 """
 Stock Market Domain Agent — covers equity movements, sector rotation, analyst consensus.
+Also provides live stock price data via yfinance.
 """
 
 from agents.base_agent import BaseAgent
 from models.event import Event
 from models.causal_graph import CausalLink
+import yfinance as yf
+from datetime import datetime
 
 SYSTEM_PROMPT = """You are an equity markets expert specializing in semiconductor stocks.
 Your domain expertise covers:
@@ -34,6 +37,7 @@ class StockMarketAgent(BaseAgent):
             role_description="Equity Markets & Analyst Consensus Expert",
             system_prompt=SYSTEM_PROMPT,
         )
+        self._price_cache = {}  # {ticker: {'price': float, 'timestamp': datetime}}
 
     def detect_events(self, news_input: str) -> list:
         prompt = f"""Analyze the following news/scenario for stock market events relevant to semiconductor companies.
@@ -125,3 +129,133 @@ Return a JSON object with:
 - challenges: challenges to other positions"""
 
         return self.call_llm_json(prompt)
+
+    # ───────────────────────────────────────────────────────────
+    # LIVE STOCK PRICE FETCHING
+    # ───────────────────────────────────────────────────────────
+
+    def get_current_prices(self, tickers: list) -> dict:
+        """
+        Fetch live stock prices from yfinance for a list of tickers.
+
+        Args:
+            tickers: list of ticker symbols (e.g., ['NVDA', 'CDNS', 'SPY'])
+
+        Returns:
+            dict mapping ticker -> {
+                'price': current price,
+                'prev_close': previous close,
+                'change_pct': % change from prev close,
+                'timestamp': fetch timestamp,
+                'error': error message if fetch failed
+            }
+        """
+        print(f"  [{self.name}] Fetching live prices for {len(tickers)} ticker(s)...")
+        results = {}
+
+        for ticker in tickers:
+            try:
+                # Fetch data from yfinance
+                stock = yf.Ticker(ticker)
+                info = stock.info
+
+                # Get current price (try multiple fields)
+                current_price = (
+                    info.get('currentPrice') or
+                    info.get('regularMarketPrice') or
+                    info.get('previousClose')
+                )
+
+                if current_price is None:
+                    # Fallback: get latest price from history
+                    hist = stock.history(period='1d')
+                    if not hist.empty:
+                        current_price = hist['Close'].iloc[-1]
+
+                prev_close = info.get('previousClose', current_price)
+                change_pct = ((current_price / prev_close - 1) if prev_close and prev_close > 0
+                              else 0.0)
+
+                results[ticker] = {
+                    'price': float(current_price) if current_price else 0.0,
+                    'prev_close': float(prev_close) if prev_close else 0.0,
+                    'change_pct': float(change_pct),
+                    'timestamp': datetime.now().isoformat(),
+                    'error': None,
+                }
+
+                # Update cache
+                self._price_cache[ticker] = {
+                    'price': results[ticker]['price'],
+                    'timestamp': datetime.now(),
+                }
+
+                print(f"    {ticker}: ${results[ticker]['price']:.2f} "
+                      f"({results[ticker]['change_pct']:+.2%} from prev close)")
+
+            except Exception as e:
+                print(f"    {ticker}: Error fetching price: {e}")
+                results[ticker] = {
+                    'price': 0.0,
+                    'prev_close': 0.0,
+                    'change_pct': 0.0,
+                    'timestamp': datetime.now().isoformat(),
+                    'error': str(e),
+                }
+
+        return results
+
+    def get_price(self, ticker: str, use_cache: bool = True, cache_ttl_seconds: int = 300) -> float:
+        """
+        Get current price for a single ticker, optionally using cache.
+
+        Args:
+            ticker: ticker symbol (e.g., 'NVDA')
+            use_cache: if True, use cached price if available and fresh
+            cache_ttl_seconds: cache time-to-live in seconds (default 5 min)
+
+        Returns:
+            float: current price, or 0.0 if unavailable
+        """
+        # Check cache
+        if use_cache and ticker in self._price_cache:
+            cached = self._price_cache[ticker]
+            age = (datetime.now() - cached['timestamp']).total_seconds()
+            if age < cache_ttl_seconds:
+                print(f"  [{self.name}] Using cached price for {ticker}: ${cached['price']:.2f} "
+                      f"(age: {age:.0f}s)")
+                return cached['price']
+
+        # Fetch fresh
+        prices = self.get_current_prices([ticker])
+        return prices.get(ticker, {}).get('price', 0.0)
+
+    def get_market_snapshot(self) -> dict:
+        """
+        Get a snapshot of all tracked tickers + SPY benchmark.
+
+        Returns:
+            dict with:
+              - prices: {ticker: price_data}
+              - timestamp: snapshot timestamp
+              - summary: text summary
+        """
+        # Get all tickers from config + SPY
+        import config
+        tickers = list(config.COMPANIES.keys()) + ['SPY']
+
+        prices = self.get_current_prices(tickers)
+
+        # Calculate summary stats
+        num_up = sum(1 for p in prices.values() if p.get('change_pct', 0) > 0)
+        num_down = sum(1 for p in prices.values() if p.get('change_pct', 0) < 0)
+
+        summary = (f"Market snapshot: {num_up} up, {num_down} down. "
+                   f"SPY: ${prices.get('SPY', {}).get('price', 0):.2f}")
+
+        return {
+            'prices': prices,
+            'timestamp': datetime.now().isoformat(),
+            'summary': summary,
+            'tickers': tickers,
+        }

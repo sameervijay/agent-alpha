@@ -92,6 +92,7 @@ def run_test(mode):
     nvda_config = config.COMPANIES['NVDA']
     engine = NVDADCFEngine(nvda_config['excel_path'])
 
+    print("  Computing baseline DCF valuation...")
     baseline = engine.compute_dcf()
     baseline_price = baseline['implied_price']
     print(f"  Baseline implied price: ${baseline_price:,.2f}")
@@ -109,6 +110,7 @@ def run_test(mode):
             delta_changes[driver][period] = current + delta
 
     engine.update_drivers(delta_changes)
+    print("  Recomputing DCF with analyst adjustments...")
     result = engine.compute_dcf()
 
     print(f"\n  Analyst-adjusted implied price: ${result['implied_price']:,.2f}")

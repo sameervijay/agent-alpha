@@ -29,6 +29,8 @@ DEBATES_DIR = DATA_DIR / 'debates'
 VALUATIONS_DIR = DATA_DIR / 'valuations'
 NEWS_CACHE_DIR = DATA_DIR / 'news_cache'
 ANALYST_VIEWS_DIR = DATA_DIR / 'analyst_views'
+MACRO_ANALYST_DIR = DATA_DIR / 'macro_analyst'
+UPDATE_SESSIONS_DIR = DATA_DIR / 'update_sessions'
 
 # News fetcher settings
 NEWS_CACHE_TTL_HOURS = 4
@@ -36,7 +38,8 @@ NEWS_MAX_ITEMS = 20
 
 # Ensure directories exist
 for d in [EVENTS_DIR, CAUSAL_GRAPHS_DIR, DEBATES_DIR, VALUATIONS_DIR,
-          NEWS_CACHE_DIR, ANALYST_VIEWS_DIR]:
+          NEWS_CACHE_DIR, ANALYST_VIEWS_DIR, MACRO_ANALYST_DIR,
+          UPDATE_SESSIONS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # ── Company Definitions ────────────────────────────────────
@@ -54,8 +57,10 @@ COMPANIES = {
         'name': 'Cadence Design Systems',
         'ticker': 'CDNS',
         'sector': 'EDA Software',
-        'segments': ['eda', 'ip', 'system_design'],
-        'has_full_model': False,
+        'segments': ['core_eda', 'system_interconnect', 'ip'],
+        'excel_path': str(_PROJECT_ROOT / 'Cadence Design CDNS US.xlsx'),
+        'engine_class': 'CDNSDCFEngine',
+        'has_full_model': True,
     },
     'CRWV': {
         'name': 'CoreWeave',

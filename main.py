@@ -50,14 +50,19 @@ def main():
         '--sensitivity', action='store_true',
         help='Run WACC sensitivity analysis after valuation'
     )
+    parser.add_argument(
+        '--request-update', action='store_true',
+        help='PM initiates a focused update dialogue with company analyst (no --event needed)'
+    )
 
     args = parser.parse_args()
 
-    if not args.event and not args.backtest:
+    if not args.event and not args.backtest and not args.request_update:
         parser.print_help()
         print("\nExample:")
         print('  python main.py --event "US Bureau of Industry and Security '
               'announces new export controls restricting sale of advanced AI chips to China"')
+        print('  python main.py --request-update --company NVDA')
         sys.exit(1)
 
     # Check for API key
@@ -67,8 +72,15 @@ def main():
         sys.exit(1)
 
     # Initialize PM agent
-    print("Initializing Council of Agents...")
+    print("\n" + "=" * 70)
+    print("  INITIALIZING COUNCIL OF AGENTS")
+    print("=" * 70)
     pm = PMAgent()
+    print("  Initialization complete.\n")
+
+    if args.request_update:
+        session = pm.request_update(args.company)
+        return
 
     if args.backtest:
         from eval.backtest import run_backtest, print_backtest_summary

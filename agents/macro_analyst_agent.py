@@ -80,6 +80,66 @@ class MacroAnalystAgent(BaseAgent):
 
     def _save_view(self, view: MacroView):
         view.save(str(self._view_path))
+        self._write_summary_txt(view)
+
+    def _write_summary_txt(self, view: MacroView):
+        """Write a human-readable text summary alongside the JSON view."""
+        txt_path = config.MACRO_ANALYST_DIR / 'macro_summary.txt'
+        sep = "=" * 80
+
+        lines = [
+            sep,
+            "  Macro Analyst Summary",
+            f"  Updated: {view.last_updated}",
+            f"  Established: {view.established_at}",
+            sep,
+            "",
+            f"OUTLOOK: {view.outlook}",
+            f"CONFIDENCE: {view.confidence:.0%}",
+            "",
+            "THESIS:",
+        ]
+        for s in (view.summary or "(no summary)").split(". "):
+            lines.append(f"  {s.strip()}")
+        lines.append("")
+
+        if view.key_themes:
+            lines.append("KEY THEMES:")
+            for theme in view.key_themes:
+                lines.append(f"  - {theme}")
+            lines.append("")
+
+        if view.risk_factors:
+            lines.append("RISK FACTORS:")
+            for risk in view.risk_factors:
+                lines.append(f"  - {risk}")
+            lines.append("")
+
+        if view.company_implications:
+            lines.append("COMPANY IMPLICATIONS:")
+            max_tk = max(len(tk) for tk in view.company_implications)
+            for ticker in sorted(view.company_implications):
+                lines.append(f"  {ticker:<{max_tk}s}: {view.company_implications[ticker]}")
+            lines.append("")
+
+        # Latest indicator readings (most recent value from history)
+        if view.indicator_history:
+            lines.append("LATEST INDICATORS:")
+            for key, history in sorted(view.indicator_history.items()):
+                if not history:
+                    continue
+                latest = history[-1].get('value', 'N/A')
+                info = mcfg.TRACKED_INDICATORS.get(key, {})
+                label = info.get('label', key)
+                unit = info.get('unit', '')
+                lines.append(f"  {label + ':':<25s} {latest} {unit}")
+            lines.append("")
+
+        lines.append(f"NEWS TRACKED: {len(view.seen_headlines)} headlines processed")
+        lines.append(sep)
+        lines.append("")
+
+        txt_path.write_text("\n".join(lines))
 
     @property
     def has_view(self) -> bool:
