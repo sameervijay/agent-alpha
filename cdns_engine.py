@@ -103,7 +103,7 @@ class CDNSDCFEngine:
         self.drivers = self.get_drivers()
         self._last_result = None
         print(f"    [DCF] Model loaded — {len(self.drivers)} drivers, "
-              f"stock price: ${self._stock_price:,.2f}, "
+              f"stock price: (will fetch live), "
               f"WACC assumptions: rf={self._dcf_assumptions['rf']:.2%}, "
               f"beta={self._dcf_assumptions['beta']:.2f}")
 
@@ -281,9 +281,9 @@ class CDNSDCFEngine:
             'shares':  self._read_cell(ws, 521, 'BQ'),   # Row 521 = Shares WAD
         }
 
-        # -- Stock price --
-        ws_fp = wb['Front Page']
-        self._stock_price = float(ws_fp['H20'].value or 0)
+        # -- Stock price (DO NOT use Excel - it's stale) --
+        # Will fetch live price from stock market agent when compute_dcf() is called
+        self._stock_price = None
 
         # -- DCF assumptions (from DCF tab) --
         ws_dcf = wb['DCF']
@@ -367,9 +367,12 @@ class CDNSDCFEngine:
     # COMPUTE
     # ───────────────────────────────────────────────────────────
 
-    def compute_dcf(self):
+    def compute_dcf(self, current_price: float = None):
         """
         Run the full DCF calculation with current drivers.
+
+        Args:
+            current_price: Optional current stock price. If not provided, will fetch live from market.
 
         Returns a dict with:
           revenue, ebit, ebit_margin, ufcf (per FY),
@@ -377,6 +380,18 @@ class CDNSDCFEngine:
           enterprise_value, equity_value, implied_price,
           current_price, upside, wacc
         """
+        # Fetch live stock price if not provided
+        if current_price is None:
+            try:
+                from agents.stock_market_agent import StockMarketAgent
+                agent = StockMarketAgent()
+                current_price = agent.get_price('CDNS', use_cache=True)
+                if current_price <= 0:
+                    current_price = self._stock_price or 100.0  # Fallback
+            except Exception:
+                current_price = self._stock_price or 100.0  # Fallback if fetch fails
+
+        self._stock_price = current_price
         drivers = self.drivers
 
         print(f"    [DCF] Step 1/7: Building segment revenues...")

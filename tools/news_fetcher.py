@@ -144,11 +144,133 @@ def fetch_sec_edgar(ticker: str, days_back: int = 90) -> list:
         return []
 
 
-# ── Fetcher 3: finviz News Headlines ─────────────────────
+# ── Fetcher 3: newsdata.io News API ─────────────────────
 
-def fetch_finviz(ticker: str) -> list:
+def fetch_newsdata_io(ticker: str, api_key: str = None) -> list:
+    """Fetch news from newsdata.io with descriptions/summaries.
+    Free tier: 200 credits/day, 10 articles per credit, 12-hour delay.
+    Returns list of dicts with headline/url/date/source/description fields.
+    """
+    if not api_key:
+        # Try to get from environment or config
+        import os
+        api_key = os.environ.get('NEWSDATA_IO_API_KEY')
+        if not api_key:
+            print("  [news_fetcher] newsdata.io API key not found, skipping")
+            return []
+
+    try:
+        # Map ticker to search query
+        ticker_queries = {
+            'NVDA': 'NVIDIA OR NVDA',
+            'CDNS': 'Cadence Design Systems OR CDNS',
+            'TSM': 'Taiwan Semiconductor OR TSMC OR TSM',
+            'ASML': 'ASML Holding OR ASML',
+            'CWEV': 'CoreWeave OR CWEV',
+        }
+        query = ticker_queries.get(ticker, ticker)
+
+        url = 'https://newsdata.io/api/1/news'
+        params = {
+            'apikey': api_key,
+            'q': query,
+            'language': 'en',
+            'category': 'business,technology',
+        }
+
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get('status') != 'success':
+            print(f"  [news_fetcher] newsdata.io error: {data}")
+            return []
+
+        items = []
+        for article in data.get('results', []):
+            title = article.get('title', '')
+            description = article.get('description', '')
+
+            # Filter for relevance - title or description must mention the ticker or company
+            ticker_variations = {
+                'NVDA': ['nvidia', 'nvda'],
+                'CDNS': ['cadence', 'cdns'],
+                'TSM': ['taiwan semiconductor', 'tsmc', 'tsm'],
+                'ASML': ['asml'],
+                'CWEV': ['coreweave', 'cwev'],
+            }
+
+            search_terms = ticker_variations.get(ticker, [ticker.lower()])
+            title_lower = title.lower()
+            desc_lower = description.lower()
+
+            # Check if article is actually about this ticker
+            is_relevant = any(term in title_lower or term in desc_lower for term in search_terms)
+
+            if not is_relevant:
+                # Skip irrelevant articles
+                continue
+
+            # Get description (summary) - this is the key value on free tier
+            if not description:
+                description = title
+
+            # Get content if available (paid plans only)
+            content = article.get('content')
+            if content and content != 'ONLY AVAILABLE IN PAID PLANS':
+                # We have full content! Use it as summary
+                description = content[:500]  # Truncate to 500 chars
+
+            items.append({
+                'headline': title,
+                'url': article.get('link', ''),
+                'date': article.get('pubDate', ''),
+                'source': 'newsdata.io',
+                'ticker': ticker,
+                'summary': description,  # Real summary, not just headline!
+                'form_type': None,
+                'source_id': article.get('source_id', 'unknown'),
+            })
+
+        return items
+
+    except Exception as e:
+        print(f"  [news_fetcher] newsdata.io error for {ticker}: {e}")
+        return []
+
+
+# ── Fetcher 4: finviz News Headlines (Fallback) ──────────
+
+def _extract_article_content(url: str, timeout: int = 10) -> str:
+    """Extract full article text from URL using newspaper3k.
+    Returns article text or empty string if extraction fails.
+    """
+    try:
+        from newspaper import Article
+
+        # Skip relative URLs or invalid URLs
+        if not url or not url.startswith('http'):
+            return ""
+
+        article = Article(url)
+        article.download()
+        article.parse()
+
+        # Return article text (typically 2000-5000 chars)
+        return article.text
+    except Exception:
+        # Silently fail - not all URLs will work
+        return ""
+
+
+def fetch_finviz(ticker: str, extract_content: bool = True) -> list:
     """Fetch news headlines from finviz. Universal fallback — works for every ticker.
-    Returns list of dicts with headline/url/date/source fields.
+
+    Args:
+        ticker: Stock ticker symbol
+        extract_content: If True, attempts to extract full article text using newspaper3k
+
+    Returns list of dicts with headline/url/date/source/summary fields.
     """
     try:
         from finvizfinance.quote import finvizfinance
@@ -162,13 +284,24 @@ def fetch_finviz(ticker: str) -> list:
 
         items = []
         for _, row in news_df.head(20).iterrows():
+            url = str(row.get('Link', ''))
+            headline = str(row.get('Title', ''))
+
+            # Try to extract full article content
+            summary = headline  # Default to headline
+            if extract_content and url.startswith('http'):
+                article_text = _extract_article_content(url, timeout=5)
+                if article_text and len(article_text) > 200:
+                    # Use first 1000 chars of article as summary
+                    summary = article_text[:1000]
+
             items.append({
-                'headline': str(row.get('Title', '')),
-                'url': str(row.get('Link', '')),
+                'headline': headline,
+                'url': url,
                 'date': str(row.get('Date', '')),
                 'source': 'finviz',
                 'ticker': ticker,
-                'summary': str(row.get('Title', '')),
+                'summary': summary,  # Now contains full article text if extraction succeeded!
                 'form_type': None,
             })
         return items
@@ -206,10 +339,14 @@ def fetch_all_news(ticker: str, use_cache: bool = True,
     print(f"  [news_fetcher] Fetching news for {ticker}...")
     all_items = []
 
+    # Get newsdata.io API key from environment
+    import os
+    newsdata_api_key = os.environ.get('NEWSDATA_IO_API_KEY', 'pub_2cba889f251d4428abc4cdd004fcfc8a')
+
     for fetcher, name in [
         (fetch_ir_rss, 'IR RSS'),
-        (fetch_sec_edgar, 'SEC EDGAR'),
-        (fetch_finviz, 'finviz'),
+        (lambda t: fetch_newsdata_io(t, newsdata_api_key), 'newsdata.io'),
+        (fetch_finviz, 'finviz (fallback)'),
     ]:
         try:
             items = fetcher(ticker)
