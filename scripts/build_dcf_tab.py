@@ -20,7 +20,7 @@ This is the FINAL version that includes:
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side
 
-wb = openpyxl.load_workbook('NVIDIA NVDA US.xlsx')
+wb = openpyxl.load_workbook('financial_models/NVIDIA NVDA US.xlsx')
 
 if 'DCF' in wb.sheetnames:
     idx = wb.sheetnames.index('DCF')

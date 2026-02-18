@@ -108,8 +108,9 @@ class NVDADCFEngine:
         self._load_baseline()
         self.drivers = self.get_drivers()
         self._last_result = None
+        price_str = f"${self._stock_price:,.2f}" if self._stock_price else "(will fetch live)"
         print(f"    [DCF] Model loaded — {len(self.drivers)} drivers, "
-              f"stock price: ${self._stock_price:,.2f}, "
+              f"stock price: {price_str}, "
               f"WACC assumptions: rf={self._dcf_assumptions['rf']:.2%}, "
               f"beta={self._dcf_assumptions['beta']:.2f}")
 

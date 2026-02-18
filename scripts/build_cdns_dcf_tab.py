@@ -14,7 +14,7 @@ Color coding: Blue = hardcoded inputs, Green = cross-tab refs, Black = local for
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side
 
-wb = openpyxl.load_workbook('Cadence Design CDNS US.xlsx')
+wb = openpyxl.load_workbook('financial_models/Cadence Design CDNS US.xlsx')
 
 if 'DCF' in wb.sheetnames:
     idx = wb.sheetnames.index('DCF')

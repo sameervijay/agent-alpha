@@ -27,11 +27,9 @@ from models.update_session import (AnalystUpdateBrief, PMChallenge,
                                     AnalystResponse, PMDecision, UpdateSession)
 import config
 
-# Import the existing DCF engine
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from pm_agent_interface import NVDADCFEngine
-from cdns_engine import CDNSDCFEngine
+# Import the existing DCF engines from models
+from models.pm_agent_interface import NVDADCFEngine
+from models.cdns_engine import CDNSDCFEngine
 
 
 PM_SYSTEM_PROMPT = """You are the Portfolio Manager (PM) for a semiconductor-focused investment fund.

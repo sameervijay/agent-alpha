@@ -14,6 +14,11 @@ from pathlib import Path
 import requests
 
 import config
+import sys
+from pathlib import Path
+
+# Import macro_analyst_config from config folder
+sys.path.insert(0, str(Path(__file__).parent.parent / 'config'))
 import macro_analyst_config as mcfg
 
 
