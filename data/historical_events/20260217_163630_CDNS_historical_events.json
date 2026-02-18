@@ -1,0 +1,1379 @@
+{
+  "ticker": "CDNS",
+  "company_name": "Cadence Design Systems",
+  "analysis_date": "2026-02-17T16:29:25.191983",
+  "parameters": {
+    "sigma": 2.0,
+    "lookback_days": 504,
+    "max_events": 10
+  },
+  "events": [
+    {
+      "date": "2025-04-09",
+      "close_price": 264.6499938964844,
+      "return_pct": 0.14250558881805575,
+      "sigma_magnitude": 5.981050446987203,
+      "direction": "up",
+      "abs_return": 0.14250558881805575,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+        "confidence": 0.9,
+        "reasoning": "The significant price movement of +14.25% for Cadence Design Systems on April 9, 2025, is fundamentally driven by the company's earnings report, which exceeded profit and revenue estimates. The strong demand linked to AI applications likely contributed to the positive market reaction, as reflected in multiple headlines highlighting the earnings beat. This suggests a clear fundamental reason for the stock's upward movement.",
+        "event_type": "earnings",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue"
+        ]
+      }
+    },
+    {
+      "date": "2024-10-29",
+      "close_price": 284.45001220703125,
+      "return_pct": 0.1253313581481068,
+      "sigma_magnitude": 5.2602370327406405,
+      "direction": "up",
+      "abs_return": 0.1253313581481068,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "[finviz] Cadence Design Systems Beats Expectations. The Stock is Rising.",
+        "confidence": 0.9,
+        "reasoning": "The significant price movement of +12.53% in Cadence Design Systems' stock is fundamentally driven by the company's earnings report, which beat both profit and revenue estimates. The strong AI-linked demand highlighted in the news suggests a positive outlook for future growth, reinforcing investor confidence. This earnings beat is a clear and material catalyst for the stock's upward movement.",
+        "event_type": "earnings",
+        "supporting_headlines": [
+          "[finviz] Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "[finviz] Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "[finviz] Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue"
+        ]
+      }
+    },
+    {
+      "date": "2025-05-28",
+      "close_price": 288.6099853515625,
+      "return_pct": -0.10669184924270436,
+      "sigma_magnitude": 4.4779249564569765,
+      "direction": "down",
+      "abs_return": 0.10669184924270436,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+        "confidence": 0.3,
+        "reasoning": "Despite the positive earnings news and the headlines indicating that Cadence Design Systems beat expectations, the stock experienced a significant decline of 10.67%. This suggests that the price movement is likely driven by technical factors or market sentiment rather than a fundamental reason. The headlines do not indicate any negative news or guidance that would justify such a decline.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates"
+        ]
+      }
+    },
+    {
+      "date": "2025-07-29",
+      "close_price": 366.260009765625,
+      "return_pct": 0.09737535669064235,
+      "sigma_magnitude": 4.0869058223652805,
+      "direction": "up",
+      "abs_return": 0.09737535669064235,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+        "confidence": 0.9,
+        "reasoning": "The significant stock price movement of +9.74% for Cadence Design Systems on July 29, 2025, is fundamentally driven by the company's earnings report. The headlines indicate that Cadence beat both profit and revenue estimates, which is a clear positive surprise for the market. The strong demand linked to AI further supports the growth narrative, making this a material and timely catalyst for the stock's upward movement.",
+        "event_type": "earnings",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates"
+        ]
+      }
+    },
+    {
+      "date": "2025-01-27",
+      "close_price": 289.8699951171875,
+      "return_pct": -0.09551302677172735,
+      "sigma_magnitude": 4.008742647949816,
+      "direction": "down",
+      "abs_return": 0.09551302677172735,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+        "confidence": 0.3,
+        "reasoning": "Despite the positive earnings headlines indicating that Cadence Design Systems beat expectations, the stock experienced a significant decline of 9.55%. This suggests that the price movement is likely driven by technical factors such as market sentiment or sector rotation rather than a fundamental reason. The headlines do not indicate any negative news or guidance that would justify such a drop.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates"
+        ]
+      }
+    },
+    {
+      "date": "2025-02-19",
+      "close_price": 274.0400085449219,
+      "return_pct": -0.08784071089513013,
+      "sigma_magnitude": 3.686730657516675,
+      "direction": "down",
+      "abs_return": 0.08784071089513013,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "",
+        "confidence": 0.3,
+        "reasoning": "Despite the positive earnings news and beats on revenue and profit estimates, the stock experienced a significant decline. This suggests that the price movement is likely due to technical factors such as market sentiment or sector rotation rather than a fundamental reason. The headlines do not indicate any negative news that would justify the drop.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates"
+        ]
+      }
+    },
+    {
+      "date": "2024-07-17",
+      "close_price": 288.1199951171875,
+      "return_pct": -0.07573866819699981,
+      "sigma_magnitude": 3.178800207283418,
+      "direction": "down",
+      "abs_return": 0.07573866819699981,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+        "confidence": 0.3,
+        "reasoning": "Despite the positive earnings news and headlines indicating that Cadence Design Systems beat expectations, the stock experienced a significant decline of 7.57%. This suggests that the price movement is likely driven by technical factors or market sentiment rather than a fundamental reason. The headlines do not indicate any negative news or guidance that would justify such a drop.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates"
+        ]
+      }
+    },
+    {
+      "date": "2024-08-08",
+      "close_price": 268.67999267578125,
+      "return_pct": 0.07338897885166329,
+      "sigma_magnitude": 3.0801822469229365,
+      "direction": "up",
+      "abs_return": 0.07338897885166329,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "[finviz] Cadence Design Systems Beats Expectations. The Stock is Rising.",
+        "confidence": 0.9,
+        "reasoning": "The significant stock price movement of Cadence Design Systems on August 8, 2024, is fundamentally driven by the company's earnings report, which exceeded both profit and revenue estimates. The strong AI-linked demand highlighted in the earnings report likely contributed to the positive market reaction. This aligns with the typical market response to earnings beats, especially when linked to high-growth areas like AI.",
+        "event_type": "earnings",
+        "supporting_headlines": [
+          "[finviz] Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "[finviz] Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "[finviz] Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue"
+        ]
+      }
+    },
+    {
+      "date": "2026-02-03",
+      "close_price": 268.5,
+      "return_pct": -0.07154466705880791,
+      "sigma_magnitude": 3.002775304749425,
+      "direction": "down",
+      "abs_return": 0.07154466705880791,
+      "news_items": [
+        {
+          "headline": "Alphabet to jack up AI spending as Google Cloud and ad business revenues shine",
+          "url": "https://siliconangle.com/2026/02/04/alphabet-jack-ai-spending-google-cloud-ad-business-revenues-shine/",
+          "date": "2026-02-04T23:32:19Z",
+          "source": "SiliconANGLE News",
+          "summary": "Google LLC\u2019s parent company Alphabet Inc. beat expectations as it delivered its fourth-quarter financial results today, but its stock was trading lower after it revealed plans for a dramatic increase in its investments in artificial intelligence data centers \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Alphabet to ramp up AI spending as Google Cloud and ad business revenues shine",
+          "url": "https://siliconangle.com/2026/02/04/alphabet-ramp-ai-spending-google-cloud-ad-business-revenues-shine/",
+          "date": "2026-02-04T23:32:19Z",
+          "source": "SiliconANGLE News",
+          "summary": "Google LLC\u2019s parent company Alphabet Inc. beat expectations as it delivered its fourth-quarter financial results today, but its stock was trading lower after it revealed plans to dramatically increase its investments in artificial intelligence data centers ov\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "The Top 10 Best Practices for AI/BI Dashboards Performance Optimization (Part 2)",
+          "url": "https://www.databricks.com/blog/top-10-best-practices-aibi-dashboards-performance-optimization-part-2",
+          "date": "2026-02-04T22:40:00Z",
+          "source": "Databricks.com",
+          "summary": "Make Databricks AI/BI dashboards consistently fast at scale\u2014reduce query fan-out, improve first paint, and boost cache hits with practical design and data patterns.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "There\u2019s a Reason You Haven\u2019t Seen a New Pixel Watch Update",
+          "url": "https://www.droid-life.com/2026/02/04/theres-a-reason-you-havent-seen-a-new-pixel-watch-update/",
+          "date": "2026-02-04T21:32:35Z",
+          "source": "Droid Life",
+          "summary": "Pixel Watch updates remain on a\u00a0mostly quarterly schedule rather than monthly as we enter 2026. When the Pixel Watch, Pixel Watch 2, and Pixel Watch 3 first arrived on the scene, Google seemed invested in pushing out updates to them on a monthly basis, just l\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Lantronix Reports Fiscal Second Quarter 2026 Financial Results",
+          "url": "https://www.globenewswire.com/news-release/2026/02/04/3232477/0/en/Lantronix-Reports-Fiscal-Second-Quarter-2026-Financial-Results.html",
+          "date": "2026-02-04T21:05:00Z",
+          "source": "GlobeNewswire",
+          "summary": "IRVINE, Calif., Feb. 04, 2026 (GLOBE NEWSWIRE) -- Lantronix Inc. (Nasdaq: LTRX), a global leader in compute and connectivity IoT solutions powering Edge AI applications, today reported results for the fiscal second quarter ended Dec. 31, 2025.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Apple\u2019s iPhone 17e is imminent",
+          "url": "https://macdailynews.com/2026/02/04/apples-iphone-17e-is-imminent/",
+          "date": "2026-02-04T20:00:19Z",
+          "source": "Macdailynews.com",
+          "summary": "Apple is preparing to unveil the iPhone 17e as early as February 19, 2026, according to industry sources cited in recent reports\u2026\nThe post Apple\u2019s iPhone 17e is imminent appeared first on MacDailyNews.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Overwatch 2 drops the 2 with a colossal overhaul \u2014 the Reign of Talon begins with 5 new characters dropping next week and a freakin' Hello Kitty collab",
+          "url": "https://www.windowscentral.com/gaming/blizzard/overwatch-2-drops-the-2-with-a-colossal-overhaul-the-reign-of-talon-begins-with-5-new-characters-dropping-next-week-and-a-freakin-hello-kitty-collab",
+          "date": "2026-02-04T19:51:03Z",
+          "source": "Windows Central",
+          "summary": "Blizzard's new Overwatch Spotlight presentation revealed that Overwatch 2 is dropping the 2, and now has a completely new live-service structure.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Electronic Design Automation Market to Reach US$ 35.3 Billion by 2032 as AI, 5nm\u20133nm Nodes, and Automotive Chips Accelerate Demand | Astute Analytica",
+          "url": "https://www.globenewswire.com/news-release/2026/02/04/3232400/0/en/Electronic-Design-Automation-Market-to-Reach-US-35-3-Billion-by-2032-as-AI-5nm-3nm-Nodes-and-Automotive-Chips-Accelerate-Demand-Astute-Analytica.html",
+          "date": "2026-02-04T19:18:00Z",
+          "source": "GlobeNewswire",
+          "summary": "The market is being propelled by the increasing complexity of integrated circuits (ICs), the rapid expansion of consumer and automotive electronics, and the rising adoption of AI and machine learning in semiconductor design. Advanced ICs with billions of tran\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "The Switch 2 Edition of Super Mario Bros. Wonder Might Be Worth It for Meetup in Bellabel Park Alone",
+          "url": "http://comicbook.com/gaming/feature/the-switch-2-edition-of-super-mario-bros-wonder-might-be-worth-it-for-meetup-in-bellabel-park-alone/",
+          "date": "2026-02-04T19:00:00Z",
+          "source": "ComicBook.com",
+          "summary": "Image courtesy of Nintendo\n\nSince the Switch 2 released, Nintendo has steadily released a series of upgraded editions of its first-party titles. The major selling point for Switch 2 editions of older games is the graphics and performance enhancement, but many\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "I Played Overwatch\u2019s 5 New Heroes: Everything You Need to Know (And Which Five Are Next in 2026)",
+          "url": "http://comicbook.com/gaming/list/i-played-overwatchs-5-new-heroes-everything-you-need-to-know-and-which-five-are-next-in-2026/",
+          "date": "2026-02-04T18:45:00Z",
+          "source": "ComicBook.com",
+          "summary": "The team at Blizzard has rolled out its plans for the next year of Overwatch with the latest Spotlight event for the hit hero shooter. In addition to confirming that the game has a new focus on narrative and lore, plus cosmetics, balance, and competitive chan\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Overwatch: 10 Most Important Things I Learned at Blizzard About the 2026 Update (Including Narrative, Cosmetics, and More)",
+          "url": "http://comicbook.com/gaming/list/overwatch-10-most-important-things-i-learned-at-blizzard-about-the-2026-update-including-narrative-cosmetics-and-more/",
+          "date": "2026-02-04T18:45:00Z",
+          "source": "ComicBook.com",
+          "summary": "Last year, the Overwatch 2 team at Blizzard dropped some of the biggest gameplay changes on players since the launch of the title in 2022. This included introducing Perks to the game, giving players customizable choices that enhance and change their hero base\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "These Pixel models won't be getting monthly updates anymore",
+          "url": "https://www.makeuseof.com/these-pixel-models-wont-be-getting-monthly-updates-anymore/",
+          "date": "2026-02-04T18:01:45Z",
+          "source": "MakeUseOf",
+          "summary": "Google says the devices will \"remain security compliant\"",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Bitcoin Quantum Panic Flares As Nic Carter And Developer Matt Corallo Clash",
+          "url": "https://bitcoinist.com/bitcoin-quantum-panic-nic-carter-matt-corallo/",
+          "date": "2026-02-04T17:30:38Z",
+          "source": "Bitcoinist",
+          "summary": "A fresh bout of \u201cquantum panic\u201d broke out across Bitcoin X on Tuesday after Castle Island\u2019s Nic Carter and longtime Bitcoin developer Matt Corallo sparred over whether the ecosystem is treating post-quantum security as an urgent protocol priority or a specula\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "This Phone Stays Charged for Almost a Week by Keeping Your Data Secure",
+          "url": "https://www.cnet.com/tech/mobile/privacy-phone-punkt-blocks-app-data-leak-multi-day-battery-life/",
+          "date": "2026-02-04T17:00:54Z",
+          "source": "CNET",
+          "summary": "Plugging up data-leaking apps extends your phone's battery life. Who would have guessed?",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Nvidia boss Jensen Huang says AI-replacement fears tanking software stocks is the 'most illogical thing in the world'",
+          "url": "https://www.businessinsider.com/ai-software-tech-stocks-sell-off-nvidia-jensen-huang-illogical-2026-2",
+          "date": "2026-02-04T16:41:13Z",
+          "source": "Business Insider",
+          "summary": "Nvidia CEO Jensen Huang dismissed fears that AI will replace software as tech stocks were rattled by new tools from Anthropic this week.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Rob Hyland\u2019s Super Bowl: How NBC Sports Football Producer Prepares for \u2018Uncharted Waters\u2019 With Mike Tirico",
+          "url": "https://variety.com/2026/tv/news/rob-hyland-super-bowl-nbc-sports-mike-tirico-1236651800/",
+          "date": "2026-02-04T16:35:00Z",
+          "source": "Variety",
+          "summary": "NBC is counting on Rob Hyland to figure out which way the wind blows during its critical Super Bowl LX telecast on Sunday night. Hyland, 58, will oversee production of the Big Game for the first time in his career Sunday night, when sportscaster Mike Tirico m\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Your Jellyfin server is stuttering on TV because you missed this setting",
+          "url": "https://www.makeuseof.com/jellyfin-server-stuttering-on-tv-because-you-missed-this-one-setting/",
+          "date": "2026-02-04T16:30:17Z",
+          "source": "MakeUseOf",
+          "summary": "I blamed my network. Jellyfin blamed me. This setting fixed it.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Weapon Sets 'Forager' Release Date, Shares \"Alpenflage\"",
+          "url": "https://exclaim.ca/music/article/cadence-weapon-sets-forager-release-date-shares-alpenflage",
+          "date": "2026-02-04T16:25:42Z",
+          "source": "Exclaim!",
+          "summary": "After teasing his upcoming new album last December, Cadence Weapon has finally unveiled the release date for his highly anticipated Forager",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "The iPhone 17e might launch in mere weeks",
+          "url": "https://www.macworld.com/article/3052191/iphone-17e-set-to-launch-on-19-february-only-one-camera-but-finally-magsafe.html",
+          "date": "2026-02-04T15:43:02Z",
+          "source": "Macworld",
+          "summary": "Macworld\n\n\n\r\n\n\n\n\nDespite the company\u2019s best efforts to keep its product launches secret, details about Apple\u2019s much-anticipated iPhone 17e are circulating among case and accessory makers. One such source with knowledge of the matter indicates that the device \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Jay Buchanan\u2019s Pioneer Heart",
+          "url": "https://www.spin.com/2026/02/jay-buchanans-pioneer-heart/",
+          "date": "2026-02-04T15:00:00Z",
+          "source": "SPIN",
+          "summary": "Jay Buchanan is a lover, not a fighter. If you spend some time listening to the soul-stirring songs he\u2019s made with blues rock band Rival Sons, you\u2019ll find a window into his heart. The blistering \u201cElectric Man\u201d comes off like a love letter to the very craft of\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Hellgate girls roll past Glacier",
+          "url": "https://dailyinterlake.com/news/2026/feb/04/hellgate-girls-roll-past-glacier/",
+          "date": "2026-02-04T14:07:00Z",
+          "source": "Dailyinterlake.com",
+          "summary": "Feb. 4\u2014MISSOULA \u2014 Paisley Johnson scored 20 points, 10 in the first quarter as Missoula Hellgate jumped ahead of Glacier early and took a 67-29 victory in Western AA girls basketball Tuesday evening. Cady Schneider added 13 points with eight coming after the \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Speech translation in Google Meet now generally available for businesses",
+          "url": "https://workspaceupdates.googleblog.com/2026/02/speech-translation-meet-ga.html",
+          "date": "2026-02-04T14:04:00Z",
+          "source": "Googleblog.com",
+          "summary": null,
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "ROVAR X3: The Outdoor Companion Robot That Treats Mobility As Its Personality",
+          "url": "https://bitrebels.com/technology/rovar-x3-the-outdoor-companion-robot-that-treats-mobility-as-its-personality/",
+          "date": "2026-02-04T14:03:40Z",
+          "source": "Bitrebels.com",
+          "summary": "ROVAR X3 arrived at CES as a small, friendly machine that did not try to be a talking appliance. What becomes clear when you look closer is that Sentigent has made a deliberate choice: treat the outdoors as the primary arena for companionship and optimize for\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "New Intuit Mailchimp Report Reveals What Marketers Overlook at the Opt-In Moment and Why It Matters",
+          "url": "https://financialpost.com/pmn/business-wire-news-releases-pmn/new-intuit-mailchimp-report-reveals-what-marketers-overlook-at-the-opt-in-moment-and-why-it-matters",
+          "date": "2026-02-04T13:40:35Z",
+          "source": "Financial Post",
+          "summary": "The Art of the Opt-In finds that trust, timing, and restraint at sign-up shape engagement, data quality, and retention across email and SMS The opt-in moment sets expectations for the entire brand-customer relationship, and many marketers overestimate how muc\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Open Channels FM: Navigating Tech Shifts, Expanding Your Developer Toolkit",
+          "url": "https://openchannels.fm/navigating-tech-shifts-expanding-your-developer-toolkit/",
+          "date": "2026-02-04T13:14:08Z",
+          "source": "Openchannels.fm",
+          "summary": "Zach Stepek and Carl Alexander discuss winter challenges, work-life balance, and AI\u2019s impact on coding. They emphasize the importance of diversifying skills and adapting to tech changes for career longevity.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "SHARC Energy Secures $3.7 Million in Equipment Orders, Demonstrating Continued Momentum and Expansion into New Markets",
+          "url": "https://financialpost.com/globe-newswire/sharc-energy-secures-3-7-million-in-equipment-orders-demonstrating-continued-momentum-and-expansion-into-new-markets",
+          "date": "2026-02-04T13:02:40Z",
+          "source": "Financial Post",
+          "summary": "VANCOUVER, British Columbia, Feb. 04, 2026 (GLOBE NEWSWIRE) \u2014 SHARC International Systems Inc. (CSE: SHRC) (FSE: IWIA) (OTCQB: INTWF) (\u201cSHARC Energy\u201d or the \u201cCompany\u201d) a global leader in Wastewater Energy Transfer (\u201cWET\u201d) technology, is pleased to announce th\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "AI Chip Startup Positron Raises $230 Million From Arm, Qatar to Compete With Nvidia",
+          "url": "https://financialpost.com/pmn/business-pmn/ai-chip-startup-positron-raises-230-million-from-arm-qatar-to-compete-with-nvidia",
+          "date": "2026-02-04T12:23:39Z",
+          "source": "Financial Post",
+          "summary": "The round values the aspiring Nvidia rival\u00a0at more than $1 billion",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Bitcoin mining profit crisis hits as difficulty to drop by 14% this weekend while block time spikes to 20 minutes",
+          "url": "https://cryptoslate.com/bitcoin-mining-profitability-crisis-hits-as-difficulty-to-drop-by-14-this-weekend-while-block-time-spikes-to-20-minutes/",
+          "date": "2026-02-04T12:05:40Z",
+          "source": "CryptoSlate",
+          "summary": "While price action has always been volatile and, arguably, exciting, the Bitcoin network itself is built to feel boring. Ten minutes per block, tick tock, rinse and repeat, a metronome you can set your watch to. Then every so often, it gets very human again. \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "9 Ways You\u2019re Using Your Exercise Bike Wrong, According to Cycling Pros",
+          "url": "https://www.cnet.com/health/fitness/ways-using-exercise-bike-wrong/",
+          "date": "2026-02-04T12:00:00Z",
+          "source": "CNET",
+          "summary": "An exercise bike may be your favorite way to work out, but are you using it correctly? Cycling experts weigh in.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Muon Space ramps up multi-mission satellite constellations",
+          "url": "https://www.spacedaily.com/reports/Muon_Space_ramps_up_multi_mission_satellite_constellations_999.html",
+          "date": "2026-02-04T11:54:21Z",
+          "source": "Space Daily",
+          "summary": "Los Angeles CA (SPX) Feb 04, 2026\n\n\nMuon Space is entering a new phase of operational scale as it moves from discrete missions to sustained, multi-mission satellite constellation deployment for government and commercial customers. \n\nThe Mountain View based co\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "iGPSPORT BSC100S 2.6\" GPS Cycling Bike Computer US$28.55 (~A$41.17) Delivered @ rockbrosbike Store AliExpress",
+          "url": "https://www.ozbargain.com.au/node/946876",
+          "date": "2026-02-04T11:45:48Z",
+          "source": "Ozbargain.com.au",
+          "summary": "I was looking for a cycling computer without spending the big bucks on the Garmin and found this popular budget one for a low price. iGPSPORT Australia currently sell the same unit for more than \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Alamos Gold Provides Three-Year Operating Guidance Outlining 46% Production Growth by 2028 at Significantly Lower Costs",
+          "url": "https://www.globenewswire.com/news-release/2026/02/04/3231870/0/en/Alamos-Gold-Provides-Three-Year-Operating-Guidance-Outlining-46-Production-Growth-by-2028-at-Significantly-Lower-Costs.html",
+          "date": "2026-02-04T11:30:00Z",
+          "source": "GlobeNewswire",
+          "summary": "Further production growth to one million ounces annually expected by 2030 through development of Lynn Lake and the Island Gold District Expansion Further production growth to one million ounces annually expected by 2030 through development of Lynn Lake and th\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Google's February Android update confirms a big shift for older Pixels",
+          "url": "https://www.androidcentral.com/phones/google-pixel/googles-february-android-update-confirms-a-big-shift-for-older-pixels",
+          "date": "2026-02-04T09:55:43Z",
+          "source": "Android Central",
+          "summary": "Pixel 6 and Pixel 7 devices seem to be now following a quarterly update schedule instead of monthly patches.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Seeger junior Bella Hubner masters diving and swimming",
+          "url": "https://www.jconline.com/story/sports/high-school/2026/02/04/indiana-high-school-diving-swimming-bella-hubner-seeger-wabash-river-conference-jerry-taylor-feature/88435353007/",
+          "date": "2026-02-04T09:02:54Z",
+          "source": "Journal & Courier",
+          "summary": "Being a champion in diving and swimming? Here's how Seeger junior Bella Hubner became a dual sport aquatics athlete.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Same-Day Pay Becomes a Hiring Edge as Paycheck Gaps Bite",
+          "url": "https://www.pymnts.com/news/faster-payments/2026/same-day-pay-becomes-a-hiring-edge-as-paycheck-gaps-bite/",
+          "date": "2026-02-04T09:02:07Z",
+          "source": "pymnts.com",
+          "summary": "Explore more conversations like this on the\u00a0PYMNTS Podcast page Technology has altered the basic assumption of payday, which has typically been every two weeks or twice a month. In an economy where nearly every other transaction settles instantly, the delay b\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Intel Shows No Signs of Leaving the GPU Business, as CEO Lip-Bu Tan Reiterates Commitment, Saying Future Lineups Will Be Built Internally",
+          "url": "https://wccftech.com/intel-shows-no-signs-of-leaving-the-gpu-business/",
+          "date": "2026-02-04T05:30:08Z",
+          "source": "Wccftech",
+          "summary": "Intel's GPU business has always been a mystery, not just on the consumer front, but also in the datacenter segment, but it appears Tan has a plan in mind. Intel's CEO Reveals Recent Efforts to Hire Qualcomm Executive Were a Part of the GPU Business Strategy I\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Lego is building out an in-house programmatic team",
+          "url": "http://digiday.com/media-buying/lego-is-building-out-an-in-house-programmatic-team/",
+          "date": "2026-02-04T05:01:00Z",
+          "source": "Digiday",
+          "summary": "The Danish advertiser is hiring for programmatic roles to flesh out paid digital unit. But it's not the only brand deepening its in-house bench.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Planning A \"Carry-On Only\" Trip? Check Out These 29 Items That Are Truly Worth The Space",
+          "url": "https://www.buzzfeed.com/imansakrani/carry-on-only-trip-items-worth-the-space",
+          "date": "2026-02-04T02:25:06Z",
+          "source": "Buzzfeed",
+          "summary": "It's so cool we live in a world where you can use a hairbrush as extra storage.View Entire Post \u203a",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Chipotle is targeting the top of the K-shaped economy",
+          "url": "https://www.businessinsider.com/chipotle-price-changes-core-customer-shaped-economy-2026-2",
+          "date": "2026-02-04T00:41:30Z",
+          "source": "Business Insider",
+          "summary": "Chipotle plans to raise prices this year, but executives said on Tuesday that their core consumer, who makes over $100k, probably won't mind.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Elon Musk Has Grand Plans for Data Centers in Space. Experts Are Skeptical",
+          "url": "https://me.pcmag.com/en/networking/35082/elon-musk-has-grand-plans-for-data-centers-in-space-experts-are-skeptical",
+          "date": "2026-02-03T21:51:49Z",
+          "source": "PCMag.com",
+          "summary": "Analysts and experts point to major safety and technical hurdles with SpaceX CEO Elon Musk's vision for a network of orbiting data centers powered by one million satellites.\nElon Musk claims to be serious about creating a network of orbiting data centers usin\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Elon Musk Has Grand Plans for Data Centers in Space. Experts Are Skeptical",
+          "url": "https://uk.pcmag.com/networking/162953/elon-musk-has-grand-plans-for-data-centers-in-space-experts-are-skeptical",
+          "date": "2026-02-03T21:51:49Z",
+          "source": "PCMag.com",
+          "summary": "Analysts and experts point to major safety and technical hurdles with SpaceX CEO Elon Musk's vision for a network of orbiting data centers powered by one million satellites.\nElon Musk claims to be serious about creating a network of orbiting data centers usin\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Here\u2019s how to score $348 in early perks ahead of Velotric\u2019s new Discover 3 and Discover M e-bike launches",
+          "url": "http://9to5toys.com/2026/02/03/early-perks-velotric-discover-3-and-discover-m-e-bike/",
+          "date": "2026-02-03T21:28:18Z",
+          "source": "9to5Toys",
+          "summary": "Back at the start of the year, Velotric announced five new e-bikes that would be joining its lineup throughout 2026, and the brand is now offering early-bird perks on the first two models. Through the rest of the week until February 9, you can sign up on the \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "American Assets Trust, Inc. Reports Fourth Quarter and Year End 2025 Financial Results",
+          "url": "https://www.globenewswire.com/news-release/2026/02/03/3231625/34254/en/American-Assets-Trust-Inc-Reports-Fourth-Quarter-and-Year-End-2025-Financial-Results.html",
+          "date": "2026-02-03T21:15:00Z",
+          "source": "GlobeNewswire",
+          "summary": "SAN DIEGO, Feb. 03, 2026 (GLOBE NEWSWIRE) -- American Assets Trust, Inc. (NYSE: AAT) (the \u201ccompany\u201d) today reported financial results for its fourth quarter and year ended December\u00a031, 2025.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "This tiny 20-year-old app is still the best way to clean Windows",
+          "url": "https://www.makeuseof.com/old-app-still-best-way-clean-windows/",
+          "date": "2026-02-03T21:00:18Z",
+          "source": "MakeUseOf",
+          "summary": "It features one-click maintenance.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Show HN: Clawdstrike \u2013 a security toolbox for the OpenClaw ecosystem",
+          "url": "https://github.com/backbay-labs/clawdstrike",
+          "date": "2026-02-03T19:19:42Z",
+          "source": "Github.com",
+          "summary": "Hi HN.OpenClaw has been popping claw for weeks now\u2026We\u2019ve seen the same question come up again and again:\n\u201cThis is fun but how do we no get fuk?\u201dMy answer: Clawdstrike.It\u2019s an open-source toolbox for developers who want to ship EDR-style apps and security infr\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Pixel 6 and Pixel 7 Updates are Missing: Here\u2019s What is Happening With Your Pixel",
+          "url": "https://www.droid-life.com/2026/02/03/pixel-6-pixel-7-updates-schedule-missing/",
+          "date": "2026-02-03T19:12:05Z",
+          "source": "Droid Life",
+          "summary": "The expected Pixel update schedule has changed in recent months for the Pixel 6 and Pixel 7 series. Both the Pixel 6 and Pixel 7 series of phones should still be supported through 2026, 2027, and beyond, we\u2019re just starting to question what the cadence for up\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Nasdaq big crash today: Nasdaq falls over 400 points, wipes out $1.1 trillion as AI stocks tumble \u2014 why AI shares are falling",
+          "url": "https://economictimes.indiatimes.com/news/international/us/nasdaq-big-crash-today-nasdaq-falls-over-400-points-wipes-out-1-1-trillion-as-ai-stocks-tumble-why-ai-shares-are-falling/articleshow/127892050.cms",
+          "date": "2026-02-03T18:08:11Z",
+          "source": "The Times of India",
+          "summary": "Nasdaq big crash today: Nasdaq falls over 400 points as AI stocks tumble. The Nasdaq Composite crashed 422.49 points today. This 1.79% drop took the index to 23,169.62. Over $1 trillion in value vanished. AI stocks are leading the tumble. Customers are buildi\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "INVESTOR ALERT: Pomerantz Law Firm Investigates Claims On Behalf of Investors\u00a0of\u00a0Atlassian Corporation - TEAM",
+          "url": "https://www.globenewswire.com/news-release/2026/02/03/3231466/1087/en/INVESTOR-ALERT-Pomerantz-Law-Firm-Investigates-Claims-On-Behalf-of-Investors-of-Atlassian-Corporation-TEAM.html",
+          "date": "2026-02-03T18:01:00Z",
+          "source": "GlobeNewswire",
+          "summary": "NEW YORK, Feb. 03, 2026 (GLOBE NEWSWIRE) -- Pomerantz LLP is investigating claims on behalf of investors of Atlassian Corporation (\u201cAtlassian\u201d or the \u201cCompany\u201d) (NASDAQ: TEAM).\u00a0\u00a0Such investors are advised to contact Danielle Peyton at newaction@pomlaw.com\r\n\u00a0o\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Bitcoin supply guide: When holders sell, miners strain, and ETFs add pressure",
+          "url": "https://cryptoslate.com/?p=518155",
+          "date": "2026-02-03T17:35:11Z",
+          "source": "CryptoSlate",
+          "summary": "Bitcoin supply guide: cost-basis bands, miner stress, and ETF flow signals Bitcoin is currently trading outside a $93,000\u2013$110,000 cost-basis band that Glassnode frames as an \u201coverhead supply\u201d zone. That setup puts the next quarter\u2019s supply story on miner cas\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Grounded 2 thrived whilst Avowed and The Outer Worlds 2 under-performed, so now Obsidian may target shorter development cycles",
+          "url": "https://www.eurogamer.net/obsidian-talks-avowed-the-outer-worlds-grounded-2-performance-and-studio-future",
+          "date": "2026-02-03T17:06:27Z",
+          "source": "Eurogamer.net",
+          "summary": "When 2025 wrapped up, Obsidian's open-world fantasy RPG Avowed had been overlooked on many end-of-year lists. Despite garnering favourable reviews overall and delivering a type of Elder Scrolls-inspired experience that stands on its own, it wasn't a massive h\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Galaxy S22 Reaches Final Year of Updates With Change to Quarterly Schedule",
+          "url": "https://www.droid-life.com/2026/02/03/galaxy-s22-reaches-final-year-of-updates-with-change-to-quarterly-schedule/",
+          "date": "2026-02-03T17:00:39Z",
+          "source": "Droid Life",
+          "summary": "The Galaxy S22, Galaxy S22+, and Galaxy S22 Ultra are in their final year of updates, now only receiving security patches on a quarterly schedule as of February 2026. When the Galaxy S22 series was introduced in 2022, Samsung promised 4 years of OS updates an\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Wall Street Expects Big Things From Advanced Micro Devices\u2019 Earnings Today",
+          "url": "https://247wallst.com/investing/2026/02/03/up-115-in-one-year-amd-earnings-today-after-close/",
+          "date": "2026-02-03T16:10:14Z",
+          "source": "24/7 Wall St.",
+          "summary": "Advanced Micro Devices (NASDAQ: AMD) reports FY2025 full-year and Q4 earnings on Feb. 3, 2026, after market close. Wall Street is expecting EPS of $1.32 on...",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Sex, Lies and Politics: How FX\u2019s \u2018Love Story\u2019 Brings Back the Doomed Romance of John F. Kennedy Jr. and Carolyn Bessette",
+          "url": "https://variety.com/2026/tv/features/love-story-fx-jfk-jr-carolyn-bessette-sex-politics-1236648235/",
+          "date": "2026-02-03T16:00:00Z",
+          "source": "Variety",
+          "summary": "Casting John F. Kennedy Jr. was a nightmare. It was April of last year, and the production of the limited series \u201cLove Story\u201d was three weeks away from starting. Cameras were ready to go up \u2014 but for the fact that Camelot\u2019s princess, Carolyn Bessette Kennedy,\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Samsung is cutting off support for this former Galaxy flagship",
+          "url": "https://www.androidauthority.com/samsung-galaxy-s21-series-end-of-updates-3637553/",
+          "date": "2026-02-03T15:49:49Z",
+          "source": "Android Authority",
+          "summary": "Samsung has stopped regular updates for the Galaxy S21 series, while the Galaxy S22 lineup drops to quarterly security patches.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Simulation Market to Reach US$ 172.33 Billion by 2033 Driven by AI-Powered Modeling, Digital Twins, Cloud Platforms, and Immersive VR Technologies | Astute Analytica",
+          "url": "https://www.globenewswire.com/news-release/2026/02/03/3231314/0/en/Simulation-Market-to-Reach-US-172-33-Billion-by-2033-Driven-by-AI-Powered-Modeling-Digital-Twins-Cloud-Platforms-and-Immersive-VR-Technologies-Astute-Analytica.html",
+          "date": "2026-02-03T15:30:00Z",
+          "source": "GlobeNewswire",
+          "summary": "Driven by rapid digital transformation, AI-powered modeling, cloud-based platforms, and immersive VR technologies, the global simulation market is witnessing accelerated adoption across manufacturing, healthcare, defense, automotive, and energy sectors. Organ\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Samsung Thinks The Galaxy Z Fold 8 Will Sell Better Than The Cheaper Galaxy Z Flip 8 This Year",
+          "url": "https://wccftech.com/samsung-thinks-the-galaxy-z-fold-8-will-sell-better-than-the-cheaper-galaxy-z-flip-8-this-year/",
+          "date": "2026-02-03T15:12:51Z",
+          "source": "Wccftech",
+          "summary": "Samsung's planned initial production runs for its upcoming devices are leading to aberrant outcomes this year, with the South Korean giant planning to produce a lot more Galaxy Z Fold 8 units than the cheaper Galaxy Z Flip 8 ones, while going all-in on the Ga\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Big expenses ruining your budget? Try a sinking fund",
+          "url": "https://www.bostonherald.com/2026/02/03/big-expenses-ruining-your-budget-try-a-sinking-fund/",
+          "date": "2026-02-03T15:00:23Z",
+          "source": "Boston Herald",
+          "summary": "Making a major purchase is different from shopping for groceries.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Building a for-profit health model that reaches the poorest",
+          "url": "https://insights.som.yale.edu/insights/building-for-profit-health-model-that-reaches-the-poorest",
+          "date": "2026-02-03T14:28:20Z",
+          "source": "Yale.edu",
+          "summary": "A wellness app created by Nneka Mobisson \u201904 M.B.A. aims to help Nigerians manage chronic health condition \u2014 while showing that for-profit innovation can make a difference for low-income&nbsp;populations.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Epic says only 16 to 18% of people claiming free games on the Epic Games Store buy games there afterwards, but \"for cost per new user, it's hard to beat\"",
+          "url": "https://www.gamesradar.com/games/epic-says-only-16-to-18-percent-of-people-claiming-free-games-on-the-epic-games-store-buy-games-there-afterwards-but-for-cost-per-new-user-its-hard-to-beat/",
+          "date": "2026-02-03T14:00:00Z",
+          "source": "GamesRadar+",
+          "summary": "\"Our budget kind of hovers around the $20 million mark\"",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "The scorecard for an XRP investment thesis that separates Ripple licensing from XRPL utility signals",
+          "url": "https://cryptoslate.com/what-breaks-the-case-for-xrp-investment-thesis-when-ripple-progress-fails-to-show-up-on-xrpl/",
+          "date": "2026-02-03T13:05:25Z",
+          "source": "CryptoSlate",
+          "summary": "Ripple enters 2026 with new permissions in the UK and the EU. In January, Ripple said it received UK Financial Conduct Authority permissions covering an Electronic Money Institution (EMI) license and cryptoasset registration. On Feb. 2, it said it received fu\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Why SEO Roadmaps Break In January (And How To Build Ones That Survive The Year) via @sejournal, @cshel",
+          "url": "https://www.searchenginejournal.com/why-seo-roadmaps-break-and-how-to-build-ones-that-survive-the-year/565586/",
+          "date": "2026-02-03T12:45:14Z",
+          "source": "Search Engine Journal",
+          "summary": "SEO roadmaps age poorly. Search evolves faster than planning cycles, technical debt accumulates quietly, and AI shortens the distance between approval and obsolescence.\nThe post Why SEO Roadmaps Break In January (And How To Build Ones That Survive The Year) a\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "ANBERNIC\u2019s next gaming handheld is an unabashed Sony PS Vita clone",
+          "url": "https://www.androidauthority.com/anbernic-rg-vita-pro-announcement-3637476/",
+          "date": "2026-02-03T12:21:11Z",
+          "source": "Android Authority",
+          "summary": "ANBERNIC just announced the RG VITA and RG VITA Pro, and they don't hide their inspiration in Sony's ill-fated handheld.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Voice search optimization: How to get your business heard about",
+          "url": "https://blog.hubspot.com/marketing/voice-search-optimization#article",
+          "date": "2026-02-03T12:00:00Z",
+          "source": "Hubspot.com",
+          "summary": "Discover practical voice search optimization tips to help your site rank for spoken queries on Siri, Alexa, and Google. Drive traffic with voice SEO today.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Landmark agreements secured\u00a0after\u00a0first UK-China Financial Working Group in Beijing",
+          "url": "https://www.gov.uk/government/news/landmark-agreements-secured-after-first-uk-china-financial-working-group-in-beijing",
+          "date": "2026-02-03T10:14:10Z",
+          "source": "Www.gov.uk",
+          "summary": "British jobs and businesses to be supported by enhanced cooperation with China in financial services",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "cadence-sdk 1.3.4",
+          "url": "https://pypi.org/project/cadence-sdk/1.3.4/",
+          "date": "2026-02-03T10:13:57Z",
+          "source": "Pypi.org",
+          "summary": "Cadence SDK - To building custom AI agent plugins for Cadence AI Framework",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "What Edward Said Teaches Us About Gaza",
+          "url": "https://www.thenation.com/article/world/edward-said-gaza/",
+          "date": "2026-02-03T10:00:00Z",
+          "source": "Thenation.com",
+          "summary": "Alaa Alqaisi\n\n\n\nOn Palestine and the geography of vanishing.\r\n\n\r\n\n\nThe post What Edward Said Teaches Us About Gaza appeared first on The Nation.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Umair Shahid: PostgreSQL Materialized Views: When Caching Your Query Results Makes Sense (And When It Doesn\u2019t)",
+          "url": "https://stormatics.tech/blogs/postgresql-materialized-views-when-caching-your-query-results-makes-sense",
+          "date": "2026-02-03T09:17:40Z",
+          "source": "Stormatics.tech",
+          "summary": "The Pain and the Real Constraint\r\nYour dashboard queries are timing out at 30 seconds. Your BI tool is showing spinners. Your users are refreshing the page, wondering if something\u2019s broken.\r\nYou\u2019ve indexed everything. You\u2019ve tuned shared_buffers. You\u2019ve rewri\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "MMORPG Gaming Trends, Statistics, and Growth Forecasts 2026-2031: Monetization Innovation, Government Support, and Regulatory Oversight Shape The Future $50+ Billion Industry",
+          "url": "https://www.globenewswire.com/news-release/2026/02/03/3230780/28124/en/MMORPG-Gaming-Trends-Statistics-and-Growth-Forecasts-2026-2031-Monetization-Innovation-Government-Support-and-Regulatory-Oversight-Shape-The-Future-50-Billion-Industry.html",
+          "date": "2026-02-03T09:02:00Z",
+          "source": "GlobeNewswire",
+          "summary": "The MMORPG market promises growth with mobile platforms expanding rapidly due to 5G, cross-platform integration, and cloud gaming. Key opportunities include leveraging real-time analytics, AI-driven content, and hybrid monetization. Emerging markets and espor\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "LiarsandThieves22 - kiss me just once for luck (these are desperate measures) - Game Changers Series - Rachel Reid [Archive of Our Own]",
+          "url": "https://archiveofourown.org/works/78623251",
+          "date": "2026-02-03T05:47:02Z",
+          "source": "Archiveofourown.org",
+          "summary": "\u201cI do not want to make you uncomfortable. With how I talk about us. To others. Like . . . reporters. Or how I treat you in front of others, like the guys on the team.\u201d\n\nSomething like understanding settled on Shane\u2019s face now, and it immediately made Ilya\u2019s h\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Garmin Edge 810 Classic Bike Computer \u2013 $299 Delivered (Exc. WA & NT) @ Crooze (RRP $749.95)",
+          "url": "https://www.ozbargain.com.au/node/946631",
+          "date": "2026-02-03T04:13:36Z",
+          "source": "Ozbargain.com.au",
+          "summary": "Only a limited amount of units are available. When they sell out they are gone! Free shipping Australia-wide (exc WA & NT)* *WA & NT: $15 Flat Shipping fee. Take your cycling performance \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "NASA backs studies to boost hypersonic flight testing",
+          "url": "https://www.spacedaily.com/reports/NASA_backs_studies_to_boost_hypersonic_flight_testing_999.html",
+          "date": "2026-02-03T03:50:43Z",
+          "source": "Space Daily",
+          "summary": "Los Angeles CA (SPX) Feb 02, 2026\n\n\nNASA is preparing for a new phase in hypersonic aviation by funding industry studies aimed at expanding flight test capabilities for reusable airbreathing vehicles that can cruise at several times the speed of sound. \n\nThe \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Northern Oil and Gas, Inc. (NOG): A\u00a0Bull\u00a0Case Theory",
+          "url": "https://finance.yahoo.com/news/northern-oil-gas-inc-nog-022824898.html",
+          "date": "2026-02-03T02:28:24Z",
+          "source": "Yahoo Entertainment",
+          "summary": "We came across a bullish thesis on Northern Oil and Gas, Inc. on Asymmetric Capital\u2019s Substack by Srikanth Thangellamudi. In this article, we will summarize ...",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Where\u2019s the February Pixel Update?",
+          "url": "https://www.droid-life.com/2026/02/02/wheres-the-february-pixel-update/",
+          "date": "2026-02-02T23:03:57Z",
+          "source": "Droid Life",
+          "summary": "Pixel updates are no longer released on the first Monday of the month, as Google has shifted to a schedule that gives it more flexibility and to release updates when they are truly ready. We probably don\u2019t need to keep explaining this to you, so this may be t\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Why AI Exposed Marketing\u2019s Biggest Structural Weakness",
+          "url": "https://www.cmswire.com/digital-marketing/why-ai-exposed-marketings-biggest-structural-weakness/",
+          "date": "2026-02-02T22:17:04Z",
+          "source": "CMSWire",
+          "summary": "The problem isn\u2019t tools or data volume. It\u2019s architectures, decision cycles, and how teams are built to respond.\nContinue reading...",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Ashland reports first quarter fiscal 2026 results and narrows full-year outlook",
+          "url": "https://www.globenewswire.com/news-release/2026/02/02/3230659/0/en/Ashland-reports-first-quarter-fiscal-2026-results-and-narrows-full-year-outlook.html",
+          "date": "2026-02-02T22:01:00Z",
+          "source": "GlobeNewswire",
+          "summary": "Ashland reports first quarter fiscal 2026 results and narrows full-year outlook...",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "13th Floor, Rockpoint score $100M construction loan for rental project near Tri-Rail stop",
+          "url": "https://therealdeal.com/miami/2026/02/02/13th-floor-rockpoint-nab-construction-loan-for-boca-rentals/",
+          "date": "2026-02-02T22:00:00Z",
+          "source": "The Real Deal",
+          "summary": "13th Floor Investments and Rockpoint scored a $100 million construction loan for an apartment project near the Boca Raton Tri-Rail station.\u00a0 The 340-unit development hit the pipeline as South Florida is feeling the sting of a multifamily supply overhang, as h\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Confidence in Motion: Venno\u2019s \u201cHOW I WALK\"",
+          "url": "https://earmilk.com/2026/02/02/confidence-in-motion-vennos-how-i-walk/",
+          "date": "2026-02-02T21:40:27Z",
+          "source": "Earmilk.com",
+          "summary": "Genre-defier Venno has just shared his latest banger. Entitled \u201cHOW I WALK\", the single features a collaboration with Yovng Patron and fuses reggaeton, hip hop, electronica, and pop for an\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "NASA\u2019s Rivalry/Not-Rivalry With China\u2019s Space Agency Takes Off",
+          "url": "https://spectrum.ieee.org/china-moon-mission-mengzhou-artemis",
+          "date": "2026-02-02T20:44:01Z",
+          "source": "Ieee.org",
+          "summary": "Slow and steady wins the race, or so goes the fable. The China Manned Space Agency, or CMSA, has repeatedly denied any rivalry with the United States akin to the race to the moon in the 1960s. But step by step, one element at a time over a period of decades, \u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Jonathan Frakes On Why Star Trek: The Next Generation's Cast Had Reputation For Being 'A--holes' On Set, And Why Guest Stars Struggled So Much",
+          "url": "https://www.cinemablend.com/television/jonathan-frakes-why-star-trek-the-next-generations-cast-reputation",
+          "date": "2026-02-02T18:39:52Z",
+          "source": "CinemaBlend",
+          "summary": "It's interesting to hear this.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "[EU] WoW\u00ae: Burning Crusade Classic Anniversary Edition Launches on 5 February",
+          "url": "https://www.bluetracker.gg/wow/topic/eu-en/24242436-wow-burning-crusade-classic-anniversary-edition-launches-on-5-february/",
+          "date": "2026-02-02T18:00:00Z",
+          "source": "Bluetracker.gg",
+          "summary": "[Blue Topic] Prepare to tread once again through the Dark Portal and into the fel-scarred realm of Outland with the WoW\u00ae: Burning Crusade Classic Anniversary Edition on 5 February at 23:00 GMT globally, and included with your WoW Subscription or Game Time. Ne\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Velotric\u2019s Ocean Mist Breeze 1 cruiser e-bike with 70-mile range gets FREE $150 bundle at a new $1,649 low, more from $1,299",
+          "url": "http://9to5toys.com/2026/02/02/velotric-ocean-mist-breeze-1-cruiser-e-bike-150-bundle-new-1649-low-more/",
+          "date": "2026-02-02T17:56:42Z",
+          "source": "9to5Toys",
+          "summary": "Velotric is currently offering a number of e-bike discounts, including the latest Breeze 1 Cruiser e-bike in its Ocean Mist colorway at $1,649 shipped and getting $150 in FREE add-on gear. While the e-bike carries a $1,799 MSRP, this entire bundle would fetch\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Twist Bioscience Q1 Earnings Call Highlights",
+          "url": "https://www.marketbeat.com/instant-alerts/twist-bioscience-q1-earnings-call-highlights-2026-02-02/?utm_source=yahoofinance&amp;utm_medium=yahoofinance",
+          "date": "2026-02-02T17:52:07Z",
+          "source": "MarketBeat",
+          "summary": "Twist Bioscience (NASDAQ:TWST) reported fiscal 2026 first-quarter results that management said extended a multi-year trend of consistent execution...",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Upcoming free-to-play RPG Sea of Remnants will get a new season 'every 10 weeks' with a big world expansion 'every 20 weeks'",
+          "url": "https://www.techradar.com/gaming/upcoming-free-to-play-rpg-sea-of-remnants-will-get-a-new-season-every-10-weeks-with-a-big-world-expansion-every-20-weeks",
+          "date": "2026-02-02T17:27:46Z",
+          "source": "TechRadar",
+          "summary": "Developer Joker Studio has outlined a release cadence for its live service support of upcoming RPG Sea of Remnants.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "A \u201cMoore-ish\u201d law for marketing",
+          "url": "https://ducttapemarketing.com/campaign-to-systems/",
+          "date": "2026-02-02T16:47:16Z",
+          "source": "Ducttapemarketing.com",
+          "summary": "A \u201cMoore-ish\u201d law for marketing written by John Jantsch read more at Duct Tape Marketing\nMarketing is quietly crossing a threshold. Not because we can \u201cmake more content\u201d with AI. Because every time the cost of thinking drops, the amount of experimentation an\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Presentation: Scaling to 100+ as a Director: Lessons From Growing Engineering Organizations",
+          "url": "https://www.infoq.com/presentations/patterns-organizational-change/",
+          "date": "2026-02-02T16:23:00Z",
+          "source": "InfoQ.com",
+          "summary": "Thiago Ghisi discusses the strategic evolution required to lead 100+ engineers without breaking the organization. He explains his \"Three Levels of Impact\" framework and shares practical lessons on speeding up decision-making, cultivating leadership teams, and\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Temple making strides in year three under Adam Fisher",
+          "url": "https://www.midmajormadness.com/general/33394/temple-making-strides-in-year-three-under-adam-fisher",
+          "date": "2026-02-02T15:45:00Z",
+          "source": "Midmajormadness.com",
+          "summary": "Tied for third place in the American with a 5-3 start, Temple has only continued to grow and improve this season",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "There Will Never Be Another Moira Rose",
+          "url": "https://reason.com/2026/02/02/there-will-never-be-another-moira-rose/",
+          "date": "2026-02-02T15:28:08Z",
+          "source": "Reason",
+          "summary": "The 'Schitt's Creek' character, played by Catherine O'Hara, was unapologetically herself and free from ordinary social expectations in a way I'd never seen before and knew I'd never see again.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Electronic Design Automation Software Market Size to Lead USD 34.71 Billion by 2035 Driven by AI, Cloud, and Advanced Chip Design",
+          "url": "https://www.globenewswire.com/news-release/2026/02/02/3230409/0/en/Electronic-Design-Automation-Software-Market-Size-to-Lead-USD-34-71-Billion-by-2035-Driven-by-AI-Cloud-and-Advanced-Chip-Design.html",
+          "date": "2026-02-02T15:02:00Z",
+          "source": "GlobeNewswire",
+          "summary": "According to Precedence Research, the global electronic design automation software market size surpassed USD 14.55 billion in 2025 and is estimated to hit around USD 15.89 billion by 2035, growing at a CAGR of 9.08% from 2026 to 2035. The proliferation of con\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "5 Things 2XKO Needs to Thrive",
+          "url": "http://comicbook.com/gaming/list/5-things-2xko-needs-to-thrive/",
+          "date": "2026-02-02T14:00:00Z",
+          "source": "ComicBook.com",
+          "summary": "Image Courtesy of Riot Games\n\nOver six years after its initial reveal, 2XKO is finally out. And even though many games launch in busted or lackluster states, this fighting game is quite solid all around, something undoubtedly aided by its many different playt\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Assessment of muscle oxygenation following eccentric exercise-induced muscle damage using near-infrared spectroscopy",
+          "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0341963",
+          "date": "2026-02-02T14:00:00Z",
+          "source": "Plos.org",
+          "summary": "Exercise-induced muscle damage (EIMD) disrupts muscle structure and function, impairing recovery and performance. Near-infrared spectroscopy (NIRS) offers a non-invasive method to assess muscle oxygenation, yet its sensitivity to EIMD-related changes under pr\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "60+ Content Marketing FAQs: Strategy, SEO, ROI, AI, & More",
+          "url": "https://www.webfx.com/blog/content-marketing/content-marketing-faq/",
+          "date": "2026-02-02T14:00:00Z",
+          "source": "Webfx.com",
+          "summary": "Get answers to the top 60+ content marketing FAQs about strategy, SEO, ROI, AI, timelines, and results. Learn how content attracts, engages, and converts.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "River City Roundup",
+          "url": "https://richmondmagazine.com/arts-entertainment/river-city-roundup-feb-2-2026/",
+          "date": "2026-02-02T13:00:00Z",
+          "source": "Richmondmagazine.com",
+          "summary": "The best things to see and do in the days ahead",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "B2B Email Marketing: How to use email to drive B2B pipeline growth",
+          "url": "https://blog.hubspot.com/marketing/b2b-email-marketing#article",
+          "date": "2026-02-02T12:00:08Z",
+          "source": "Hubspot.com",
+          "summary": "If you\u2018ve ever wondered why B2B email marketing still dominates as a revenue-driving channel in 2025, you\u2019re not alone. Despite the rise of new marketing platforms and AI-powered tools, B2B email marketing remains one of the most reliable ways to nurture lead\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "SEO Writing Assistant: How AI Marketing Actually Wins",
+          "url": "https://www.contentship.io/blog/seo-writing-assistant-ai-marketing-playbook-2026/",
+          "date": "2026-02-02T11:00:45Z",
+          "source": "Contentship.io",
+          "summary": "Stop wasted drafts. Use a seo writing assistant with SEO+GEO workflow, scoring, and human QA. Get the 2026 playbook and ship smarter.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Deepfaking Orson Welles\u2019s Mangled Masterpiece",
+          "url": "https://www.newyorker.com/magazine/2026/02/09/deepfaking-orson-welless-mangled-masterpiece",
+          "date": "2026-02-02T11:00:00Z",
+          "source": "The New Yorker",
+          "summary": "Michael Schulman on efforts by Edward Saatchi and Fable Studio to use A.I. to restore \u201cThe Magnificent Ambersons,\u201d the Oscar-nominated movie starring Joseph Cotten, Agnes Moorehead, Tim Holt, and Dolores Costello.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Infrastructure cyberattacks are suddenly in fashion. We can buck the trend",
+          "url": "https://www.theregister.com/2026/02/02/energy_infrastructure_cyberattacks/",
+          "date": "2026-02-02T10:15:14Z",
+          "source": "Theregister.com",
+          "summary": "Don't be scared of the digital dark \u2013 learn how to keep the lights on\nOpinion Barely a month into 2026, electrical power infrastructure on two continents has tested positive for cyberattacks. One fell flat as attempts to infiltrate and disrupt the Polish dist\u2026",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "FAA Warns Airlines About Safety Risks From Rocket Launches, Urges \u201cExtreme Caution\u201d",
+          "url": "http://www.propublica.org/article/faa-safety-warning-spacex-starship-explosions-airlines",
+          "date": "2026-02-02T10:00:00Z",
+          "source": "ProPublica",
+          "summary": "The agency\u2019s official safety alert comes as SpaceX looks to ramp up Starship tests. A recent ProPublica investigation found that explosions during previous Starship launches disrupted air traffic and forced pilots to scramble for safety.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Melania at the Multiplex",
+          "url": "https://www.thenation.com/?post_type=article&p=585480",
+          "date": "2026-02-02T10:00:00Z",
+          "source": "Thenation.com",
+          "summary": "Elizabeth Spiers\n\n\n\nPackaging a $75 million bribe from Jeff Bezos as a vapid, content-challenged biopic.\r\n\n\r\n\n\nThe post Melania at the Multiplex appeared first on The Nation.",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Electronic Design Automation Market to Reach US$ 35.3 Billion by 2032 as AI, 5nm\u20133nm Nodes, and Automotive Chips Accelerate Demand | Astute Analytica",
+        "confidence": 0.3,
+        "reasoning": "The news headlines from February 3, 2026, do not provide a clear fundamental reason for the 7.15% decline in Cadence's stock price. The headlines primarily focus on unrelated topics such as Alphabet's AI spending, Apple's upcoming iPhone, and the EDA market's long-term growth prospects. The lack of direct news related to Cadence suggests the price movement is more likely due to technical factors or sector rotation rather than a specific fundamental catalyst.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Electronic Design Automation Market to Reach US$ 35.3 Billion by 2032 as AI, 5nm\u20133nm Nodes, and Automotive Chips Accelerate Demand | Astute Analytica"
+        ]
+      }
+    },
+    {
+      "date": "2025-04-04",
+      "close_price": 232.8800048828125,
+      "return_pct": -0.06440078158151208,
+      "sigma_magnitude": 2.702941875186472,
+      "direction": "down",
+      "abs_return": 0.06440078158151208,
+      "news_items": [
+        {
+          "headline": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "url": "https://www.barrons.com/articles/cadence-earnings-stock-price-970644de?mod=bar_FV",
+          "date": "2026-02-17 16:29:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "url": "https://finance.yahoo.com/news/cadence-beats-quarterly-profit-revenue-224610884.html",
+          "date": "2026-02-17 17:46:00",
+          "source": "finviz",
+          "summary": "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "url": "/news/313513/cadence-cdns-q4-earnings-taking-a-look-at-key-metrics-versus-estimates",
+          "date": "2026-02-17 17:30:00",
+          "source": "finviz",
+          "summary": "Cadence (CDNS) Q4 Earnings: Taking a Look at Key Metrics Versus Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "url": "/news/313499/cadence-design-systems-cdns-beats-q4-earnings-and-revenue-estimates",
+          "date": "2026-02-17 17:15:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates",
+          "ticker": "CDNS"
+        },
+        {
+          "headline": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "url": "/news/313458/cadence-design-systemss-nasdaq-cdns-q4-cy2025-beats-on-revenue",
+          "date": "2026-02-17 16:59:00",
+          "source": "finviz",
+          "summary": "Cadence Design Systems's (NASDAQ:CDNS) Q4 CY2025: Beats On Revenue",
+          "ticker": "CDNS"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+        "confidence": 0.3,
+        "reasoning": "Despite the positive earnings headlines indicating that Cadence Design Systems beat expectations, the stock experienced a significant decline. This suggests that the negative price movement may be driven by technical factors such as market sentiment or sector rotation, rather than a fundamental issue. The headlines do not indicate any negative news or guidance that would justify a 6.44% drop.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Cadence Design Systems Beats Expectations. The Stock is Rising.",
+          "Cadence beats quarterly profit and revenue estimates on strong AI-linked demand",
+          "Cadence Design Systems (CDNS) Beats Q4 Earnings and Revenue Estimates"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_events": 10,
+    "fundamental_driven": 4,
+    "technical_driven": 6
+  }
+}

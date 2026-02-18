@@ -1,0 +1,627 @@
+{
+  "ticker": "ASML",
+  "company_name": "ASML",
+  "analysis_date": "2026-02-17T16:36:30.497357",
+  "parameters": {
+    "sigma": 2.0,
+    "lookback_days": 504,
+    "max_events": 10
+  },
+  "events": [
+    {
+      "date": "2024-10-15",
+      "close_price": 720.8900146484375,
+      "return_pct": -0.16261011023696859,
+      "sigma_magnitude": 5.96768598957024,
+      "direction": "down",
+      "abs_return": 0.16261011023696859,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not indicate any significant fundamental news such as earnings, guidance changes, or regulatory actions that would justify a 16.26% drop in ASML's stock price. The mention of Wall Street turning bullish on ASML is contrary to the price movement, suggesting that the decline is likely due to technical factors or broader market sentiment rather than a specific fundamental catalyst.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ASML reports transactions under its current share buyback program"
+        ]
+      }
+    },
+    {
+      "date": "2025-04-09",
+      "close_price": 681.2957763671875,
+      "return_pct": 0.15434106844452922,
+      "sigma_magnitude": 5.664217498096994,
+      "direction": "up",
+      "abs_return": 0.15434106844452922,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement of ASML on April 9, 2025, appears to be driven by a shift in market sentiment, as indicated by the headline suggesting Wall Street's bullish stance on ASML. However, there is no clear fundamental news such as earnings, product announcements, or major contracts that would typically justify such a large move. The mention of ASML in the context of a share buyback program is not new information and likely not the primary driver.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ASML reports transactions under its current share buyback program"
+        ]
+      }
+    },
+    {
+      "date": "2024-07-17",
+      "close_price": 918.185302734375,
+      "return_pct": -0.12743983712958296,
+      "sigma_magnitude": 4.6769596886874565,
+      "direction": "down",
+      "abs_return": 0.12743983712958296,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not indicate any significant fundamental news such as earnings, guidance changes, or regulatory actions that would justify a 12.74% drop in ASML's stock price. The mention of a share buyback program is typically seen as a positive or neutral event. The lack of clear negative news suggests that the price movement is likely driven by technical factors or market sentiment.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why"
+        ]
+      }
+    },
+    {
+      "date": "2024-06-05",
+      "close_price": 1025.8385009765625,
+      "return_pct": 0.09521356919320745,
+      "sigma_magnitude": 3.494276475572441,
+      "direction": "up",
+      "abs_return": 0.09521356919320745,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in ASML's stock appears to be driven more by market sentiment and technical factors rather than a clear fundamental catalyst. The headline about Wall Street turning bullish suggests a shift in sentiment, but lacks specific details on earnings, product news, or major contracts. The share buyback program is a positive signal but not typically enough to drive such a large move alone.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ASML reports transactions under its current share buyback program"
+        ]
+      }
+    },
+    {
+      "date": "2024-07-31",
+      "close_price": 924.4658813476562,
+      "return_pct": 0.08888217114339314,
+      "sigma_magnitude": 3.261918257616574,
+      "direction": "up",
+      "abs_return": 0.08888217114339314,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.8,
+        "reasoning": "The significant price movement in ASML's stock on July 31, 2024, is likely driven by the announcement of transactions under its current share buyback program. Share buybacks are often perceived positively by the market as they can indicate management's confidence in the company's future prospects and can also improve earnings per share by reducing the number of shares outstanding. This fundamental action is a clear catalyst for the stock's upward movement.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why"
+        ]
+      }
+    },
+    {
+      "date": "2026-01-02",
+      "close_price": 1162.2470703125,
+      "return_pct": 0.08778728691834847,
+      "sigma_magnitude": 3.221736713919944,
+      "direction": "up",
+      "abs_return": 0.08778728691834847,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.8,
+        "reasoning": "The significant stock price movement of ASML on January 2, 2026, is likely driven by the announcement of transactions under its share buyback program. Share buybacks are often perceived positively by the market as they can indicate management's confidence in the company's future prospects and can improve earnings per share by reducing the number of outstanding shares. This fundamental action is a clear catalyst for the stock's upward movement.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why"
+        ]
+      }
+    },
+    {
+      "date": "2024-08-02",
+      "close_price": 798.7792358398438,
+      "return_pct": -0.0841452466027568,
+      "sigma_magnitude": 3.0880761873196416,
+      "direction": "down",
+      "abs_return": 0.0841452466027568,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.3,
+        "reasoning": "The headlines from the day do not indicate any significant fundamental news such as earnings, product announcements, or guidance changes that would justify an 8.41% drop in ASML's stock price. The mention of ASML's share buyback program is not typically a negative catalyst. The price movement is likely driven by technical factors or broader market sentiment rather than a specific fundamental event.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials"
+        ]
+      }
+    },
+    {
+      "date": "2025-07-16",
+      "close_price": 750.2188110351562,
+      "return_pct": -0.08331516110094195,
+      "sigma_magnitude": 3.0576125856892946,
+      "direction": "down",
+      "abs_return": 0.08331516110094195,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not indicate any significant fundamental news such as earnings, guidance changes, or major contracts that would justify an 8.33% drop in ASML's stock price. The mention of ASML's share buyback program is routine and unlikely to cause such a significant move. The price action is more likely driven by technical factors such as market sentiment or sector rotation, especially given the lack of negative news specific to ASML.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials"
+        ]
+      }
+    },
+    {
+      "date": "2025-01-06",
+      "close_price": 760.2330932617188,
+      "return_pct": 0.07580216651897298,
+      "sigma_magnitude": 2.781890538387341,
+      "direction": "up",
+      "abs_return": 0.07580216651897298,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.8,
+        "reasoning": "The announcement of transactions under ASML's share buyback program is a fundamental reason that likely contributed to the stock's price increase. Share buybacks can signal management's confidence in the company's future prospects and are often viewed positively by investors, leading to upward price movements. The other headlines do not directly pertain to ASML or provide a clear fundamental reason for the price change.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why"
+        ]
+      }
+    },
+    {
+      "date": "2024-04-17",
+      "close_price": 892.24365234375,
+      "return_pct": -0.07094746070018121,
+      "sigma_magnitude": 2.60372597127605,
+      "direction": "down",
+      "abs_return": 0.07094746070018121,
+      "news_items": [
+        {
+          "headline": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "url": "/news/313169/wall-street-turns-bullish-on-asml-holding-nv-asml-heres-why",
+          "date": "2026-02-17 12:56:00",
+          "source": "finviz",
+          "summary": "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "France's AI company Mistral buys cloud service startup Koyeb",
+          "url": "https://finance.yahoo.com/news/frances-ai-company-mistral-buys-150611967.html",
+          "date": "2026-02-17 10:06:00",
+          "source": "finviz",
+          "summary": "France's AI company Mistral buys cloud service startup Koyeb",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "url": "/news/312229/the-zacks-analyst-blog-nvidia-taiwan-asml-and-applied-materials",
+          "date": "2026-02-17 04:37:00",
+          "source": "finviz",
+          "summary": "The Zacks Analyst Blog  NVIDIA, Taiwan, ASML and Applied Materials",
+          "ticker": "ASML"
+        },
+        {
+          "headline": "ASML reports transactions under its current share buyback program",
+          "url": "/news/311547/asml-reports-transactions-under-its-current-share-buyback-program",
+          "date": "2026-02-16 08:00:00",
+          "source": "finviz",
+          "summary": "ASML reports transactions under its current share buyback program",
+          "ticker": "ASML"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "ASML reports transactions under its current share buyback program",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not indicate any significant fundamental news such as earnings, product announcements, or guidance changes that would justify a 7.09% drop in ASML's stock price. The mention of ASML's share buyback program is routine and unlikely to cause such a movement. The price decline is likely due to technical factors or broader market sentiment rather than a specific fundamental catalyst.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "ASML reports transactions under its current share buyback program",
+          "Wall Street Turns Bullish on ?ASML Holding N.V. (ASML), Here's Why"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_events": 10,
+    "fundamental_driven": 3,
+    "technical_driven": 7
+  }
+}

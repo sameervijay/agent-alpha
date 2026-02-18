@@ -1,0 +1,794 @@
+{
+  "ticker": "CRWV",
+  "company_name": "CoreWeave",
+  "analysis_date": "2026-02-17T16:31:36.317271",
+  "parameters": {
+    "sigma": 2.0,
+    "lookback_days": 504,
+    "max_events": 10
+  },
+  "events": [
+    {
+      "date": "2025-04-01",
+      "close_price": 52.56999969482422,
+      "return_pct": 0.4177453370780737,
+      "sigma_magnitude": 5.444187197152838,
+      "direction": "up",
+      "abs_return": 0.4177453370780737,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be directly linked to any fundamental news specific to the company. The most relevant headline involves Nvidia and Meta expanding their GPU collaboration, which could indirectly benefit CoreWeave due to its involvement in the AI and GPU space. However, there is no direct news about CoreWeave itself, suggesting the move may be driven more by market sentiment or technical factors rather than a specific fundamental catalyst.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    },
+    {
+      "date": "2025-06-03",
+      "close_price": 150.47999572753906,
+      "return_pct": 0.2519134737776687,
+      "sigma_magnitude": 3.2830147628299295,
+      "direction": "up",
+      "abs_return": 0.2519134737776687,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.4,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be directly explained by any of the headlines. The most relevant news involves Nvidia and Meta expanding their GPU collaboration, which could indirectly benefit CoreWeave due to its involvement in AI infrastructure. However, there is no direct mention of CoreWeave in this context, suggesting the move is more likely driven by technical factors or market sentiment rather than a specific fundamental catalyst.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    },
+    {
+      "date": "2025-12-19",
+      "close_price": 83.0,
+      "return_pct": 0.22635933253169083,
+      "sigma_magnitude": 2.949985243987958,
+      "direction": "up",
+      "abs_return": 0.22635933253169083,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be directly linked to any fundamental news about the company itself. The headlines primarily focus on other companies, such as Nvidia and Meta, and their strategic moves. While CoreWeave is related to the GPU and AI space, the lack of direct news about CoreWeave suggests the move is more likely driven by market sentiment or technical factors, possibly due to sector rotation or momentum in the broader tech sector.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    },
+    {
+      "date": "2025-05-16",
+      "close_price": 80.30000305175781,
+      "return_pct": 0.22092150144914413,
+      "sigma_magnitude": 2.8791177375617942,
+      "direction": "up",
+      "abs_return": 0.22092150144914413,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be directly linked to any specific fundamental news about the company itself. The headlines primarily focus on activities related to Nvidia and other tech investments, which may have indirectly influenced sentiment towards CoreWeave due to its association with Nvidia. However, there is no direct news about CoreWeave that would justify a 22.09% increase, suggesting the move is more likely driven by technical factors or market sentiment.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    },
+    {
+      "date": "2025-08-13",
+      "close_price": 117.76000213623047,
+      "return_pct": -0.2083361200925683,
+      "sigma_magnitude": 2.7151011322969683,
+      "direction": "down",
+      "abs_return": 0.2083361200925683,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "[finviz] Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+        "confidence": 0.8,
+        "reasoning": "The significant stock price drop of CoreWeave on August 13, 2025, is likely driven by the news of Philippe Laffont's strategic exit from the company. As a notable investor, his exit could signal a lack of confidence in CoreWeave's future prospects, prompting other investors to sell. This type of news is fundamental as it directly impacts investor sentiment and potentially the company's perceived valuation.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "[finviz] Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact"
+        ]
+      }
+    },
+    {
+      "date": "2025-05-27",
+      "close_price": 123.97000122070312,
+      "return_pct": 0.2066381526023,
+      "sigma_magnitude": 2.6929726917107533,
+      "direction": "up",
+      "abs_return": 0.2066381526023,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in CoreWeave's stock on May 27, 2025, does not appear to be directly explained by any of the headlines. While the news about Nvidia and Meta expanding their GPU collaboration could indirectly benefit CoreWeave due to its involvement in AI infrastructure, there is no direct mention of CoreWeave in this context. The other headlines focus on portfolio adjustments by notable investors, which are more indicative of sentiment or technical factors rather than fundamental changes specific to CoreWeave.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    },
+    {
+      "date": "2026-02-06",
+      "close_price": 89.94999694824219,
+      "return_pct": 0.20495639798559462,
+      "sigma_magnitude": 2.671055542336782,
+      "direction": "up",
+      "abs_return": 0.20495639798559462,
+      "news_items": [
+        {
+          "headline": "Crypto Currents: Strategy, Galaxy Digital report Q4 earnings results",
+          "url": "https://finance.yahoo.com/news/crypto-currents-strategy-galaxy-digital-153045203.html",
+          "date": "2026-02-07T15:30:45Z",
+          "source": "Yahoo Entertainment",
+          "summary": "As bitcoin, ethereum and other cryptocurrencies see major legal, institutional, and technological developments, the financial landscape continues to adapt...",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Why Nvidia shares just had their best day since April? Nvidia (NVDA) stock jumped 8.2%, reclaiming a $4.5 trillion market capitalization",
+          "url": "https://economictimes.indiatimes.com/news/international/us/why-nvidia-shares-just-had-their-best-day-since-april-nvidia-nvda-stock-jumped-8-2-reclaiming-a-4-5-trillion-market-capitalization/articleshow/128031648.cms",
+          "date": "2026-02-07T12:09:36Z",
+          "source": "The Times of India",
+          "summary": "Nvidia stock jumped 8.2% to $185.40 as Big Tech confirmed a $650 billion AI spending spree for 2026. Amazon is leading the charge with a $200 billion budget for data centers. This massive capital injection proves the AI infrastructure buildout is accelerating\u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "CoreWeave, Inc. (NASDAQ:CRWV) Accused of Securities Fraud after Stock Drops 16% \u2013 Contact BFA Law before March 13",
+          "url": "https://www.globenewswire.com/news-release/2026/02/07/3234147/0/en/CoreWeave-Inc-NASDAQ-CRWV-Accused-of-Securities-Fraud-after-Stock-Drops-16-Contact-BFA-Law-before-March-13.html",
+          "date": "2026-02-07T12:05:00Z",
+          "source": "GlobeNewswire",
+          "summary": "CoreWeave, Inc. (NASDAQ:CRWV) Accused of Securities Fraud after Stock Drops 16% -- Contact BFA Law before March 13...",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "How Nvidia became the first $5 trillion company, in 4 charts | CNN Business",
+          "url": "https://www.cnn.com/2026/02/07/business/nvidia-trillion-valuation-ai-chips-vis",
+          "date": "2026-02-07T06:45:42Z",
+          "source": "CNN",
+          "summary": "Nvidia, not Apple or Microsoft, became the first company to surpass a $5 trillion valuation in October, cementing its role as the engine of the AI boom through the chips it designs.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "CoreWeave, Inc. (CRWV) Investors: March 13, 2026 Filing Deadline in Securities Class Action Lawsuit - Contact Kessler Topaz Meltzer & Check, LLP",
+          "url": "https://www.globenewswire.com/news-release/2026/02/06/3234112/0/en/CoreWeave-Inc-CRWV-Investors-March-13-2026-Filing-Deadline-in-Securities-Class-Action-Lawsuit-Contact-Kessler-Topaz-Meltzer-Check-LLP.html",
+          "date": "2026-02-06T23:32:00Z",
+          "source": "GlobeNewswire",
+          "summary": "CoreWeave (CRWV) Class Action Lawsuit \u2013 March 13, 2026 Lead Plaintiff Deadline ...",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Crypto\u2019s stress test hits balance sheets as Bitcoin, Ether collapse",
+          "url": "https://cointelegraph.com/news/crypto-stress-test-hits-balance-sheets-bitcoin-ether-collapse",
+          "date": "2026-02-06T21:00:00Z",
+          "source": "Cointelegraph",
+          "summary": "From ETH-heavy treasuries and Bitcoin ETFs slipping underwater to miners hit by winter storms, this week\u2019s Crypto Biz unpacks the business impact of the sell-off.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia CEO says AI data center spending will last 7\u20138 years amid $650B capex boom",
+          "url": "https://cryptobriefing.com/long-term-ai-data-center-investing/",
+          "date": "2026-02-06T19:23:32Z",
+          "source": "Crypto Briefing",
+          "summary": "Nvidia CEO Jensen Huang says AI infrastructure spending is sustainable and will span 78 years as capex hits $650B in 2026.\nThe post Nvidia CEO says AI data center spending will last 7\u20138 years amid $650B capex boom appeared first on Crypto Briefing.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia shares surge on Big Tech\u2019s US$650 billion AI-spending plan",
+          "url": "https://financialpost.com/investing/nvidia-shares-big-techs-650-billion-ai-spending",
+          "date": "2026-02-06T19:21:20Z",
+          "source": "Financial Post",
+          "summary": "Nvidia shares soared as investors snapped up shares of companies positioned to benefit from big technology firms spending on AI. Read more,",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "DEADLINE ALERT for VRNS, ARDT, CRWV, BBWI: Law Offices of Howard G. Smith Reminds Investors of Opportunity to Lead Securities Fraud Class Actions",
+          "url": "https://www.globenewswire.com/news-release/2026/02/06/3234032/3448/en/DEADLINE-ALERT-for-VRNS-ARDT-CRWV-BBWI-Law-Offices-of-Howard-G-Smith-Reminds-Investors-of-Opportunity-to-Lead-Securities-Fraud-Class-Actions.html",
+          "date": "2026-02-06T18:14:00Z",
+          "source": "GlobeNewswire",
+          "summary": "BENSALEM, Pa., Feb. 06, 2026 (GLOBE NEWSWIRE) -- Law Offices of Howard G. Smith reminds investors that class action lawsuits have been filed on behalf of shareholders of the following publicly-traded companies. Investors have until the deadlines listed below \u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Four horsemen of the AI-pocalypse line up capex bigger than Israel\u2019s GDP",
+          "url": "https://www.theregister.com/2026/02/06/ai_capex_plans/",
+          "date": "2026-02-06T17:44:05Z",
+          "source": "Theregister.com",
+          "summary": "Amazon, Google, Meta, Microsoft eye $635B in infrastructure spend\nAIpocolypse Four tech megacorps intend to collectively fork out roughly $635 billion this year on capex, much of it for datacenters and AI infrastructure - more than the entire output of Israel\u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "GenAI drives $119B cloud revenue in Q4",
+          "url": "https://www.techtarget.com/searchcloudcomputing/news/366638805/GenAI-drives-119B-cloud-revenue-in-Q4",
+          "date": "2026-02-06T16:30:00Z",
+          "source": "Techtarget.com",
+          "summary": "Q4 cloud infrastructure service revenues reach $119.1 billion, bringing the 2025 total to $419 billion. See how much market share AWS, Microsoft and Google hold.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia Is Investing $2 Billion More Into CoreWeave. Does This Make the Artificial Intelligence (AI) Stock a Safer Buy?",
+          "url": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_c088c8dc-86fd-45fa-beb6-0dd5f223f59a",
+          "date": "2026-02-06T15:20:00Z",
+          "source": "Yahoo Entertainment",
+          "summary": null,
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "CRWV Investors Have Opportunity to Lead CoreWeave, Inc. Securities Fraud Lawsuit with the Schall Law Firm",
+          "url": "https://www.globenewswire.com/news-release/2026/02/06/3233889/0/en/CRWV-Investors-Have-Opportunity-to-Lead-CoreWeave-Inc-Securities-Fraud-Lawsuit-with-the-Schall-Law-Firm.html",
+          "date": "2026-02-06T14:34:00Z",
+          "source": "GlobeNewswire",
+          "summary": "CRWV Investors Have Opportunity to Lead CoreWeave, Inc. Securities Fraud Lawsuit with the Schall Law Firm...",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "When the music stops: the unravelling of AI companies\u2019 flawed valuations",
+          "url": "https://fortune.com/2026/02/06/when-the-music-stops-the-unravelling-of-ai-companies-flawed-valuations/",
+          "date": "2026-02-06T10:00:00Z",
+          "source": "Fortune",
+          "summary": "Right now, we\u2019re already slipping into the\u00a0Trough of Disillusionment\u00a0and when the AI bubble bursts, the flawed\u00a0valuations will be exposed.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Claude Code is the Inflection Point",
+          "url": "https://newsletter.semianalysis.com/p/claude-code-is-the-inflection-point",
+          "date": "2026-02-06T03:51:03Z",
+          "source": "Semianalysis.com",
+          "summary": "4% of GitHub public commits are being authored by Claude Code right now. At the current trajectory, we believe that Claude Code will be 20%+ of all daily commits by the end of 2026. While you blinked, AI consumed all of software development. Our sister public\u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Data center noise a concern for Lancaster city Planning Commission",
+          "url": "https://lancasteronline.com/news/local/data-center-noise-a-concern-for-lancaster-city-planning-commission/article_922d4926-885c-4e38-b2a5-1c1fdd9673cc.html",
+          "date": "2026-02-05T22:15:00Z",
+          "source": "LancasterOnline",
+          "summary": "Noise concerns were the top issue raised by Lancaster city Planning Commission members and residents getting their first look at the second phase of a planned data center on Greenfield Road.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "ROSEN, TOP RANKED INVESTOR COUNSEL, Encourages CoreWeave, Inc. Investors to Secure Counsel Before Important Deadline in Securities Class Action \u2013 CRWV",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3233511/673/en/ROSEN-TOP-RANKED-INVESTOR-COUNSEL-Encourages-CoreWeave-Inc-Investors-to-Secure-Counsel-Before-Important-Deadline-in-Securities-Class-Action-CRWV.html",
+          "date": "2026-02-05T22:03:00Z",
+          "source": "GlobeNewswire",
+          "summary": "NEW YORK, Feb. 05, 2026 (GLOBE NEWSWIRE) -- WHY: Rosen Law Firm, a global investor rights law firm, reminds purchasers of securities of CoreWeave, Inc. (NASDAQ: CRWV) between March 28, 2025 and December 15, 2025, both dates inclusive (the \u201cClass Period\u201d), of \u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Class Action Filed Against CoreWeave, Inc. (CRWV) - March 13, 2026 Deadline to Join \u2013 Contact Levi & Korsinsky",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3233500/3080/en/Class-Action-Filed-Against-CoreWeave-Inc-CRWV-March-13-2026-Deadline-to-Join-Contact-Levi-Korsinsky.html",
+          "date": "2026-02-05T22:00:00Z",
+          "source": "GlobeNewswire",
+          "summary": "NEW YORK, Feb. 05, 2026 (GLOBE NEWSWIRE) -- Levi & Korsinsky, LLP notifies investors in CoreWeave, Inc. (\"CoreWeave, Inc.\" or the \"Company\") (NASDAQ: CRWV) of a class action securities lawsuit.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Bronstein, Gewirtz & Grossman LLC Urges CoreWeave, Inc. Investors to Act: Class Action Filed Alleging Investor Harm",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3233367/9788/en/Bronstein-Gewirtz-Grossman-LLC-Urges-CoreWeave-Inc-Investors-to-Act-Class-Action-Filed-Alleging-Investor-Harm.html",
+          "date": "2026-02-05T19:03:00Z",
+          "source": "GlobeNewswire",
+          "summary": "New class action for CoreWeave (CRWV) urges investors to seek recovery for alleged securities fraud violations \u2013 lead plaintiff deadline of 3/13/2026....",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "CoreWeave Shareholder Alert: ClaimsFiler Reminds Investors With Losses In Excess Of $100,000 Of Lead Plaintiff Deadline In Class Action Lawsuit Against CoreWeave, Inc. - CRWV",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3233263/35454/en/CoreWeave-Shareholder-Alert-ClaimsFiler-Reminds-Investors-With-Losses-In-Excess-Of-100-000-Of-Lead-Plaintiff-Deadline-In-Class-Action-Lawsuit-Against-CoreWeave-Inc-CRWV.html",
+          "date": "2026-02-05T16:28:00Z",
+          "source": "GlobeNewswire",
+          "summary": "NEW ORLEANS, Feb. 05, 2026 (GLOBE NEWSWIRE) -- ClaimsFiler, a FREE shareholder information service, reminds investors that they have until March 13, 2026\r\n to file lead plaintiff applications in a securities class action lawsuit against CoreWeave, Inc. (Nasda\u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "SHAREHOLDER ALERT Bernstein Liebhard LLP Announces A Securities Fraud Class Action Lawsuit Has Been Filed Against CoreWeave, Inc. (NASDAQ: CRWV)",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3233214/0/en/SHAREHOLDER-ALERT-Bernstein-Liebhard-LLP-Announces-A-Securities-Fraud-Class-Action-Lawsuit-Has-Been-Filed-Against-CoreWeave-Inc-NASDAQ-CRWV.html",
+          "date": "2026-02-05T15:47:00Z",
+          "source": "GlobeNewswire",
+          "summary": "CoreWeave Shareholders Between March 28, 2025 and December 15, 2025 - Contact Bernstein Liebhard For More Information Regarding Shareholder Lawsuit...",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "The recent struggles of top AI stocks show investors are realizing they were 'sold a bill of goods,' AI scientist says",
+          "url": "https://www.businessinsider.com/tech-stock-crash-ai-chatgpt5-gary-marcus-nvda-orcl-crwv-2026-2",
+          "date": "2026-02-05T15:42:34Z",
+          "source": "Business Insider",
+          "summary": "AI scientist Gary Marcus thinks the underwhelming release of ChatGPT-5 marked a turning point when investors realized AI might not be a game changer.",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Why Customer Concentration Is a Long-Term Test for CoreWeave",
+          "url": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_ca3f4913-8c82-4ab5-9fdc-26441179b89f",
+          "date": "2026-02-05T15:31:00Z",
+          "source": "Yahoo Entertainment",
+          "summary": null,
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "CRWV COURT UPDATE: The CoreWeave, Inc. Deadline in the Securities Class Action is Imminent \u2013 Contact BFA Law before March 13 if You Lost Money",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3232782/0/en/CRWV-COURT-UPDATE-The-CoreWeave-Inc-Deadline-in-the-Securities-Class-Action-is-Imminent-Contact-BFA-Law-before-March-13-if-You-Lost-Money.html",
+          "date": "2026-02-05T11:18:00Z",
+          "source": "GlobeNewswire",
+          "summary": "The CoreWeave, Inc. Deadline in the Securities Class Action is Imminent \u2013 Contact BFA Law before March 13 if You Lost Money...",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "ARK Invest Bets $60,900,000 on Seven Crypto-Related Stocks As Bitcoin Price Falters",
+          "url": "https://dailyhodl.com/2026/02/05/ark-invest-bets-60900000-on-seven-crypto-related-stocks-as-bitcoin-price-falters/",
+          "date": "2026-02-05T10:15:14Z",
+          "source": "The Daily Hodl",
+          "summary": "Investor Cathie Wood is amassing crypto stocks amid a downturn that saw Bitcoin (BTC) plunge to its lowest price since 2024. Ark Invest\u2019s trade disclosures show Wood\u2019s funds bought additional shares in crypto-related firms as Bitcoin dips below $80,000. The c\u2026",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "DEADLINE ALERT for CRWV, BBWI, SDM, and BRBR: The Law Offices of Frank R. Cruz Reminds Investors of Class Actions on Behalf of Shareholders",
+          "url": "https://www.globenewswire.com/news-release/2026/02/05/3232675/0/en/DEADLINE-ALERT-for-CRWV-BBWI-SDM-and-BRBR-The-Law-Offices-of-Frank-R-Cruz-Reminds-Investors-of-Class-Actions-on-Behalf-of-Shareholders.html",
+          "date": "2026-02-05T07:06:00Z",
+          "source": "GlobeNewswire",
+          "summary": "LOS ANGELES, Feb. 05, 2026 (GLOBE NEWSWIRE) -- The Law Offices of Frank R. Cruz reminds investors that class action lawsuits have been filed on behalf of shareholders of the following publicly-traded companies. Investors have until the deadlines listed below \u2026",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "CoreWeave, Inc. (NASDAQ:CRWV) Accused of Securities Fraud after Stock Drops 16% \u2013 Contact BFA Law before March 13",
+        "confidence": 0.3,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be driven by any positive fundamental news. Instead, the headlines focus on legal issues and class action lawsuits against the company, which would typically exert downward pressure on the stock. The absence of any positive earnings, product news, or major contracts suggests that the price movement is more likely due to technical factors or market sentiment shifts, possibly influenced by broader sector movements related to Nvidia's AI spending news.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "CoreWeave, Inc. (NASDAQ:CRWV) Accused of Securities Fraud after Stock Drops 16% \u2013 Contact BFA Law before March 13",
+          "CoreWeave (CRWV) Class Action Lawsuit \u2013 March 13, 2026 Lead Plaintiff Deadline"
+        ]
+      }
+    },
+    {
+      "date": "2025-05-21",
+      "close_price": 107.38999938964844,
+      "return_pct": 0.1900487802733477,
+      "sigma_magnitude": 2.4767748304161237,
+      "direction": "up",
+      "abs_return": 0.1900487802733477,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be directly linked to any specific fundamental news about the company itself. While the headline about Nvidia and Meta expanding their GPU collaboration could indirectly benefit CoreWeave due to its ties with Nvidia, there is no direct announcement or contract involving CoreWeave. The movement is likely driven by market sentiment and momentum, possibly influenced by broader positive sentiment towards Nvidia and AI-related stocks.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    },
+    {
+      "date": "2025-06-05",
+      "close_price": 135.0500030517578,
+      "return_pct": -0.17198039241001106,
+      "sigma_magnitude": 2.241301978542292,
+      "direction": "down",
+      "abs_return": 0.17198039241001106,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": true,
+        "primary_catalyst": "[finviz] Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+        "confidence": 0.8,
+        "reasoning": "The significant stock price decline of CoreWeave on June 5, 2025, is likely driven by the news of Philippe Laffont's strategic exit from the company. As a prominent investor, Laffont's divestment could signal a lack of confidence in CoreWeave's future prospects, prompting other investors to follow suit. This news is material and timely, directly impacting investor sentiment and causing the stock to drop.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "[finviz] Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact"
+        ]
+      }
+    },
+    {
+      "date": "2025-09-10",
+      "close_price": 117.13999938964844,
+      "return_pct": 0.16882855680358966,
+      "sigma_magnitude": 2.2002262763548543,
+      "direction": "up",
+      "abs_return": 0.16882855680358966,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "url": "https://finance.yahoo.com/news/nvidia-and-meta-expand-gpu-team-up-with-millions-of-additional-ai-chips-211544907.html",
+          "date": "2026-02-17 16:15:00",
+          "source": "finviz",
+          "summary": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Soros Doubles Down On Big Tech",
+          "url": "https://finance.yahoo.com/news/soros-doubles-down-big-tech-171408072.html",
+          "date": "2026-02-17 12:14:00",
+          "source": "finviz",
+          "summary": "Soros Doubles Down On Big Tech",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/significant-increase-nvidia-corp-duan-150021490.html",
+          "date": "2026-02-17 10:00:00",
+          "source": "finviz",
+          "summary": "Significant Increase in NVIDIA Corp by Duan Yongping: A 7.08% Portfolio Impact",
+          "ticker": "CRWV"
+        },
+        {
+          "headline": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "url": "/news/311857/nebius-stock-up-post-q4-earnings-buy-stay-invested-or-offload",
+          "date": "2026-02-16 10:38:00",
+          "source": "finviz",
+          "summary": "Nebius Stock Up Post Q4 Earnings: Buy, Stay Invested or Offload?",
+          "ticker": "CRWV"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+        "confidence": 0.6,
+        "reasoning": "The significant price movement in CoreWeave's stock does not appear to be directly explained by any of the headlines. While the news about Nvidia and Meta expanding their GPU collaboration could indirectly benefit CoreWeave, it is not a direct or material announcement for CoreWeave itself. The other headlines are related to portfolio adjustments by notable investors, which are more indicative of market sentiment and technical factors rather than fundamental changes specific to CoreWeave.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Nvidia and Meta expand GPU team up with millions of additional AI chips",
+          "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "Soros Doubles Down On Big Tech"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_events": 10,
+    "fundamental_driven": 2,
+    "technical_driven": 8
+  }
+}

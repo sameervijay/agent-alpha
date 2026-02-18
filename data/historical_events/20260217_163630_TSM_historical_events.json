@@ -1,0 +1,621 @@
+{
+  "ticker": "TSM",
+  "company_name": "TSMC",
+  "analysis_date": "2026-02-17T16:34:39.516610",
+  "parameters": {
+    "sigma": 2.0,
+    "lookback_days": 504,
+    "max_events": 10
+  },
+  "events": [
+    {
+      "date": "2025-01-27",
+      "close_price": 189.7532196044922,
+      "return_pct": -0.13327023888397682,
+      "sigma_magnitude": 5.210710980102594,
+      "direction": "down",
+      "abs_return": 0.13327023888397682,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+        "confidence": 0.3,
+        "reasoning": "The headlines from the day do not provide a clear fundamental reason for TSM's significant price drop. Most headlines focus on portfolio adjustments by prominent investors, which are not directly related to TSM. The absence of TSM-specific news such as earnings, guidance, or regulatory actions suggests the move is likely driven by technical factors or broader market sentiment.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2025-04-09",
+      "close_price": 157.24969482421875,
+      "return_pct": 0.12293966416577651,
+      "sigma_magnitude": 4.806797551525642,
+      "direction": "up",
+      "abs_return": 0.12293966416577651,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+        "confidence": 0.3,
+        "reasoning": "The significant price movement in TSMC's stock does not appear to be directly linked to any fundamental news such as earnings, product announcements, or major contracts. The headlines of the day focus on portfolio adjustments by notable investors and a speculative piece on AI productivity, which are unlikely to have a direct and immediate impact on TSMC's stock. The price move is more likely driven by technical factors or market sentiment, possibly related to sector rotation or momentum in the semiconductor space.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2024-10-17",
+      "close_price": 202.46041870117188,
+      "return_pct": 0.09793048549602146,
+      "sigma_magnitude": 3.8289678200783137,
+      "direction": "up",
+      "abs_return": 0.09793048549602146,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+        "confidence": 0.3,
+        "reasoning": "The headlines from the day do not provide a clear fundamental reason for TSM's significant price movement. The news primarily focuses on portfolio adjustments by notable investors, which may influence market sentiment but do not directly impact TSM's fundamentals. The absence of specific news related to TSM's earnings, products, or contracts suggests the move is likely driven by technical factors or sector rotation.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2024-07-17",
+      "close_price": 167.76992797851562,
+      "return_pct": -0.07976766392671863,
+      "sigma_magnitude": 3.1188226700932242,
+      "direction": "down",
+      "abs_return": 0.07976766392671863,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not provide any direct fundamental news related to TSMC that would justify a nearly 8% drop in stock price. The news primarily focuses on portfolio adjustments by prominent investors, which may influence market sentiment but do not directly impact TSMC's fundamentals. The absence of any TSMC-specific news suggests the move is likely driven by technical factors or broader market sentiment.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon"
+        ]
+      }
+    },
+    {
+      "date": "2025-10-13",
+      "close_price": 302.07452392578125,
+      "return_pct": 0.07920621951424267,
+      "sigma_magnitude": 3.0968708480712595,
+      "direction": "up",
+      "abs_return": 0.07920621951424267,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+        "confidence": 0.3,
+        "reasoning": "The headlines from the day do not provide a clear fundamental reason for TSM's significant price movement. The most relevant headline suggests a broader market sentiment shift towards AI, which could indirectly benefit semiconductor stocks like TSM. However, this is more indicative of a technical or sentiment-driven move rather than a specific fundamental catalyst.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2025-04-03",
+      "close_price": 155.8926544189453,
+      "return_pct": -0.07635420416654837,
+      "sigma_magnitude": 2.9853603727235742,
+      "direction": "down",
+      "abs_return": 0.07635420416654837,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not provide a clear fundamental reason for TSM's significant price drop. The news primarily focuses on portfolio adjustments by prominent investors, which may indirectly influence market sentiment but do not directly impact TSM's fundamentals. The absence of TSM-specific news suggests the move is likely driven by technical factors or broader market sentiment shifts.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon"
+        ]
+      }
+    },
+    {
+      "date": "2024-07-31",
+      "close_price": 162.4781036376953,
+      "return_pct": 0.07286135083926815,
+      "sigma_magnitude": 2.848793879433262,
+      "direction": "up",
+      "abs_return": 0.07286135083926815,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+        "confidence": 0.3,
+        "reasoning": "The news headlines from July 31, 2024, do not provide a clear fundamental reason for TSM's 7.29% price increase. The headlines primarily focus on portfolio adjustments by notable investors and a speculative outlook on AI productivity, which are more indicative of market sentiment and technical factors rather than specific, material news affecting TSM directly. The absence of direct news related to TSM's earnings, products, or contracts suggests the move is likely driven by broader market sentiment or sector rotation.",
+        "event_type": "sentiment",
+        "supporting_headlines": [
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2025-02-27",
+      "close_price": 178.68238830566406,
+      "return_pct": -0.06952006993699344,
+      "sigma_magnitude": 2.718153691264565,
+      "direction": "down",
+      "abs_return": 0.06952006993699344,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+        "confidence": 0.4,
+        "reasoning": "The headlines from the day do not directly mention TSMC or any fundamental changes such as earnings, product news, or guidance that would justify a significant price movement. The news primarily focuses on portfolio adjustments by notable investors, which may influence market sentiment but do not provide a clear fundamental reason for TSMC's decline. The movement is likely driven by technical factors or broader sector rotation trends.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2024-06-05",
+      "close_price": 159.15371704101562,
+      "return_pct": 0.0685380471145225,
+      "sigma_magnitude": 2.679757743702593,
+      "direction": "up",
+      "abs_return": 0.0685380471145225,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+        "confidence": 0.3,
+        "reasoning": "The headlines do not provide a clear fundamental reason for TSM's significant price movement. The news primarily focuses on portfolio adjustments by various investors and a general sentiment about AI's future impact. The lack of direct news related to TSM suggests the move is likely driven by technical factors or broader market sentiment, possibly related to optimism around AI and semiconductor demand.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    },
+    {
+      "date": "2025-04-04",
+      "close_price": 145.41265869140625,
+      "return_pct": -0.06722571866263283,
+      "sigma_magnitude": 2.6284472310853255,
+      "direction": "down",
+      "abs_return": 0.06722571866263283,
+      "news_items": [
+        {
+          "headline": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "url": "https://finance.yahoo.com/news/philippe-laffonts-strategic-exit-coreweave-231858934.html",
+          "date": "2026-02-17 18:18:00",
+          "source": "finviz",
+          "summary": "Philippe Laffont's Strategic Exit from CoreWeave Inc: A -2.26% Portfolio Impact",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "url": "https://finance.yahoo.com/news/david-rolfes-strategic-moves-chubb-231446331.html",
+          "date": "2026-02-17 18:14:00",
+          "source": "finviz",
+          "summary": "David Rolfe's Strategic Moves: Chubb Ltd Takes Center Stage with 3.29% Portfolio Share",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "url": "https://finance.yahoo.com/news/steve-mandels-strategic-moves-meta-230701248.html",
+          "date": "2026-02-17 18:07:00",
+          "source": "finviz",
+          "summary": "Steve Mandel's Strategic Moves: Meta Platforms Inc. Exit Impacts Portfolio by -7.07%",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "url": "/news/313485/david-teppers-appaloosa-ups-micron-stake-by-250-trims-nvidia-and-amazon",
+          "date": "2026-02-17 17:43:00",
+          "source": "finviz",
+          "summary": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "ticker": "TSM"
+        },
+        {
+          "headline": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "url": "/news/313409/scott-bessents-case-for-a-2026-ai-productivity-miracle",
+          "date": "2026-02-17 15:23:00",
+          "source": "finviz",
+          "summary": "Scott Bessent's Case for a 2026 AI Productivity Miracle",
+          "ticker": "TSM"
+        }
+      ],
+      "causality": {
+        "has_fundamental_reason": false,
+        "primary_catalyst": "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+        "confidence": 0.3,
+        "reasoning": "The headlines from the day do not provide a clear fundamental reason for TSM's significant price decline. The news primarily focuses on portfolio adjustments by prominent investors, which may influence market sentiment but do not directly impact TSM's fundamentals. The absence of TSM-specific news suggests the move is likely driven by technical factors or broader market sentiment shifts.",
+        "event_type": "technical",
+        "supporting_headlines": [
+          "David Tepper's Appaloosa Ups Micron Stake By 250%, Trims Nvidia And Amazon",
+          "Scott Bessent's Case for a 2026 AI Productivity Miracle"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_events": 10,
+    "fundamental_driven": 0,
+    "technical_driven": 10
+  }
+}
