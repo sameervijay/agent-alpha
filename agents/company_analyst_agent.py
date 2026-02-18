@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
+from pathlib import Path
 
 from agents.base_agent import BaseAgent
 from models.event import Event
@@ -33,6 +34,19 @@ VALID_DRIVERS_BY_TICKER = {
         'gm_improvement_bps', 'rd_improvement_bps', 'ga_improvement_bps',
         'sm_improvement_bps',
     },
+    'TSM': {
+        'smartphone_growth', 'hpc_growth', 'iot_growth',
+        'automotive_growth', 'digital_consumer_growth',
+        'gm_improvement_bps', 'opex_improvement_bps', 'tax_rate_bps',
+    },
+    'ASML': {
+        'euv_growth', 'arfi_growth', 'arf_growth', 'krf_growth', 'others_growth',
+        'gm_improvement_bps',
+    },
+    'CRWV': {
+        'revenue_growth',
+        'ebitda_margin_improvement_bps', 'opex_improvement_bps', 'tax_rate_bps',
+    },
 }
 
 VALID_PERIODS_BY_TICKER = {
@@ -42,6 +56,15 @@ VALID_PERIODS_BY_TICKER = {
     },
     'CDNS': {
         'Q3-26', 'Q4-26',
+        'FY2027', 'FY2028', 'FY2029',
+    },
+    'TSM': {
+        'FY2027', 'FY2028', 'FY2029',
+    },
+    'ASML': {
+        'FY2027', 'FY2028', 'FY2029',
+    },
+    'CRWV': {
         'FY2027', 'FY2028', 'FY2029',
     },
 }
@@ -926,6 +949,1141 @@ Return a JSON object with key "causal_links", where each link has:
                 proposed_by=self.name,
             ))
         return links
+
+    # ───────────────────────────────────────────────────────────
+    # CONSENSUS UNDERSTANDING
+    # ───────────────────────────────────────────────────────────
+
+    def understand_consensus(self) -> dict:
+        """
+        Read consensus estimates and compare to own model assumptions.
+
+        Returns:
+            {
+                'consensus': {...},  # Raw consensus data
+                'own_model': {...},  # Own model forecasts
+                'differences': {...}, # Key differences
+                'summary': str,      # Text summary of differences
+            }
+        """
+        from tools.consensus_reader import ConsensusReader
+
+        print(f"  [{self.ticker}] Reading consensus estimates...")
+
+        try:
+            reader = ConsensusReader(self.ticker)
+            consensus_data = reader.get_annual_consensus(['FY2026', 'FY2027', 'FY2028'])
+        except FileNotFoundError as e:
+            print(f"  [{self.ticker}] Warning: {e}")
+            return {
+                'consensus': None,
+                'own_model': None,
+                'differences': {},
+                'summary': f"No consensus estimates available for {self.ticker}",
+            }
+
+        # Load own model forecasts
+        own_model = self._get_own_model_forecasts()
+
+        # Compare
+        differences = self._compare_to_consensus(consensus_data, own_model)
+
+        # Generate summary
+        summary = self._summarize_consensus_differences(differences)
+
+        result = {
+            'consensus': consensus_data,
+            'own_model': own_model,
+            'differences': differences,
+            'summary': summary,
+        }
+
+        print(f"  [{self.ticker}] Consensus analysis complete")
+        return result
+
+    def _get_own_model_forecasts(self) -> dict:
+        """Extract own model forecasts from DCF engine or model file."""
+        company_info = config.COMPANIES.get(self.ticker, {})
+
+        # Check if company has a DCF engine
+        if not company_info.get('has_full_model'):
+            return {}
+
+        excel_path = company_info.get('excel_path')
+        if not excel_path or not Path(excel_path).exists():
+            return {}
+
+        # Load via DCF engine to get consistent forecast
+        engine_class_name = company_info.get('engine_class')
+        if not engine_class_name:
+            return {}
+
+        try:
+            # Import the appropriate engine
+            if engine_class_name == 'NVDADCFEngine':
+                from models.pm_agent_interface import NVDADCFEngine as EngineClass
+            elif engine_class_name == 'CDNSDCFEngine':
+                from models.cdns_engine import CDNSDCFEngine as EngineClass
+            elif engine_class_name == 'CoreWeaveDCFEngine':
+                from models.crwv_engine import CoreWeaveDCFEngine as EngineClass
+            elif engine_class_name == 'TSMCDCFEngine':
+                from models.tsm_engine import TSMCDCFEngine as EngineClass
+            elif engine_class_name == 'ASMLDCFEngine':
+                from models.asml_engine import ASMLDCFEngine as EngineClass
+            else:
+                return {}
+
+            # Load engine and compute baseline
+            engine = EngineClass(excel_path)
+            result = engine.compute_dcf()
+
+            # Extract key metrics
+            forecast = {
+                'FY2026': {},
+                'FY2027': {},
+                'FY2028': {},
+            }
+
+            # Map engine output to standardized format
+            proj_years = ['FY2026', 'FY2027', 'FY2028']
+            for fy in proj_years:
+                if fy in result.get('total_rev', {}):
+                    forecast[fy]['revenue'] = result['total_rev'][fy]
+                if fy in result.get('ebit', {}):
+                    forecast[fy]['operating_income'] = result['ebit'][fy]
+                if fy in result.get('ebit_margin', {}):
+                    forecast[fy]['operating_margin'] = result['ebit_margin'][fy]
+
+                # Segment revenues if available
+                if 'seg_rev' in result:
+                    forecast[fy]['segments'] = {}
+                    for seg, seg_data in result['seg_rev'].items():
+                        if fy in seg_data:
+                            forecast[fy]['segments'][seg] = seg_data[fy]
+
+            return forecast
+
+        except Exception as e:
+            print(f"  [{self.ticker}] Warning: Could not load own model: {e}")
+            return {}
+
+    def _compare_to_consensus(self, consensus: dict, own_model: dict) -> dict:
+        """Compare own model to consensus and identify key differences."""
+        if not consensus or not own_model:
+            return {}
+
+        differences = {}
+        fiscal_years = ['FY2026', 'FY2027', 'FY2028']
+
+        for fy in fiscal_years:
+            if fy not in own_model:
+                continue
+
+            fy_diff = {}
+
+            # Revenue comparison
+            cons_rev = consensus['revenue'].get(fy)
+            own_rev = own_model[fy].get('revenue')
+
+            if cons_rev and own_rev:
+                diff_pct = (own_rev / cons_rev - 1)
+                fy_diff['revenue'] = {
+                    'consensus': cons_rev,
+                    'own': own_rev,
+                    'diff_pct': diff_pct,
+                    'direction': 'above' if diff_pct > 0 else 'below',
+                    'material': abs(diff_pct) > 0.05,  # >5% difference is material
+                }
+
+            # Operating income comparison
+            cons_oi = consensus['margins'].get('operating_income', {}).get(fy)
+            own_oi = own_model[fy].get('operating_income')
+
+            if cons_oi and own_oi:
+                diff_pct = (own_oi / cons_oi - 1)
+                fy_diff['operating_income'] = {
+                    'consensus': cons_oi,
+                    'own': own_oi,
+                    'diff_pct': diff_pct,
+                    'direction': 'above' if diff_pct > 0 else 'below',
+                    'material': abs(diff_pct) > 0.05,
+                }
+
+            # Operating margin comparison (derived)
+            if cons_rev and cons_oi and own_rev and own_oi:
+                cons_margin = cons_oi / cons_rev
+                own_margin = own_oi / own_rev
+                diff_bps = (own_margin - cons_margin) * 10000
+
+                fy_diff['operating_margin'] = {
+                    'consensus': cons_margin,
+                    'own': own_margin,
+                    'diff_bps': diff_bps,
+                    'direction': 'above' if diff_bps > 0 else 'below',
+                    'material': abs(diff_bps) > 100,  # >100bps is material
+                }
+
+            # Segment comparisons if available
+            if 'segments' in own_model[fy] and consensus['segments']:
+                fy_diff['segments'] = {}
+
+                for seg_key, cons_seg_data in consensus['segments'].items():
+                    cons_seg_rev = cons_seg_data.get(fy)
+                    own_seg_rev = own_model[fy]['segments'].get(seg_key)
+
+                    if cons_seg_rev and own_seg_rev:
+                        diff_pct = (own_seg_rev / cons_seg_rev - 1)
+                        fy_diff['segments'][seg_key] = {
+                            'consensus': cons_seg_rev,
+                            'own': own_seg_rev,
+                            'diff_pct': diff_pct,
+                            'direction': 'above' if diff_pct > 0 else 'below',
+                            'material': abs(diff_pct) > 0.10,  # >10% for segments
+                        }
+
+            if fy_diff:
+                differences[fy] = fy_diff
+
+        return differences
+
+    def _summarize_consensus_differences(self, differences: dict) -> str:
+        """Generate a text summary of key consensus differences."""
+        if not differences:
+            return "No material differences vs consensus identified."
+
+        summary_lines = [f"Consensus Comparison for {self.ticker}"]
+        summary_lines.append("=" * 60)
+
+        for fy in sorted(differences.keys()):
+            fy_diff = differences[fy]
+            summary_lines.append(f"\n{fy}:")
+
+            # Revenue
+            if 'revenue' in fy_diff and fy_diff['revenue']['material']:
+                d = fy_diff['revenue']
+                summary_lines.append(
+                    f"  Revenue: {d['direction'].upper()} consensus by {d['diff_pct']:.1%} "
+                    f"(${d['own']:,.0f}M vs ${d['consensus']:,.0f}M)"
+                )
+
+            # Operating income
+            if 'operating_income' in fy_diff and fy_diff['operating_income']['material']:
+                d = fy_diff['operating_income']
+                summary_lines.append(
+                    f"  Op Income: {d['direction'].upper()} consensus by {d['diff_pct']:.1%} "
+                    f"(${d['own']:,.0f}M vs ${d['consensus']:,.0f}M)"
+                )
+
+            # Operating margin
+            if 'operating_margin' in fy_diff and fy_diff['operating_margin']['material']:
+                d = fy_diff['operating_margin']
+                summary_lines.append(
+                    f"  Op Margin: {d['direction'].upper()} consensus by {d['diff_bps']:.0f}bps "
+                    f"({d['own']:.1%} vs {d['consensus']:.1%})"
+                )
+
+            # Segments with material differences
+            if 'segments' in fy_diff:
+                material_segs = [seg for seg, data in fy_diff['segments'].items()
+                                if data.get('material')]
+                if material_segs:
+                    summary_lines.append(f"  Material segment differences: {', '.join(material_segs)}")
+
+        return "\n".join(summary_lines)
+
+    # ───────────────────────────────────────────────────────────
+    # THESIS DEVELOPMENT MODE
+    # ───────────────────────────────────────────────────────────
+
+    def develop_thesis(self, mode: str = 'contrarian') -> dict:
+        """
+        Develop 1-3 differentiated thesis points that would make view more bullish/bearish
+        than consensus. For each thesis point, conduct supporting analyses and quantify
+        into DCF driver changes.
+
+        Args:
+            mode: 'contrarian' (find differences vs consensus) or 'deep_dive' (explore key drivers)
+
+        Returns:
+            {
+                'timestamp': str,
+                'ticker': str,
+                'thesis_points': [
+                    {
+                        'thesis': str,
+                        'direction': 'bullish'|'bearish',
+                        'conviction': float (0-1),
+                        'analyses': [
+                            {
+                                'analysis_type': str,
+                                'question': str,
+                                'evidence': str,
+                                'source': str,
+                                'finding': str,
+                            },
+                        ],
+                        'driver_implications': {
+                            'datacenter_growth': {'FY2028': 0.42, 'rationale': '...'},
+                            ...
+                        },
+                        'confidence': float (0-1),
+                    },
+                ],
+                'summary': str,
+            }
+        """
+        print(f"\n  [{self.name}] Developing thesis for {self.ticker}...")
+        print(f"    Mode: {mode}")
+
+        # Step 0: Understand consensus
+        consensus_comparison = self.understand_consensus()
+
+        # Step 1: Identify potential thesis points
+        thesis_points = self._identify_thesis_points(mode, consensus_comparison)
+
+        # Step 2: For each thesis point, conduct supporting analyses
+        for thesis_point in thesis_points:
+            print(f"\n    Thesis: {thesis_point['thesis']}")
+            analyses = self._conduct_supporting_analyses(thesis_point)
+            thesis_point['analyses'] = analyses
+
+            # Step 3: Quantify into DCF drivers
+            driver_implications = self._quantify_thesis_to_drivers(thesis_point)
+            thesis_point['driver_implications'] = driver_implications
+
+        # Step 4: Build summary
+        summary = self._summarize_thesis(thesis_points)
+
+        result = {
+            'timestamp': datetime.now().isoformat(),
+            'ticker': self.ticker,
+            'mode': mode,
+            'thesis_points': thesis_points,
+            'summary': summary,
+        }
+
+        # Save thesis
+        self._save_thesis(result)
+
+        return result
+
+    def _identify_thesis_points(self, mode: str, consensus_comparison: dict = None) -> List[dict]:
+        """Identify 1-3 differentiated thesis points using LLM."""
+
+        # Get context from specialist input
+        specialist_context = ""
+        try:
+            specialist_input = self.seek_specialist_input()
+            specialist_context = f"\nSpecialist findings:\n{specialist_input['narrative']}"
+        except:
+            pass
+
+        # Get market valuation context
+        valuation_context = ""
+        try:
+            valuation = self.check_market_valuation()
+            valuation_context = f"\nMarket valuation: {valuation['assessment']}\n{valuation['implications']}"
+        except:
+            pass
+
+        # Add consensus context
+        consensus_context = ""
+        if consensus_comparison and consensus_comparison.get('summary'):
+            consensus_context = f"\nConsensus comparison:\n{consensus_comparison['summary']}"
+
+        prompt = f"""You are developing an investment thesis for {self.ticker}.
+
+Mode: {mode}
+{'Focus on finding points where your view differs from consensus.' if mode == 'contrarian' else 'Focus on deep-diving into key value drivers.'}
+
+Context:
+{specialist_context}
+{valuation_context}
+{consensus_context}
+
+Identify 1-3 fundamental thesis points that would drive differentiated views on {self.ticker}.
+
+For each thesis point, specify:
+1. Clear thesis statement (one sentence)
+2. Direction: bullish or bearish
+3. Why this differs from consensus (what is consensus missing?)
+4. Initial conviction level (0.0-1.0)
+5. Key questions to answer to validate this thesis
+
+Return JSON with:
+{{
+  "thesis_points": [
+    {{
+      "thesis": "Clear statement of thesis",
+      "direction": "bullish" or "bearish",
+      "consensus_view": "What consensus believes",
+      "our_view": "What we believe and why",
+      "conviction": 0.7,
+      "key_questions": ["Question 1", "Question 2", "Question 3"],
+    }},
+    ...
+  ]
+}}
+
+Focus on theses that are:
+- Material to valuation (not noise)
+- Testable with available data/evidence
+- Specific enough to quantify into DCF drivers"""
+
+        try:
+            data = self.call_llm_json(prompt)
+            return data.get('thesis_points', [])
+        except Exception as e:
+            print(f"      ⚠️  Could not identify thesis points: {e}")
+            return []
+
+    def _conduct_supporting_analyses(self, thesis_point: dict) -> List[dict]:
+        """Conduct 1-3 analyses to support/refute the thesis point."""
+
+        key_questions = thesis_point.get('key_questions', [])
+        analyses = []
+
+        print(f"      Conducting {len(key_questions[:3])} supporting analyses...")
+
+        for i, question in enumerate(key_questions[:3], 1):
+            print(f"        Analysis {i}: {question[:60]}...")
+
+            # Determine analysis type and gather evidence
+            analysis = self._gather_evidence_for_question(question, thesis_point)
+            analyses.append(analysis)
+
+        return analyses
+
+    def _gather_evidence_for_question(self, question: str, thesis_point: dict) -> dict:
+        """Gather evidence to answer a specific question."""
+
+        # Try multiple evidence sources
+        evidence_pieces = []
+
+        # 1. Check news
+        try:
+            news_items = self.gather_news()
+            if news_items:
+                relevant_news = [n for n in news_items[:5] if any(
+                    keyword in n.headline.lower()
+                    for keyword in ['ai', 'datacenter', 'gpu', 'growth', 'margin', 'competition']
+                )]
+                if relevant_news:
+                    evidence_pieces.append({
+                        'source': 'company_news',
+                        'data': [n.headline for n in relevant_news[:3]],
+                    })
+        except:
+            pass
+
+        # 2. Check specialist views
+        try:
+            specialist_input = self.seek_specialist_input()
+            relevant_findings = [
+                f for f in specialist_input['key_findings']
+                if f['materiality'] in ['high', 'medium']
+            ]
+            if relevant_findings:
+                evidence_pieces.append({
+                    'source': 'specialist_agents',
+                    'data': [f['finding'] for f in relevant_findings],
+                })
+        except:
+            pass
+
+        # 3. Synthesize evidence into finding
+        evidence_summary = "\n".join([
+            f"From {e['source']}: " + "; ".join(e['data'])
+            for e in evidence_pieces
+        ])
+
+        prompt = f"""You are analyzing evidence for an investment thesis.
+
+Thesis: {thesis_point['thesis']}
+Direction: {thesis_point['direction']}
+
+Question to answer: {question}
+
+Evidence gathered:
+{evidence_summary if evidence_summary else '(Limited evidence available - use industry knowledge)'}
+
+Based on this evidence, provide:
+1. Analysis type (e.g., "competitive analysis", "demand analysis", "margin analysis")
+2. Key finding (what does the evidence suggest?)
+3. Confidence in finding (0.0-1.0)
+4. Supporting rationale
+
+Return JSON:
+{{
+  "analysis_type": "...",
+  "finding": "Clear statement of what evidence suggests",
+  "confidence": 0.7,
+  "rationale": "Why this evidence supports/refutes the thesis",
+}}"""
+
+        try:
+            data = self.call_llm_json(prompt)
+            return {
+                'analysis_type': data.get('analysis_type', 'general'),
+                'question': question,
+                'evidence': evidence_summary if evidence_summary else 'Industry knowledge and specialist input',
+                'finding': data.get('finding', 'Insufficient evidence'),
+                'confidence': data.get('confidence', 0.5),
+                'rationale': data.get('rationale', ''),
+            }
+        except Exception as e:
+            return {
+                'analysis_type': 'general',
+                'question': question,
+                'evidence': evidence_summary,
+                'finding': f'Analysis incomplete: {e}',
+                'confidence': 0.3,
+                'rationale': '',
+            }
+
+    def _quantify_thesis_to_drivers(self, thesis_point: dict) -> dict:
+        """Quantify thesis point into specific DCF driver changes."""
+
+        # Get valid drivers for this ticker
+        valid_drivers = VALID_DRIVERS_BY_TICKER.get(self.ticker, set())
+        valid_periods = VALID_PERIODS_BY_TICKER.get(self.ticker, set())
+
+        # Build context from analyses
+        analyses_summary = "\n".join([
+            f"- {a['finding']} (confidence: {a['confidence']:.0%})"
+            for a in thesis_point.get('analyses', [])
+        ])
+
+        prompt = f"""You are quantifying an investment thesis into DCF driver changes.
+
+Ticker: {self.ticker}
+Thesis: {thesis_point['thesis']}
+Direction: {thesis_point['direction']}
+
+Supporting analyses:
+{analyses_summary}
+
+Available DCF drivers: {', '.join(sorted(valid_drivers))}
+Valid periods: {', '.join(sorted(valid_periods))}
+
+Based on the thesis and supporting evidence, quantify specific changes to DCF drivers.
+
+For each driver you want to change:
+1. Identify which driver(s) are affected
+2. Specify magnitude of change (e.g., datacenter_growth from 0.35 to 0.42)
+3. Provide clear rationale linking thesis → evidence → driver change
+
+Return JSON:
+{{
+  "driver_changes": {{
+    "datacenter_growth": {{
+      "FY2028": 0.42,
+      "baseline": 0.35,
+      "change": "+7pp",
+      "rationale": "Why this driver should change based on thesis"
+    }},
+    ...
+  }},
+  "conviction": 0.7,
+  "sensitivity": "High/Medium/Low - how sensitive is valuation to this thesis"
+}}
+
+Only include drivers that are materially impacted by this thesis.
+Be conservative - only change drivers where you have strong evidence."""
+
+        try:
+            data = self.call_llm_json(prompt)
+            driver_changes = data.get('driver_changes', {})
+
+            # Validate and clean driver changes
+            validated_changes = {}
+            for driver, change_data in driver_changes.items():
+                if driver in valid_drivers:
+                    validated_changes[driver] = change_data
+
+            return {
+                'driver_changes': validated_changes,
+                'conviction': data.get('conviction', thesis_point.get('conviction', 0.5)),
+                'sensitivity': data.get('sensitivity', 'Medium'),
+            }
+        except Exception as e:
+            print(f"        ⚠️  Could not quantify to drivers: {e}")
+            return {
+                'driver_changes': {},
+                'conviction': 0.3,
+                'sensitivity': 'Unknown',
+            }
+
+    def _summarize_thesis(self, thesis_points: List[dict]) -> str:
+        """Generate executive summary of thesis."""
+
+        bullish_points = [t for t in thesis_points if t['direction'] == 'bullish']
+        bearish_points = [t for t in thesis_points if t['direction'] == 'bearish']
+
+        lines = [f"Investment Thesis for {self.ticker}"]
+        lines.append("=" * 60)
+
+        if bullish_points:
+            lines.append(f"\nBULLISH POINTS ({len(bullish_points)}):")
+            for i, point in enumerate(bullish_points, 1):
+                lines.append(f"  {i}. {point['thesis']}")
+                lines.append(f"     Conviction: {point.get('conviction', 0.5):.0%}")
+                if point.get('driver_implications', {}).get('driver_changes'):
+                    lines.append(f"     Drivers: {', '.join(point['driver_implications']['driver_changes'].keys())}")
+
+        if bearish_points:
+            lines.append(f"\nBEARISH POINTS ({len(bearish_points)}):")
+            for i, point in enumerate(bearish_points, 1):
+                lines.append(f"  {i}. {point['thesis']}")
+                lines.append(f"     Conviction: {point.get('conviction', 0.5):.0%}")
+                if point.get('driver_implications', {}).get('driver_changes'):
+                    lines.append(f"     Drivers: {', '.join(point['driver_implications']['driver_changes'].keys())}")
+
+        return "\n".join(lines)
+
+    def _save_thesis(self, thesis: dict):
+        """Save thesis to file."""
+        thesis_file = config.ANALYST_VIEWS_DIR / f"{self.ticker}_thesis.json"
+        try:
+            with open(thesis_file, 'w') as f:
+                json.dump(thesis, f, indent=2)
+            print(f"\n  ✅ Thesis saved to {thesis_file}")
+        except Exception as e:
+            print(f"  ⚠️  Could not save thesis: {e}")
+
+    # ───────────────────────────────────────────────────────────
+    # MARKET VALUATION CHECK
+    # ───────────────────────────────────────────────────────────
+
+    def check_market_valuation(self) -> dict:
+        """
+        Check with market monitor about current trading multiples and valuation.
+
+        Gets:
+        - Current market multiples (P/E NTM, P/E TTM, EV/EBITDA)
+        - Fair multiples from framework
+        - Assessment: UNDERVALUED/FAIRLY VALUED/OVERVALUED
+        - Implications for DCF assumptions
+
+        Returns:
+            {
+                'timestamp': str,
+                'current_multiples': {
+                    'pe_ntm': float,
+                    'pe_ttm': float,
+                    'price': float,
+                },
+                'fair_multiples': {
+                    'pe_ntm': float,
+                    'range': str,
+                },
+                'assessment': str,
+                'premium_discount': float,
+                'implications': str,
+            }
+        """
+        print(f"\n  [{self.name}] Checking market valuation for {self.ticker}...")
+
+        result = {
+            'timestamp': datetime.now().isoformat(),
+            'ticker': self.ticker,
+            'current_multiples': {},
+            'fair_multiples': {},
+            'assessment': '',
+            'premium_discount': 0,
+            'implications': '',
+        }
+
+        try:
+            from tools.market_monitor import MarketMonitor
+            from tools.multiples_framework import MultiplesFramework
+
+            # Get current market data
+            monitor = MarketMonitor()
+            snapshot = monitor.get_market_snapshot()
+
+            if self.ticker in snapshot.get('stocks', {}):
+                stock_data = snapshot['stocks'][self.ticker]
+
+                result['current_multiples'] = {
+                    'pe_ntm': stock_data.get('pe_forward_ntm'),
+                    'pe_ttm': stock_data.get('pe_trailing_ttm'),
+                    'price': stock_data.get('price'),
+                    'market_cap': stock_data.get('market_cap'),
+                }
+
+            # Get fair multiples from framework
+            framework = MultiplesFramework()
+            if not framework.framework_file.exists():
+                print("    No framework found, developing new one...")
+                framework.develop_view()
+
+            fair = framework.get_fair_multiple(self.ticker, 'forward_pe')
+            if fair:
+                result['fair_multiples'] = {
+                    'pe_ntm': fair['point_estimate'],
+                    'range': f"{fair['range_low']:.1f}x - {fair['range_high']:.1f}x",
+                    'range_low': fair['range_low'],
+                    'range_high': fair['range_high'],
+                }
+
+            # Compare to framework
+            current_pe = result['current_multiples'].get('pe_ntm')
+            fair_pe = result['fair_multiples'].get('pe_ntm')
+
+            if current_pe and fair_pe:
+                comparison = framework.compare_to_market(self.ticker, current_pe)
+
+                result['assessment'] = comparison['assessment']
+                result['premium_discount'] = comparison['premium_discount']
+
+                # Generate implications for DCF
+                implications = []
+
+                if comparison['premium_discount'] < -0.20:
+                    implications.append(
+                        f"Market is pricing in {abs(comparison['premium_discount']):.0%} discount to fair value. "
+                        "This suggests either: (1) Market expects earnings below consensus, "
+                        "(2) Market sees execution risk or competitive threats, "
+                        "(3) Sector rotation away from growth stocks."
+                    )
+                    implications.append(
+                        "DCF implication: Consider stress-testing downside scenarios with lower growth or margin compression."
+                    )
+
+                elif comparison['premium_discount'] > 0.20:
+                    implications.append(
+                        f"Market is pricing in {comparison['premium_discount']:.0%} premium to fair value. "
+                        "This suggests either: (1) Market expects earnings above consensus, "
+                        "(2) Strong momentum/sentiment driving multiples higher, "
+                        "(3) Scarcity premium for AI exposure."
+                    )
+                    implications.append(
+                        "DCF implication: Market expectations may be ahead of fundamentals - ensure DCF growth assumptions are achievable."
+                    )
+
+                else:
+                    implications.append(
+                        f"Market valuation is within fair range (premium/discount: {comparison['premium_discount']:+.1%}). "
+                        "Current multiples align with fundamental drivers."
+                    )
+                    implications.append(
+                        "DCF implication: Current DCF assumptions likely aligned with market consensus."
+                    )
+
+                result['implications'] = '\n'.join(implications)
+
+        except Exception as e:
+            result['assessment'] = f"Could not complete market check: {e}"
+            print(f"    ⚠️  Error: {e}")
+
+        return result
+
+    # ───────────────────────────────────────────────────────────
+    # MULTIPLES-BASED VALUATION
+    # ───────────────────────────────────────────────────────────
+
+    def analyze_multiples_perspective(self, current_price: float = None) -> dict:
+        """
+        Analyze valuation from multiples perspective (P/E, EV/EBITDA).
+        Provides sanity check against DCF and identifies cheap/expensive relativities.
+
+        Returns:
+            {
+                'timestamp': str,
+                'current_price': float,
+                'pe_valuations': {
+                    'TTM': {'multiple': x, 'earnings': y, 'implied_price': z, 'upside': u},
+                    ...
+                },
+                'ev_ebitda_valuations': {...},
+                'summary': {
+                    'ntm_pe_implied': float,
+                    'ntm_ev_ebitda_implied': float,
+                    'average_implied': float,
+                    'average_upside': float,
+                },
+                'assessment': str,
+            }
+        """
+        print(f"\n  [{self.name}] Analyzing multiples perspective for {self.ticker}...")
+
+        # Try to load multiples engine if it exists
+        result = {
+            'timestamp': datetime.now().isoformat(),
+            'ticker': self.ticker,
+            'method': 'multiples',
+            'current_price': current_price,
+            'pe_valuations': {},
+            'ev_ebitda_valuations': {},
+            'summary': {},
+            'assessment': '',
+        }
+
+        try:
+            # Try NVDA multiples engine
+            if self.ticker == 'NVDA':
+                from models.nvda_multiples_engine import NVDAMultiplesEngine
+                engine = NVDAMultiplesEngine(config.COMPANIES['NVDA']['excel_path'])
+                multiples_result = engine.compute_multiples_valuation(current_price=current_price or 184.97)
+
+                result['pe_valuations'] = multiples_result['pe_valuations']
+                result['ev_ebitda_valuations'] = multiples_result['ev_ebitda_valuations']
+                result['summary'] = multiples_result['summary']
+
+                # Assessment
+                avg_upside = multiples_result['summary']['average_upside']
+                if avg_upside > 0.20:
+                    result['assessment'] = f"UNDERVALUED: Multiples suggest {avg_upside:+.1%} upside"
+                elif avg_upside < -0.10:
+                    result['assessment'] = f"OVERVALUED: Multiples suggest {avg_upside:+.1%} downside"
+                else:
+                    result['assessment'] = f"FAIRLY VALUED: Multiples suggest {avg_upside:+.1%} upside"
+
+        except Exception as e:
+            print(f"    ⚠️  Could not load multiples engine: {e}")
+            result['assessment'] = f"Multiples analysis unavailable: {e}"
+
+        return result
+
+    def debate_multiples_vs_dcf(self, dcf_result: dict, current_price: float = None) -> dict:
+        """
+        Compare DCF valuation vs multiples-based valuation.
+        Identifies divergences and flags if one method suggests material opportunity.
+
+        Args:
+            dcf_result: Result from DCF engine (contains 'implied_price')
+            current_price: Current stock price
+
+        Returns:
+            {
+                'dcf_implied': float,
+                'multiples_implied': float,
+                'divergence': float (difference in implied prices),
+                'analysis': str,
+                'consensus_view': str,
+            }
+        """
+        print(f"\n  [{self.name}] Comparing DCF vs Multiples for {self.ticker}...")
+
+        multiples_result = self.analyze_multiples_perspective(current_price=current_price)
+
+        dcf_implied = dcf_result.get('implied_price', 0) if isinstance(dcf_result, dict) else 0
+        multiples_implied = multiples_result['summary'].get('average_implied', 0)
+        current = current_price or 184.97
+
+        comparison = {
+            'timestamp': datetime.now().isoformat(),
+            'current_price': current,
+            'dcf_implied': dcf_implied,
+            'multiples_implied': multiples_implied,
+            'divergence': multiples_implied - dcf_implied if dcf_implied > 0 else 0,
+            'divergence_pct': (multiples_implied / dcf_implied - 1) if dcf_implied > 0 else 0,
+        }
+
+        # Build analysis
+        analysis_lines = []
+        if abs(comparison['divergence_pct']) < 0.10:
+            analysis_lines.append("✓ Methods ALIGNED — DCF and multiples suggest similar valuations")
+        elif comparison['divergence_pct'] > 0.10:
+            analysis_lines.append(f"⚠️  DIVERGENCE — Multiples suggest {comparison['divergence_pct']:+.1%} MORE upside than DCF")
+            analysis_lines.append(f"   Possible reasons: (1) DCF too conservative on growth, (2) Multiples inflated")
+        else:
+            analysis_lines.append(f"⚠️  DIVERGENCE — DCF suggests {abs(comparison['divergence_pct']):+.1%} MORE upside than multiples")
+            analysis_lines.append(f"   Possible reasons: (1) DCF too aggressive on growth, (2) Multiples compressed")
+
+        # Consensus
+        avg_view = (dcf_implied + multiples_implied) / 2
+        consensus_upside = (avg_view / current - 1) if current > 0 else 0
+
+        analysis_lines.append(f"\nCONSENSUS VIEW:")
+        analysis_lines.append(f"  DCF implies:      ${dcf_implied:.2f} ({(dcf_implied/current-1):+.1%})")
+        analysis_lines.append(f"  Multiples imply:  ${multiples_implied:.2f} ({(multiples_implied/current-1):+.1%})")
+        analysis_lines.append(f"  Blended target:   ${avg_view:.2f} ({consensus_upside:+.1%})")
+
+        comparison['analysis'] = '\n'.join(analysis_lines)
+        comparison['consensus_view'] = f"Target: ${avg_view:.2f} ({consensus_upside:+.1%} upside)"
+
+        return comparison
+
+    # ───────────────────────────────────────────────────────────
+    # SPECIALIST INPUT SYNTHESIS
+    # ───────────────────────────────────────────────────────────
+
+    def seek_specialist_input(self) -> dict:
+        """
+        Query all specialist agents, synthesize their insights, and recommend
+        DCF driver updates based on what is new and material.
+
+        Returns:
+            {
+                'timestamp': str,
+                'specialist_views': {
+                    'macro': {...},
+                    'commodities': {...},
+                    'market': {...},
+                },
+                'key_findings': [
+                    {
+                        'source': 'macro|commodities|market',
+                        'finding': str,
+                        'materiality': 'high|medium|low',
+                        'affected_drivers': [driver names],
+                        'direction': 'positive|negative',
+                    },
+                ],
+                'driver_recommendations': {
+                    'datacenter_growth': {'FY2028': 0.25, 'FY2029': 0.20},
+                    'gm_improvement_bps': {'FY2028': 100},
+                    ...
+                },
+                'narrative': str,
+                'confidence': float (0.0-1.0),
+            }
+        """
+        print(f"\n  [{self.name}] Seeking specialist input for {self.ticker}...")
+
+        specialist_views = {}
+        key_findings = []
+
+        # 1. Query Macro Analyst view
+        try:
+            from agents.macro_analyst_agent import MacroAnalystAgent
+            macro = MacroAnalystAgent()
+            macro_view = macro._load_view()
+            if macro_view:
+                specialist_views['macro'] = {
+                    'confidence': macro_view.confidence,
+                    'summary': macro_view.summary,
+                    'alerts': macro_view.alerts if hasattr(macro_view, 'alerts') else [],
+                }
+                # Extract high-confidence macro findings
+                if macro_view.confidence > 0.6:
+                    key_findings.append({
+                        'source': 'macro_analyst',
+                        'finding': macro_view.summary[:200] if macro_view.summary else 'Macro monitoring active',
+                        'materiality': 'high' if macro_view.confidence > 0.8 else 'medium',
+                        'affected_drivers': ['datacenter_growth', 'gaming_growth'],  # Macro affects growth
+                        'direction': 'positive' if 'supportive' in (macro_view.summary or '').lower() else 'mixed',
+                    })
+        except Exception as e:
+            print(f"    ⚠️  Could not load macro view: {e}")
+
+        # 2. Query Commodities Agent view
+        try:
+            from agents.commodities_agent import CommoditiesAgent
+            commodities = CommoditiesAgent()
+            # Call commodities agent to get latest commodity view
+            commodity_prompt = f"""
+            Provide a brief update on key commodity impacts for {self.ticker}:
+            1. HBM memory pricing (impact on gross margin)
+            2. CoWoS/Advanced packaging capacity (impact on production volume)
+            3. Any supply chain bottlenecks
+
+            Focus on what has CHANGED since last update. Be specific with basis point estimates.
+            Return JSON with: {{
+                'hbm_impact_bps': float,
+                'packaging_impact_bps': float,
+                'volume_constraint_pct': float,
+                'key_findings': [str],
+                'materiality': 'high|medium|low',
+            }}"""
+
+            commodity_view = commodities.call_llm_json(commodity_prompt)
+            specialist_views['commodities'] = commodity_view
+
+            if commodity_view.get('materiality') in ['high', 'medium']:
+                key_findings.append({
+                    'source': 'commodities_agent',
+                    'finding': f"HBM: {commodity_view.get('hbm_impact_bps', 0):+.0f}bps margin impact | "
+                              f"Packaging: {commodity_view.get('packaging_impact_bps', 0):+.0f}bps",
+                    'materiality': commodity_view.get('materiality', 'low'),
+                    'affected_drivers': ['gm_improvement_bps'],
+                    'direction': 'negative' if commodity_view.get('hbm_impact_bps', 0) < 0 else 'positive',
+                })
+        except Exception as e:
+            print(f"    ⚠️  Could not query commodities: {e}")
+
+        # 3. Query Market Analyst view (if it exists)
+        try:
+            market_view_path = Path('data/valuations/market_view_latest.json')
+            if market_view_path.exists():
+                with open(market_view_path) as f:
+                    market_data = json.load(f)
+                nvda_data = market_data.get('market_snapshot', {}).get('stocks', {}).get('NVDA', {})
+                specialist_views['market'] = {
+                    'price': nvda_data.get('price'),
+                    'pe_forward_ntm': nvda_data.get('pe_forward_ntm'),
+                    'pe_trailing_ttm': nvda_data.get('pe_trailing_ttm'),
+                    'sector_3m_return': market_data.get('market_snapshot', {}).get('sector_rotation', {}).get('Semiconductors', {}).get('avg_3m_return'),
+                    'technical_trend': market_data.get('market_snapshot', {}).get('technical_signals', {}).get('NVDA', {}).get('trend'),
+                }
+
+                # Extract market findings
+                sector_perf = specialist_views['market'].get('sector_3m_return', 0)
+                if abs(sector_perf) > 15:  # Material sector move
+                    key_findings.append({
+                        'source': 'market_analyst',
+                        'finding': f"Semiconductor sector {'+' if sector_perf > 0 else ''}{sector_perf:.1f}% in 3 months ({specialist_views['market'].get('technical_trend')})",
+                        'materiality': 'medium',
+                        'affected_drivers': ['datacenter_growth', 'gaming_growth'],
+                        'direction': 'positive' if sector_perf > 0 else 'negative',
+                    })
+        except Exception as e:
+            print(f"    ⚠️  Could not load market view: {e}")
+
+        # 4. Synthesize into driver recommendations
+        driver_recommendations = {}
+
+        # Start with current view baseline
+        view = self._load_view()
+        if view:
+            for driver, periods in view.baseline_drivers.items():
+                driver_recommendations[driver] = periods.copy()
+
+        # Apply specialist recommendations
+        if 'commodities' in specialist_views:
+            comm_view = specialist_views['commodities']
+            hbm_bps = comm_view.get('hbm_impact_bps', 0)
+            pkg_bps = comm_view.get('packaging_impact_bps', 0)
+
+            if hbm_bps != 0 or pkg_bps != 0:
+                total_margin_bps = hbm_bps + pkg_bps
+                if 'gm_improvement_bps' not in driver_recommendations:
+                    driver_recommendations['gm_improvement_bps'] = {}
+                # Apply to near-term periods
+                for period in ['Q4-26', 'Q1-27', 'FY2028']:
+                    if period in VALID_PERIODS_BY_TICKER.get(self.ticker, set()):
+                        driver_recommendations['gm_improvement_bps'][period] = total_margin_bps
+
+        # Build narrative
+        narrative = f"Specialist input synthesis for {self.ticker}:\n"
+        avg_confidence = 0.5
+        if key_findings:
+            avg_confidence = sum(0.8 if f['materiality'] == 'high' else 0.5 if f['materiality'] == 'medium' else 0.3
+                                for f in key_findings) / len(key_findings)
+            for finding in key_findings:
+                narrative += f"\n  [{finding['source']}] {finding['finding']} (materiality: {finding['materiality']})"
+
+        return {
+            'timestamp': datetime.now().isoformat(),
+            'specialist_views': specialist_views,
+            'key_findings': key_findings,
+            'driver_recommendations': driver_recommendations,
+            'narrative': narrative,
+            'confidence': avg_confidence,
+            'action_items': f"Update {len([d for d in driver_recommendations if driver_recommendations[d]])} drivers"
+                           if driver_recommendations else "No driver updates recommended",
+        }
+
+    def apply_specialist_recommendations(self, specialist_input: dict, threshold_confidence: float = 0.5) -> dict:
+        """
+        Apply specialist input recommendations to update the DCF driver view.
+
+        Filters recommendations by:
+        1. Overall confidence (threshold_confidence)
+        2. Materiality of findings (high/medium > low)
+        3. Identifies what is NEW vs already reflected in baseline
+
+        Returns:
+            {
+                'applied_updates': {...},
+                'skipped_updates': {...},
+                'summary': str,
+                'view_updated': bool,
+            }
+        """
+        print(f"\n  [{self.name}] Applying specialist recommendations for {self.ticker}...")
+
+        if specialist_input['confidence'] < threshold_confidence:
+            print(f"    ⚠️  Confidence {specialist_input['confidence']:.0%} below threshold {threshold_confidence:.0%}, skipping")
+            return {
+                'applied_updates': {},
+                'skipped_updates': specialist_input['driver_recommendations'],
+                'summary': 'Recommendations below confidence threshold',
+                'view_updated': False,
+            }
+
+        # Load current view
+        view = self._load_view()
+        if not view:
+            print(f"    ⚠️  No existing view. Run ramp() first.")
+            return {'applied_updates': {}, 'skipped_updates': {}, 'summary': 'No view to update', 'view_updated': False}
+
+        # Identify what's NEW in the specialist recommendations
+        applied = {}
+        skipped = {}
+
+        for driver, specialist_periods in specialist_input['driver_recommendations'].items():
+            baseline_periods = view.baseline_drivers.get(driver, {})
+
+            # Only update if values differ materially from baseline
+            driver_applied = {}
+            driver_skipped = {}
+
+            for period, specialist_value in specialist_periods.items():
+                baseline_value = baseline_periods.get(period, 0)
+
+                # Check if this is NEW and MATERIAL (not just rounding)
+                if isinstance(specialist_value, (int, float)) and isinstance(baseline_value, (int, float)):
+                    delta = abs(specialist_value - baseline_value)
+                    is_material = delta > (10 if driver.endswith('_bps') else 0.005)  # >10bps or >0.5pp
+
+                    if is_material:
+                        driver_applied[period] = specialist_value
+                    else:
+                        driver_skipped[period] = specialist_value
+
+            if driver_applied:
+                applied[driver] = driver_applied
+            if driver_skipped:
+                skipped[driver] = driver_skipped
+
+        # Apply updates to view
+        view_updated = False
+        if applied:
+            for driver, periods in applied.items():
+                if driver not in view.baseline_drivers:
+                    view.baseline_drivers[driver] = {}
+                for period, value in periods.items():
+                    old_val = view.baseline_drivers[driver].get(period)
+                    view.baseline_drivers[driver][period] = value
+                    print(f"    ✓ {driver}[{period}]: {old_val} → {value}")
+
+            # Update metadata
+            view.last_updated = datetime.now().isoformat()
+            view.confidence = specialist_input['confidence']
+
+            # Add to rationale
+            specialist_sources = ', '.join(set(f['source'] for f in specialist_input['key_findings']))
+            view.rationale = view.rationale or {}
+            view.rationale['specialist_input'] = f"Updated based on {specialist_sources}"
+
+            # Persist
+            self._save_view(view)
+            view_updated = True
+
+        # Build summary
+        summary_lines = []
+        if applied:
+            summary_lines.append(f"✓ Applied {len(applied)} drivers:")
+            for driver in sorted(applied.keys()):
+                summary_lines.append(f"    {driver} ({len(applied[driver])} periods)")
+
+        if skipped:
+            summary_lines.append(f"⊘ Skipped {len(skipped)} drivers (not material):")
+            for driver in sorted(skipped.keys()):
+                summary_lines.append(f"    {driver}")
+
+        if not applied and not skipped:
+            summary_lines.append("→ No changes (specialist input aligned with baseline)")
+
+        return {
+            'applied_updates': applied,
+            'skipped_updates': skipped,
+            'summary': '\n'.join(summary_lines),
+            'view_updated': view_updated,
+        }
 
     def debate_position(self, event: Event, metric: str, company: str,
                         period: str, other_positions: list) -> dict:
