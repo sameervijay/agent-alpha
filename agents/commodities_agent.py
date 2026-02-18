@@ -1,10 +1,11 @@
 """
-Commodities Domain Agent — covers raw materials, neon gas, silicon wafers, rare earths.
+Commodities Domain Agent — covers raw materials, neon gas, silicon wafers, rare earths, memory pricing.
 """
 
 from agents.base_agent import BaseAgent
 from models.event import Event
 from models.causal_graph import CausalLink
+from tools.memory_pricing_monitor import analyze_memory_impact, estimate_supply_constraint
 
 SYSTEM_PROMPT = """You are a commodities and supply chain expert specializing in semiconductor inputs.
 Your domain expertise covers:
@@ -14,7 +15,7 @@ Your domain expertise covers:
 - Shipping and logistics (container rates, air freight)
 - Energy costs for fab operations
 - Advanced packaging materials (substrates, underfill)
-- HBM (High Bandwidth Memory) supply constraints
+- DRAM and HBM (High Bandwidth Memory) pricing and supply constraints ⭐ PRIORITY
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
@@ -23,9 +24,16 @@ When analyzing events, consider:
 2. Are supply constraints limiting production capacity?
 3. What is the lead time for supply chain adjustments?
 4. How do inventory levels buffer or amplify the impact?
+5. For HBM pricing: track ASP changes, lead times, and inventory weeks as leading indicators
 
 Available DCF drivers: datacenter_growth, gaming_growth, automotive_growth, proviz_growth, oem_growth, gm_improvement_bps, rd_improvement_bps, sga_improvement_bps
-Valid periods: Q4-26, Q1-27, Q2-27, Q3-27, Q4-27, FY2028, FY2029, FY2030"""
+Valid periods: Q4-26, Q1-27, Q2-27, Q3-27, Q4-27, FY2028, FY2029, FY2030
+
+Memory Pricing Focus (Phase 1):
+- HBM pricing drives NVIDIA GPU costs (50% of BOM) and TSMC CoWoS revenue
+- Monitor for +20% HBM ASP changes (current 2026 forecast)
+- Track lead times >30 weeks and inventory <6 weeks as margin expansion signals
+- Recommend DCF adjustments when memory ASP changes >8% month-over-month"""
 
 
 class CommoditiesAgent(BaseAgent):
@@ -101,6 +109,64 @@ Return a JSON object with key "causal_links", where each link has:
                 proposed_by=self.name,
             ))
         return links
+
+    def analyze_memory_pricing_event(self, event: Event) -> dict:
+        """
+        Specialized analysis for memory pricing events.
+        Maps DRAM/HBM price changes to DCF driver impacts.
+
+        Returns:
+            - headline: event title
+            - affected_companies: tickers impacted
+            - memory_type: HBM or DRAM
+            - estimated_price_change: ±% ASP change
+            - margin_impacts: dict of {company: {driver: bps_change}}
+            - recommendation: which DCF drivers to adjust and by how much
+            - confidence: 0.0-1.0 confidence in the estimate
+        """
+        prompt = f"""Analyze this memory pricing event for magnitude and company impact.
+
+EVENT: {event.headline}
+DESCRIPTION: {event.description}
+AFFECTED COMPANIES: {', '.join(event.affected_companies)}
+
+Extract from the event:
+1. Is this HBM or DRAM pricing news?
+2. What is the estimated ASP change (±5%, ±10%, ±20%)?
+3. Which companies are directly exposed (NVDA, TSMC, CRWV)?
+4. Timeline for impact (this quarter, next quarter, 2+ quarters)?
+
+Return a JSON object with:
+- memory_type: "HBM" or "DRAM" or "both"
+- estimated_price_change: float (-0.20 to +0.20)
+- affected_companies: list of tickers
+- timeline_quarters: number of quarters to margin impact
+- confidence: 0.0-1.0 estimate confidence
+- reasoning: brief explanation"""
+
+        data = self.call_llm_json(prompt)
+
+        # Convert LLM output to margin impact analysis
+        impacts = {}
+        for company in data.get('affected_companies', []):
+            impact = analyze_memory_impact(
+                company,
+                price_change=data.get('estimated_price_change', 0.0),
+                memory_type=data.get('memory_type', 'HBM')
+            )
+            if 'error' not in impact:
+                impacts[company] = impact
+
+        return {
+            'headline': event.headline,
+            'memory_type': data.get('memory_type', 'unknown'),
+            'estimated_price_change': data.get('estimated_price_change', 0.0),
+            'affected_companies': data.get('affected_companies', []),
+            'margin_impacts': impacts,
+            'timeline_quarters': data.get('timeline_quarters', 1),
+            'confidence': data.get('confidence', 0.5),
+            'reasoning': data.get('reasoning', ''),
+        }
 
     def debate_position(self, event: Event, metric: str, company: str,
                         period: str, other_positions: list) -> dict:
