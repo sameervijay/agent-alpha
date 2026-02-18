@@ -329,6 +329,142 @@ Valid periods: {', '.join(sorted(valid_periods))}"""
         return view
 
     # ───────────────────────────────────────────────────────────
+    # SEC FILING LEARNING
+    # ───────────────────────────────────────────────────────────
+
+    def learn_from_sec_filing(self, filing_type: str, filing_data: dict) -> AnalystView:
+        """
+        Process SEC filing and potentially update view.
+
+        SEC filings are AUTHORITATIVE but have lag (filed 45-60 days after period end).
+        Weight: 10-K (highest) > 10-Q (moderate) > 8-K (event-specific)
+
+        Args:
+            filing_type: '10-K', '10-Q', or '8-K'
+            filing_data: Dict with filing sections and metadata
+
+        Returns:
+            Updated AnalystView (may be unchanged if filing doesn't warrant update)
+        """
+        # Load current view
+        view = self._load_view()
+        if view is None:
+            print(f"  [{self.name}] No existing view. Run ramp() first before processing SEC filings.")
+            return None
+
+        print(f"  [{self.name}] Processing SEC {filing_type} for {self.ticker}...")
+
+        # Get ticker-specific drivers and periods
+        valid_drivers = VALID_DRIVERS_BY_TICKER.get(self.ticker, set())
+        valid_periods = VALID_PERIODS_BY_TICKER.get(self.ticker, set())
+
+        current_view_text = json.dumps({
+            'summary': view.summary,
+            'baseline_drivers': view.baseline_drivers,
+            'rationale': view.rationale,
+            'confidence': view.confidence,
+        }, indent=2)
+
+        # Extract key sections (truncate if too long)
+        sections = filing_data.get('sections', {})
+        risk_factors = sections.get('risk_factors', 'N/A')[:5000]
+        mda = sections.get('mda', 'N/A')[:5000]
+        business = sections.get('business', 'N/A')[:3000]
+
+        filing_date = filing_data.get('filing_date', 'Unknown')
+        report_date = filing_data.get('report_date', 'Unknown')
+
+        prompt = f"""You are analyzing a SEC {filing_type} filing for {self.ticker}.
+
+YOUR CURRENT VIEW ON {self.ticker}:
+{current_view_text}
+
+SEC FILING INFORMATION:
+Filing Type: {filing_type}
+Filing Date: {filing_date}
+Period End: {report_date}
+
+RISK FACTORS (Item 1A):
+{risk_factors}
+
+MD&A - MANAGEMENT'S DISCUSSION & ANALYSIS (Item 7):
+{mda}
+
+BUSINESS DESCRIPTION (Item 1):
+{business}
+
+IMPORTANT CONTEXT:
+- SEC filings are AUTHORITATIVE sources but have 45-60 day lag after period end
+- Weight filings by type:
+  * 10-K = HIGHEST weight (annual comprehensive review, audited financials)
+  * 10-Q = MODERATE weight (quarterly update, unaudited)
+  * 8-K = LOWER weight (specific material events)
+- Look for:
+  * Revenue growth trends and forward guidance
+  * Margin expansion/contraction drivers
+  * New risk factors or changes to existing risks
+  * Capital allocation plans (capex, R&D, buybacks)
+  * Geographic/segment mix shifts
+  * Competitive positioning changes
+- ONLY update view if filing provides CONCRETE new information not already captured in your news-based view
+
+Analyze this filing and decide:
+1. Does this filing reveal NEW material insights about {self.ticker}'s financial outlook?
+2. Should you adjust ANY driver assumptions based on management's discussion or risk factors?
+3. How does this filing data compare to your existing news-based expectations?
+
+Return a JSON object with:
+- warrants_change: boolean (true only if filing provides material new insights)
+- updated_drivers: the FULL driver map (only modify values where filing provides concrete data)
+- updated_summary: revised summary if warranted
+- updated_rationale: rationale for any CHANGED drivers
+- confidence: float 0.0 to 1.0 (may increase given SEC filing is authoritative)
+- change_explanation: 2-4 sentences on key insights from filing and their impact
+
+Valid driver names: {', '.join(sorted(valid_drivers))}
+Valid periods: {', '.join(sorted(valid_periods))}"""
+
+        result = self.call_llm_json(prompt)
+
+        warrants_change = result.get('warrants_change', False)
+        explanation = result.get('change_explanation', '')
+
+        print(f"  [{self.name}] {explanation}")
+
+        if not warrants_change:
+            print(f"  [{self.name}] SEC {filing_type} does not warrant view change.")
+            return view
+
+        print(f"  [{self.name}] Updating view based on SEC {filing_type}...")
+
+        # Validate and update
+        validated_drivers = _validate_drivers(result.get('updated_drivers', {}), self.name, self.ticker)
+        raw_rationale = result.get('updated_rationale', {})
+        valid_drivers_set = VALID_DRIVERS_BY_TICKER.get(self.ticker, set())
+        validated_rationale = {k: v for k, v in raw_rationale.items() if k in valid_drivers_set}
+
+        view.summary = result.get('updated_summary', view.summary)
+        view.baseline_drivers = validated_drivers
+        view.rationale = validated_rationale
+        view.confidence = float(result.get('confidence', view.confidence))
+        view.last_updated = datetime.now().isoformat()
+
+        # Track that we've processed this filing
+        if not hasattr(view, 'sec_filings_processed'):
+            view.sec_filings_processed = []
+        view.sec_filings_processed.append({
+            'type': filing_type,
+            'filing_date': filing_date,
+            'report_date': report_date,
+            'processed_at': datetime.now().isoformat()
+        })
+
+        self._save_view(view)
+        print(f"  [{self.name}] View updated based on {filing_type} (confidence: {view.confidence:.0%})")
+
+        return view
+
+    # ───────────────────────────────────────────────────────────
     # RAMP MODE — establish baseline view
     # ───────────────────────────────────────────────────────────
 
