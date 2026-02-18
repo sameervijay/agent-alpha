@@ -6,16 +6,25 @@ from agents.base_agent import BaseAgent
 from models.event import Event
 from models.causal_graph import CausalLink
 from tools.memory_pricing_monitor import analyze_memory_impact, estimate_supply_constraint
+from tools.advanced_packaging_monitor import (
+    analyze_packaging_impact,
+    estimate_production_constraint,
+    track_cowos_capacity,
+)
 
-SYSTEM_PROMPT = """You are a commodities and supply chain expert specializing in semiconductor inputs.
+SYSTEM_PROMPT = """You are a commodities and supply chain expert specializing in semiconductor inputs and packaging.
 Your domain expertise covers:
 - Silicon wafer supply and pricing (Shin-Etsu, SUMCO, Siltronic)
 - Specialty gases: neon, krypton, xenon (critical for lithography)
 - Rare earth elements used in chip manufacturing
 - Shipping and logistics (container rates, air freight)
 - Energy costs for fab operations
-- Advanced packaging materials (substrates, underfill)
 - DRAM and HBM (High Bandwidth Memory) pricing and supply constraints ⭐ PRIORITY
+- Advanced Packaging Capacity ⭐ PRIORITY
+  * CoWoS (Chip-on-Wafer-on-Substrate): GPU packaging, expanding from 75K → 120K wafers/month
+  * Advanced Substrates (ABF, GIS, HDI): Watch Unimicron (40% market, tightest capacity)
+  * HBM stacking: 3D memory integration, critical for H/GB-series GPUs
+  * Chiplet interconnects: Emerging bottleneck for multi-die modules
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
@@ -24,16 +33,19 @@ When analyzing events, consider:
 2. Are supply constraints limiting production capacity?
 3. What is the lead time for supply chain adjustments?
 4. How do inventory levels buffer or amplify the impact?
-5. For HBM pricing: track ASP changes, lead times, and inventory weeks as leading indicators
+5. For HBM pricing: track ASP changes, lead times, inventory weeks (leading indicators)
+6. For Advanced Packaging: Is this a production BOTTLENECK (limits volume) or cost pressure (limits margin)?
+   - CoWoS constraints directly limit NVIDIA H/GB GPU production (can't make enough)
+   - Substrate constraints are secondary (manageable but watch Unimicron)
+   - HBM stacking is primary for AI GPU competitiveness (50% of BOM cost)
 
 Available DCF drivers: datacenter_growth, gaming_growth, automotive_growth, proviz_growth, oem_growth, gm_improvement_bps, rd_improvement_bps, sga_improvement_bps
 Valid periods: Q4-26, Q1-27, Q2-27, Q3-27, Q4-27, FY2028, FY2029, FY2030
 
-Memory Pricing Focus (Phase 1):
-- HBM pricing drives NVIDIA GPU costs (50% of BOM) and TSMC CoWoS revenue
-- Monitor for +20% HBM ASP changes (current 2026 forecast)
-- Track lead times >30 weeks and inventory <6 weeks as margin expansion signals
-- Recommend DCF adjustments when memory ASP changes >8% month-over-month"""
+Commodity Monitoring Focus (Phase 1):
+- Memory: HBM +20% expected → NVIDIA -70bps, TSMC +240bps, CRWV -180bps margin impact
+- Packaging: CoWoS at 85-95% utilization (constrained) → production bottleneck risk for NVIDIA
+- Lead indicators: Inventory weeks <6, lead times >30 weeks, supplier CapEx announcements"""
 
 
 class CommoditiesAgent(BaseAgent):
@@ -109,6 +121,78 @@ Return a JSON object with key "causal_links", where each link has:
                 proposed_by=self.name,
             ))
         return links
+
+    def analyze_packaging_capacity_event(self, event: Event) -> dict:
+        """
+        Specialized analysis for advanced packaging capacity events.
+        Maps CoWoS, substrate, and chiplet capacity changes to production bottlenecks.
+
+        Returns:
+            - headline: event title
+            - affected_companies: tickers impacted
+            - packaging_type: CoWoS, Advanced_Substrates, HBM_Stacking, Chiplet
+            - capacity_change_estimate: estimated capacity delta
+            - constraint_level: abundant, balanced, tight, constrained
+            - is_bottleneck: Is this limiting factor for GPU/chip production?
+            - margin_impacts: dict of {company: {bps_change}}
+            - recommendation: DCF adjustments
+        """
+        prompt = f"""Analyze this advanced packaging/substrate capacity event.
+
+EVENT: {event.headline}
+DESCRIPTION: {event.description}
+AFFECTED COMPANIES: {', '.join(event.affected_companies)}
+
+Extract from event:
+1. Which packaging type? (CoWoS, substrate/ABF/GIS, HBM stacking, chiplet interconnect)
+2. Is capacity increasing (+%) or decreasing (-%)? By how much?
+3. Is this a bottleneck for GPU/chip production?
+4. Which companies are affected? (NVDA=GPU demand, TSMC=manufacturing)
+5. Timeline to impact (this quarter, Q3-Q4, 2027)?
+
+Return JSON with:
+- packaging_type: string
+- capacity_change_pct: float (-0.20 to +0.30)
+- is_bottleneck: boolean
+- affected_companies: list
+- constraint_level: "abundant", "balanced", "tight", or "constrained"
+- confidence: 0.0-1.0
+- reasoning: brief explanation"""
+
+        data = self.call_llm_json(prompt)
+
+        # Analyze impact for each company
+        impacts = {}
+        for company in data.get('affected_companies', []):
+            if company in ['NVDA', 'TSMC', 'CRWV']:
+                # Estimate constraint level from event
+                constraint = data.get('constraint_level', 'balanced')
+
+                impact = analyze_packaging_impact(
+                    company,
+                    packaging_type=data.get('packaging_type', 'CoWoS'),
+                    constraint_level=constraint,
+                    cost_increase_pct=data.get('capacity_change_pct', 0.0) * -1,  # Capacity reduction = cost increase
+                )
+                if 'error' not in impact:
+                    impacts[company] = impact
+
+        return {
+            'headline': event.headline,
+            'packaging_type': data.get('packaging_type', 'unknown'),
+            'capacity_change_pct': data.get('capacity_change_pct', 0.0),
+            'is_bottleneck': data.get('is_bottleneck', False),
+            'constraint_level': data.get('constraint_level', 'balanced'),
+            'affected_companies': data.get('affected_companies', []),
+            'margin_impacts': impacts,
+            'confidence': data.get('confidence', 0.5),
+            'reasoning': data.get('reasoning', ''),
+            'dcf_actions': [
+                impact.get('dcf_recommendation')
+                for impact in impacts.values()
+                if impact.get('dcf_recommendation')
+            ],
+        }
 
     def analyze_memory_pricing_event(self, event: Event) -> dict:
         """
