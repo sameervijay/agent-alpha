@@ -30,6 +30,9 @@ import config
 # Import the existing DCF engines from models
 from models.pm_agent_interface import NVDADCFEngine
 from models.cdns_engine import CDNSDCFEngine
+from models.tsmc_engine import TSMCDCFEngine
+from models.crwv_engine import CoreWeaveDCFEngine
+from models.asml_engine import ASMLDCFEngine
 
 
 PM_SYSTEM_PROMPT = """You are the Portfolio Manager (PM) for a semiconductor-focused investment fund.
@@ -88,6 +91,9 @@ class PMAgent(BaseAgent):
         _ENGINE_MAP = {
             'NVDADCFEngine': NVDADCFEngine,
             'CDNSDCFEngine': CDNSDCFEngine,
+            'TSMCDCFEngine': TSMCDCFEngine,
+            'CoreWeaveDCFEngine': CoreWeaveDCFEngine,
+            'ASMLDCFEngine': ASMLDCFEngine,
         }
         self.engines = {}
         for ticker, comp in config.COMPANIES.items():
