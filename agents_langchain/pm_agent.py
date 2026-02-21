@@ -294,10 +294,6 @@ class PMAgent:
             company = metric_info['company']
             periods = metric_info['periods']
 
-            if company not in self.engines:
-                print(f"  Skipping {metric} for {company} (no DCF engine)")
-                continue
-
             print(f"  --- Debate [{i}/{len(metrics_to_debate)}]: {metric} / {company} ---")
 
             for period in periods:
