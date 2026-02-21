@@ -10,7 +10,10 @@ import json
 from langchain.agents import create_agent
 from langchain.tools import tool
 
-from agents_langchain.base import build_model, extract_json, get_final_message
+from agents_langchain.base import (
+    build_model, cache_get, cache_set,
+    get_final_message, parse_causal_links, parse_debate_position, parse_events,
+)
 from models.event import Event
 from models.causal_graph import CausalLink
 
@@ -24,6 +27,7 @@ Your domain expertise covers:
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
+When you need data from multiple sources, call multiple tools in parallel in a single step.
 Use your tools to fetch current geopolitics and trade-policy news before answering.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
@@ -34,8 +38,12 @@ Always return your final answer as a single JSON object — no prose outside the
 def fetch_geopolitics_news(query: str) -> str:
     """Fetch recent news about geopolitics, trade policy, export controls, or sanctions matching the query."""
     try:
-        from tools.macro_news_fetcher import fetch_all_macro_news
-        articles = fetch_all_macro_news(max_items=30)
+        articles = cache_get("macro_news_raw")
+        if articles is None:
+            from tools.macro_news_fetcher import fetch_all_macro_news
+            articles = fetch_all_macro_news(max_items=40)
+            cache_set("macro_news_raw", articles)
+
         geo_keywords = {'china', 'taiwan', 'export', 'sanction', 'chips act',
                         'trade', 'tariff', 'entity list', 'bis', 'geopolit'}
         q = query.lower()
@@ -59,6 +67,10 @@ def fetch_geopolitics_news(query: str) -> str:
 @tool
 def get_affected_stock_prices(tickers: str) -> str:
     """Get current stock prices for a comma-separated list of tickers (e.g. 'NVDA,TSM,ASML')."""
+    key = f"stock_prices:{tickers}"
+    cached = cache_get(key)
+    if cached:
+        return cached
     try:
         import yfinance as yf
         result = {}
@@ -71,7 +83,9 @@ def get_affected_stock_prices(tickers: str) -> str:
                         (hist['Close'].iloc[-1] / hist['Close'].iloc[0] - 1) * 100, 2
                     ),
                 }
-        return json.dumps(result)
+        out = json.dumps(result)
+        cache_set(key, out)
+        return out
     except Exception as e:
         return f"Price fetch error: {e}"
 
@@ -103,21 +117,7 @@ class PoliticsAgent:
             goal += f"\n\nAlso consider this pre-fetched context:\n{news_input}"
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        data = extract_json(get_final_message(result))
-
-        return [
-            Event(
-                headline=e['headline'],
-                description=e['description'],
-                source_agent=self.name,
-                affected_companies=e.get('affected_companies', []),
-                affected_segments=e.get('affected_segments', []),
-                severity=e['severity'],
-                direction=e['direction'],
-                raw_input=news_input or '',
-            )
-            for e in data.get('events', [])
-        ]
+        return parse_events(get_final_message(result), self.name, news_input or '')
 
     def build_causal_links(self, event: Event) -> list:
         """Trace causal chain from a geopolitical event to DCF drivers."""
@@ -136,23 +136,7 @@ class PoliticsAgent:
         )
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        data = extract_json(get_final_message(result))
-
-        return [
-            CausalLink(
-                source_event=l['source_event'],
-                intermediate_step=l['intermediate_step'],
-                downstream_metric=l['downstream_metric'],
-                affected_company=l['affected_company'],
-                affected_periods=l['affected_periods'],
-                direction=l['direction'],
-                magnitude_estimate=l['magnitude_estimate'],
-                confidence=l['confidence'],
-                reasoning=l['reasoning'],
-                proposed_by=self.name,
-            )
-            for l in data.get('causal_links', [])
-        ]
+        return parse_causal_links(get_final_message(result), self.name)
 
     def debate_position(self, event: Event, metric: str, company: str,
                         period: str, other_positions: list) -> dict:
@@ -174,7 +158,7 @@ class PoliticsAgent:
         )
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        return extract_json(get_final_message(result))
+        return parse_debate_position(get_final_message(result))
 
     def __repr__(self):
         return f"<PoliticsAgent (LangChain)>"

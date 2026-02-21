@@ -11,7 +11,11 @@ import yfinance as yf
 from langchain.agents import create_agent
 from langchain.tools import tool
 
-from agents_langchain.base import build_model, extract_json, get_final_message
+from agents_langchain.base import (
+    build_model, cache_get, cache_set,
+    extract_json, get_final_message,
+    parse_causal_links, parse_debate_position, parse_events,
+)
 from models.event import Event
 from models.causal_graph import CausalLink
 
@@ -24,6 +28,7 @@ Your responsibilities:
 - Detect material news events and map them to specific DCF driver changes
 - Participate in multi-analyst debates to sharpen conviction
 
+When you need data from multiple sources, call multiple tools in parallel in a single step.
 Use your tools to fetch company-specific data before answering.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
@@ -33,6 +38,10 @@ Always return your final answer as a single JSON object — no prose outside the
 @tool
 def get_company_price_and_financials(ticker: str) -> str:
     """Get current price, 52-week range, P/E, and recent earnings info for a ticker."""
+    key = f"company_financials:{ticker}"
+    cached = cache_get(key)
+    if cached:
+        return cached
     try:
         t = yf.Ticker(ticker)
         info = t.info
@@ -49,7 +58,9 @@ def get_company_price_and_financials(ticker: str) -> str:
             'gross_margin': info.get('grossMargins'),
             'operating_margin': info.get('operatingMargins'),
         }
-        return json.dumps(result, indent=2)
+        out = json.dumps(result, indent=2)
+        cache_set(key, out)
+        return out
     except Exception as e:
         return f"Financials fetch error for {ticker}: {e}"
 
@@ -57,11 +68,17 @@ def get_company_price_and_financials(ticker: str) -> str:
 @tool
 def get_consensus_estimates(ticker: str) -> str:
     """Read analyst consensus revenue and earnings estimates from the consensus Excel file for a ticker."""
+    key = f"consensus:{ticker}"
+    cached = cache_get(key)
+    if cached:
+        return cached
     try:
         from tools.consensus_reader import ConsensusReader
         reader = ConsensusReader(ticker)
         consensus = reader.get_consensus()
-        return json.dumps(consensus, indent=2, default=str)
+        out = json.dumps(consensus, indent=2, default=str)
+        cache_set(key, out)
+        return out
     except FileNotFoundError:
         return f"No consensus file found for {ticker}."
     except Exception as e:
@@ -71,35 +88,45 @@ def get_consensus_estimates(ticker: str) -> str:
 @tool
 def fetch_company_news(ticker: str) -> str:
     """Fetch recent news articles specifically about a company (by ticker or company name)."""
+    key = f"company_news:{ticker}"
+    cached = cache_get(key)
+    if cached:
+        return cached
     try:
-        import yfinance as yf
         t = yf.Ticker(ticker)
         news = t.news or []
-        return json.dumps([{
+        out = json.dumps([{
             'headline': n.get('title', ''),
             'publisher': n.get('publisher', ''),
             'link': n.get('link', ''),
             'published': n.get('providerPublishTime', ''),
         } for n in news[:10]], indent=2)
+        cache_set(key, out)
+        return out
     except Exception as e:
         # Fallback to macro news fetcher filtered by ticker
         try:
-            from tools.macro_news_fetcher import fetch_all_macro_news
+            articles = cache_get("macro_news_raw")
+            if articles is None:
+                from tools.macro_news_fetcher import fetch_all_macro_news
+                articles = fetch_all_macro_news(max_items=40)
+                cache_set("macro_news_raw", articles)
             ticker_map = {
                 'NVDA': 'nvidia', 'TSM': 'tsmc', 'ASML': 'asml',
                 'CDNS': 'cadence', 'CRWV': 'coreweave',
             }
             keyword = ticker_map.get(ticker.upper(), ticker.lower())
-            articles = fetch_all_macro_news(max_items=30)
             relevant = [a for a in articles
                         if keyword in a.get('headline', '').lower()
                         or keyword in a.get('summary', '').lower()]
-            return json.dumps([{
+            out = json.dumps([{
                 'headline': a.get('headline', ''),
                 'summary': a.get('summary', '')[:200],
                 'source': a.get('source', ''),
                 'date': a.get('date', ''),
             } for a in relevant[:8]], indent=2)
+            cache_set(key, out)
+            return out
         except Exception as e2:
             return f"News fetch error for {ticker}: {e2}"
 
@@ -126,10 +153,8 @@ class CompanyAnalystAgent:
         """
         goal = (
             f"Develop a comprehensive investment thesis for {self.ticker}.\n\n"
-            f"1. Fetch current financials and price for {self.ticker}.\n"
-            f"2. Read the consensus estimates for {self.ticker}.\n"
-            f"3. Fetch recent company news for {self.ticker}.\n"
-            f"4. Synthesize all data into a thesis.\n\n"
+            f"Fetch financials, consensus estimates, and recent news for {self.ticker} in parallel.\n\n"
+            "Synthesize all data into a thesis.\n\n"
             "Return a JSON object with:\n"
             "  ticker, thesis (2-3 paragraph summary), bull_case (list of 3 points), "
             "bear_case (list of 3 points), conviction (0.0-1.0), key_risks (list), "
@@ -142,7 +167,7 @@ class CompanyAnalystAgent:
     def detect_events(self, news_input: str = None) -> list:
         """Identify company-specific events from news that map to DCF driver changes."""
         goal = (
-            f"Fetch recent news and financials for {self.ticker}, then identify "
+            f"Fetch recent news and financials for {self.ticker} in parallel, then identify "
             f"material events that change the fundamental outlook.\n\n"
             "Return a JSON object with key 'events'. Each event must have:\n"
             "  headline, description, affected_companies (list with just this ticker), "
@@ -153,21 +178,7 @@ class CompanyAnalystAgent:
             goal += f"\n\nAdditional context:\n{news_input}"
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        data = extract_json(get_final_message(result))
-
-        return [
-            Event(
-                headline=e['headline'],
-                description=e['description'],
-                source_agent=self.name,
-                affected_companies=e.get('affected_companies', [self.ticker]),
-                affected_segments=e.get('affected_segments', []),
-                severity=e['severity'],
-                direction=e['direction'],
-                raw_input=news_input or '',
-            )
-            for e in data.get('events', [])
-        ]
+        return parse_events(get_final_message(result), self.name, news_input or '')
 
     def build_causal_links(self, event: Event) -> list:
         """Trace causal chain from a company event to DCF drivers."""
@@ -185,23 +196,7 @@ class CompanyAnalystAgent:
         )
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        data = extract_json(get_final_message(result))
-
-        return [
-            CausalLink(
-                source_event=l['source_event'],
-                intermediate_step=l['intermediate_step'],
-                downstream_metric=l['downstream_metric'],
-                affected_company=l['affected_company'],
-                affected_periods=l['affected_periods'],
-                direction=l['direction'],
-                magnitude_estimate=l['magnitude_estimate'],
-                confidence=l['confidence'],
-                reasoning=l['reasoning'],
-                proposed_by=self.name,
-            )
-            for l in data.get('causal_links', [])
-        ]
+        return parse_causal_links(get_final_message(result), self.name)
 
     def debate_position(self, event: Event, metric: str, company: str,
                         period: str, other_positions: list) -> dict:
@@ -224,7 +219,7 @@ class CompanyAnalystAgent:
         )
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        return extract_json(get_final_message(result))
+        return parse_debate_position(get_final_message(result))
 
     def __repr__(self):
         return f"<CompanyAnalystAgent ticker={self.ticker!r} (LangChain)>"

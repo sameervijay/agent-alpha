@@ -13,6 +13,14 @@ load_dotenv(_PROJECT_ROOT / '.env')
 
 # ── LLM Configuration ──────────────────────────────────────
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+
+# ── External Data APIs ─────────────────────────────────────
+NEWS_API_KEY = os.getenv('NEWS_API_KEY', '')          # newsapi.org
+ELSEVIER_API_KEY = os.getenv('ELSEVIER_API_KEY', '')   # api.elsevier.com (Scopus)
+SPRINGER_OA_API_KEY = os.getenv('SPRINGER_OA_API_KEY', '')    # api.springernature.com/openaccess
+SPRINGER_META_API_KEY = os.getenv('SPRINGER_META_API_KEY', '') # api.springernature.com/meta
+ADZUNA_APP_ID = os.getenv('ADZUNA_APP_ID', '')   # api.adzuna.com — job postings
+ADZUNA_APP_KEY = os.getenv('ADZUNA_APP_KEY', '')
 PRIMARY_MODEL = "gpt-4o-2024-08-06"
 TEMPERATURE = 0.2
 MAX_TOKENS = 4096

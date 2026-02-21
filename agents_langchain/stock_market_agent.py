@@ -11,7 +11,10 @@ import yfinance as yf
 from langchain.agents import create_agent
 from langchain.tools import tool
 
-from agents_langchain.base import build_model, extract_json, get_final_message
+from agents_langchain.base import (
+    build_model, cache_get, cache_set,
+    get_final_message, parse_causal_links, parse_debate_position, parse_events,
+)
 from models.event import Event
 from models.causal_graph import CausalLink
 
@@ -28,6 +31,7 @@ Your domain expertise covers:
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
+When you need data from multiple sources, call multiple tools in parallel in a single step.
 Use your tools to fetch live prices and market data before answering.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
@@ -37,6 +41,10 @@ Always return your final answer as a single JSON object — no prose outside the
 @tool
 def get_stock_prices(tickers: str) -> str:
     """Get current prices and 5-day/30-day returns for a comma-separated list of tickers."""
+    key = f"stock_prices:{tickers}"
+    cached = cache_get(key)
+    if cached:
+        return cached
     try:
         result = {}
         for ticker in [t.strip() for t in tickers.split(',')]:
@@ -54,7 +62,9 @@ def get_stock_prices(tickers: str) -> str:
                     'avg_volume_30d': int(hist['Volume'].mean()),
                     'latest_volume': int(hist['Volume'].iloc[-1]),
                 }
-        return json.dumps(result, indent=2)
+        out = json.dumps(result, indent=2)
+        cache_set(key, out)
+        return out
     except Exception as e:
         return f"Price fetch error: {e}"
 
@@ -62,24 +72,34 @@ def get_stock_prices(tickers: str) -> str:
 @tool
 def get_market_snapshot() -> str:
     """Get a snapshot of the semiconductor market: prices, volumes, and sector ETF performance."""
+    cached = cache_get("market_snapshot")
+    if cached:
+        return cached
     try:
         from tools.market_monitor import MarketMonitor
         monitor = MarketMonitor()
         snapshot = monitor.get_market_snapshot()
-        return json.dumps(snapshot, indent=2, default=str)
+        out = json.dumps(snapshot, indent=2, default=str)
+        cache_set("market_snapshot", out)
+        return out
     except Exception as e:
-        # Fallback: just pull prices directly
+        # Fallback: pull prices directly
         return get_stock_prices.invoke(','.join(TICKERS))
 
 
 @tool
 def detect_unusual_volumes() -> str:
     """Detect unusual trading volumes or price movements in semiconductor stocks today."""
+    cached = cache_get("unusual_volumes")
+    if cached:
+        return cached
     try:
         from tools.market_monitor import MarketMonitor
         monitor = MarketMonitor()
         unusual = monitor.detect_unusual_volumes()
-        return json.dumps(unusual, indent=2, default=str)
+        out = json.dumps(unusual, indent=2, default=str)
+        cache_set("unusual_volumes", out)
+        return out
     except Exception as e:
         return f"Volume detection error: {e}"
 
@@ -100,7 +120,7 @@ class StockMarketAgent:
         """Fetch market data autonomously and identify equity market events."""
         goal = (
             "Fetch live stock prices, the market snapshot, and check for unusual volumes "
-            "across semiconductor stocks (NVDA, TSM, ASML, CDNS, CRWV). "
+            "across semiconductor stocks (NVDA, TSM, ASML, CDNS, CRWV) — call all three tools in parallel. "
             "Then identify significant equity market events (large moves, unusual activity, "
             "sector rotation, valuation dislocations).\n\n"
             "Return a JSON object with key 'events'. Each event must have:\n"
@@ -112,21 +132,7 @@ class StockMarketAgent:
             goal += f"\n\nAlso consider this pre-fetched context:\n{news_input}"
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        data = extract_json(get_final_message(result))
-
-        return [
-            Event(
-                headline=e['headline'],
-                description=e['description'],
-                source_agent=self.name,
-                affected_companies=e.get('affected_companies', []),
-                affected_segments=e.get('affected_segments', []),
-                severity=e['severity'],
-                direction=e['direction'],
-                raw_input=news_input or '',
-            )
-            for e in data.get('events', [])
-        ]
+        return parse_events(get_final_message(result), self.name, news_input or '')
 
     def build_causal_links(self, event: Event) -> list:
         """Trace causal chain from a market event to DCF drivers."""
@@ -145,23 +151,7 @@ class StockMarketAgent:
         )
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        data = extract_json(get_final_message(result))
-
-        return [
-            CausalLink(
-                source_event=l['source_event'],
-                intermediate_step=l['intermediate_step'],
-                downstream_metric=l['downstream_metric'],
-                affected_company=l['affected_company'],
-                affected_periods=l['affected_periods'],
-                direction=l['direction'],
-                magnitude_estimate=l['magnitude_estimate'],
-                confidence=l['confidence'],
-                reasoning=l['reasoning'],
-                proposed_by=self.name,
-            )
-            for l in data.get('causal_links', [])
-        ]
+        return parse_causal_links(get_final_message(result), self.name)
 
     def debate_position(self, event: Event, metric: str, company: str,
                         period: str, other_positions: list) -> dict:
@@ -184,7 +174,7 @@ class StockMarketAgent:
         )
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
-        return extract_json(get_final_message(result))
+        return parse_debate_position(get_final_message(result))
 
     def __repr__(self):
         return f"<StockMarketAgent (LangChain)>"

@@ -14,7 +14,10 @@ from pathlib import Path
 from langchain.agents import create_agent
 from langchain.tools import tool
 
-from agents_langchain.base import build_model, extract_json, get_final_message
+from agents_langchain.base import (
+    build_model, cache_get, cache_set, clear_session_cache,
+    extract_json, get_final_message,
+)
 from agents_langchain.macro_agent import MacroAgent
 from agents_langchain.politics_agent import PoliticsAgent
 from agents_langchain.stock_market_agent import StockMarketAgent
@@ -65,6 +68,9 @@ _ENGINE_MAP = {
 @tool
 def get_all_live_prices() -> str:
     """Fetch current live stock prices for all portfolio tickers (NVDA, TSM, ASML, CDNS, CRWV) and SPY."""
+    cached = cache_get("pm_live_prices")
+    if cached:
+        return cached
     try:
         import yfinance as yf
         tickers = list(config.COMPANIES.keys()) + ['SPY']
@@ -78,7 +84,9 @@ def get_all_live_prices() -> str:
                         (hist['Close'].iloc[-1] / hist['Close'].iloc[0] - 1) * 100, 2
                     ),
                 }
-        return json.dumps(result, indent=2)
+        out = json.dumps(result, indent=2)
+        cache_set("pm_live_prices", out)
+        return out
     except Exception as e:
         return f"Price fetch error: {e}"
 
@@ -109,11 +117,16 @@ def compute_dcf_valuation(ticker: str) -> str:
 @tool
 def get_macro_overview() -> str:
     """Get the independent macro analyst's current sector outlook and key themes."""
+    cached = cache_get("macro_overview")
+    if cached:
+        return cached
     try:
         from agents.macro_analyst_agent import MacroAnalystAgent
         analyst = MacroAnalystAgent()
         overview = analyst.get_view_summary()
-        return json.dumps(overview, indent=2, default=str)
+        out = json.dumps(overview, indent=2, default=str)
+        cache_set("macro_overview", out)
+        return out
     except Exception as e:
         return f"Macro overview unavailable: {e}"
 
@@ -177,6 +190,7 @@ class PMAgent:
 
     def detect_events(self, news_input: str) -> list:
         """Call all domain agents to detect events, deduplicate, rank by severity."""
+        clear_session_cache()  # Fresh cache for each pipeline run
         print("\n" + "=" * 70)
         print("  PHASE 1 / 4 : EVENT DETECTION")
         print("=" * 70)
