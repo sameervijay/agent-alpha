@@ -1,19 +1,4 @@
-.env
+﻿.env
 __pycache__/
 *.pyc
-.DS_Store
-
-# Excel files (analyst models from Canalyst/AlphaSense)
-*.xlsx
-*.xls
-
-# Runtime-generated data
-data/analyst_views/*.json
-data/analyst_views/*.txt
-data/news_cache/*.json
-data/valuations/*.json
-data/update_sessions/
-data/macro_analyst/
-
-# Temporary test files
-test_request_update.py
+*.pyo

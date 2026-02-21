@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from copy import deepcopy
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'models'))
 from pm_agent_interface import NVDADCFEngine
 
 import config

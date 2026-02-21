@@ -17,11 +17,20 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-# Ensure project root is on path
+# Ensure project root and config/ subdirectory are on path
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent / 'config'))
 
 import config
-from agents.pm_agent import PMAgent
+
+
+def _load_pm(backend: str):
+    """Return the PMAgent class for the chosen backend."""
+    if backend == 'langchain':
+        from agents_langchain.pm_agent import PMAgent
+    else:
+        from agents.pm_agent import PMAgent
+    return PMAgent
 
 
 def main():
@@ -54,6 +63,11 @@ def main():
         '--request-update', action='store_true',
         help='PM initiates a focused update dialogue with company analyst (no --event needed)'
     )
+    parser.add_argument(
+        '--backend', type=str, default='original',
+        choices=['original', 'langchain'],
+        help='Agent backend to use: original (default) or langchain'
+    )
 
     args = parser.parse_args()
 
@@ -73,8 +87,9 @@ def main():
 
     # Initialize PM agent
     print("\n" + "=" * 70)
-    print("  INITIALIZING COUNCIL OF AGENTS")
+    print(f"  INITIALIZING COUNCIL OF AGENTS  [backend: {args.backend.upper()}]")
     print("=" * 70)
+    PMAgent = _load_pm(args.backend)
     pm = PMAgent()
     print("  Initialization complete.\n")
 
