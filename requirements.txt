@@ -5,3 +5,6 @@ yfinance
 requests
 feedparser
 finvizfinance
+langgraph>=0.2
+langgraph-cli[inmem]>=0.2
+langgraph-sdk>=0.1
