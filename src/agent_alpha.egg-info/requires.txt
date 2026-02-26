@@ -1,0 +1,12 @@
+openai>=1.0
+python-dotenv
+openpyxl
+yfinance
+requests
+feedparser
+finvizfinance
+langchain>=0.3
+langchain-openai>=0.2
+langgraph>=0.2
+langgraph-cli[inmem]>=0.2
+langgraph-sdk>=0.1

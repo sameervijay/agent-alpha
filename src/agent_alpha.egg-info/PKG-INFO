@@ -1,0 +1,24 @@
+Metadata-Version: 2.4
+Name: agent-alpha
+Version: 0.1.0
+Summary: PM-led multi-agent allocation pipeline with domain scouts and debate
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: openai>=1.0
+Requires-Dist: python-dotenv
+Requires-Dist: openpyxl
+Requires-Dist: yfinance
+Requires-Dist: requests
+Requires-Dist: feedparser
+Requires-Dist: finvizfinance
+Requires-Dist: langchain>=0.3
+Requires-Dist: langchain-openai>=0.2
+Requires-Dist: langgraph>=0.2
+Requires-Dist: langgraph-cli[inmem]>=0.2
+Requires-Dist: langgraph-sdk>=0.1
+
+# agent-alpha
+
+PM-led multi-agent allocation pipeline. Package management uses [uv](https://docs.astral.sh/uv/).
+
+**Setup:** `uv sync` then `uv run langgraph dev` (or `uv run python main.py ...`).

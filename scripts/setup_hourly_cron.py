@@ -41,7 +41,7 @@ async def main():
     try:
         from langgraph_sdk import get_client
     except ImportError:
-        print("Install the SDK: pip install langgraph-sdk")
+        print("Install the SDK: uv sync  (or pip install langgraph-sdk)")
         return 1
 
     client = get_client(url=url)
