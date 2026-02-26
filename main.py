@@ -5,6 +5,7 @@ in the Semiconductor Value Chain.
 CLI entry point.
 
 Usage:
+    python main.py                                      # default: PM-led allocation ($1000, last 1h, autonomous)
     python main.py --event "US announces new AI chip export controls"
     python main.py --event "TSMC raises capex guidance" --company NVDA
     python main.py --phase detect --event "Fed raises rates 25bps"
@@ -76,6 +77,14 @@ def main():
     )
 
     args = parser.parse_args()
+
+    # Default behavior: no CLI arguments → LangGraph allocation pipeline
+    # with standard PM-led settings ($1000 budget, last 1h, autonomous event).
+    if len(sys.argv) == 1:
+        args.langgraph_alloc = True
+        args.budget = 1000.0
+        args.lookback_hours = 1
+        args.event = None
 
     if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc:
         parser.print_help()
