@@ -383,7 +383,7 @@ class CDNSDCFEngine:
         # Fetch live stock price if not provided
         if current_price is None:
             try:
-                from agents.stock_market_agent import StockMarketAgent
+                from agents_langchain.stock_market_agent import StockMarketAgent
                 agent = StockMarketAgent()
                 current_price = agent.get_price('CDNS', use_cache=True)
                 if current_price <= 0:

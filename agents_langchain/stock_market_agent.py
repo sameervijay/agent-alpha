@@ -6,6 +6,7 @@ before reasoning about equity market impacts on semiconductors.
 """
 
 import json
+from datetime import datetime
 
 import yfinance as yf
 from langchain.agents import create_agent
@@ -175,6 +176,69 @@ class StockMarketAgent:
 
         result = self._agent.invoke({"messages": [{"role": "user", "content": goal}]})
         return parse_debate_position(get_final_message(result))
+
+    def get_current_prices(self, tickers: list) -> dict:
+        """Fetch live prices for a list of tickers. Returns {ticker: {price, prev_close, change_pct, ...}}."""
+        results = {}
+        for ticker in tickers:
+            try:
+                hist = yf.Ticker(ticker).history(period='5d')
+                if hist.empty:
+                    results[ticker] = {'price': 0.0, 'prev_close': 0.0, 'change_pct': 0.0,
+                                        'timestamp': datetime.now().isoformat(), 'error': 'No data'}
+                    continue
+                price = float(hist['Close'].iloc[-1])
+                prev = float(hist['Close'].iloc[-2]) if len(hist) >= 2 else price
+                change_pct = (price / prev - 1) if prev and prev > 0 else 0.0
+                results[ticker] = {
+                    'price': round(price, 2),
+                    'prev_close': round(prev, 2),
+                    'change_pct': change_pct,
+                    'timestamp': datetime.now().isoformat(),
+                    'error': None,
+                }
+            except Exception as e:
+                results[ticker] = {'price': 0.0, 'prev_close': 0.0, 'change_pct': 0.0,
+                                  'timestamp': datetime.now().isoformat(), 'error': str(e)}
+        return results
+
+    def get_price(self, ticker: str, use_cache: bool = True, cache_ttl_seconds: int = 300) -> float:
+        """Get current price for a single ticker (for DCF engines). Returns 0.0 if unavailable."""
+        key = f"stock_prices:{ticker}"
+        if use_cache and cache_get(key):
+            try:
+                data = json.loads(cache_get(key))
+                return float(data.get(ticker, {}).get('price', 0.0))
+            except (TypeError, json.JSONDecodeError, KeyError):
+                pass
+        try:
+            hist = yf.Ticker(ticker).history(period='5d')
+            if hist.empty:
+                return 0.0
+            price = float(hist['Close'].iloc[-1])
+            cache_set(key, json.dumps({ticker: {'price': round(price, 2)}}))
+            return price
+        except Exception:
+            return 0.0
+
+    def get_market_snapshot(self) -> dict:
+        """Get market snapshot dict (tickers, prices, timestamp, summary) for tests/compatibility."""
+        try:
+            import config
+            tickers = list(config.COMPANIES.keys()) + ['SPY']
+        except Exception:
+            tickers = list(TICKERS) + ['SPY']
+        prices = self.get_current_prices(tickers)
+        num_up = sum(1 for p in prices.values() if p.get('change_pct', 0) > 0)
+        num_down = sum(1 for p in prices.values() if p.get('change_pct', 0) < 0)
+        summary = (f"Market snapshot: {num_up} up, {num_down} down. "
+                   f"SPY: ${prices.get('SPY', {}).get('price', 0):.2f}")
+        return {
+            'tickers': tickers,
+            'prices': prices,
+            'timestamp': datetime.now().isoformat(),
+            'summary': summary,
+        }
 
     def __repr__(self):
         return f"<StockMarketAgent (LangChain)>"

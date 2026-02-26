@@ -20,7 +20,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent))
 
 import config
-from agents.stock_market_agent import StockMarketAgent
+from agents_langchain.stock_market_agent import StockMarketAgent
 
 
 def analyze_ticker(agent: StockMarketAgent, ticker: str, sigma: float = 2.0,

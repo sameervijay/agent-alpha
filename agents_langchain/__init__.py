@@ -4,7 +4,7 @@ LangChain-native agent implementations.
 Each agent uses create_agent() with domain-specific @tool functions so the
 LLM can autonomously decide what data to fetch before reasoning.
 
-Agents expose the same public methods as agents/ for drop-in compatibility:
+Agents expose a common pipeline interface:
   detect_events(news_input=None) -> list[Event]
   build_causal_links(event)      -> list[CausalLink]
   debate_position(...)           -> dict

@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import config
-from agents.pm_agent import PMAgent
+from agents_langchain.pm_agent import PMAgent
 
 
 def show_allocation(filepath: Path):

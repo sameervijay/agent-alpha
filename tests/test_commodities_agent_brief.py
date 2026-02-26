@@ -14,8 +14,8 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from agents.commodities_agent import CommoditiesAgent
-from agents.pm_agent import PMAgent
+from agents_langchain.commodities_agent import CommoditiesAgent
+from agents_langchain.pm_agent import PMAgent
 from models.event import Event
 
 

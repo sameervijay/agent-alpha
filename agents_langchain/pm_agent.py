@@ -116,14 +116,21 @@ def compute_dcf_valuation(ticker: str) -> str:
 
 @tool
 def get_macro_overview() -> str:
-    """Get the independent macro analyst's current sector outlook and key themes."""
+    """Get the macro agent's current sector outlook and key themes (uses LangChain MacroAgent)."""
     cached = cache_get("macro_overview")
     if cached:
         return cached
     try:
-        from agents.macro_analyst_agent import MacroAnalystAgent
-        analyst = MacroAnalystAgent()
-        overview = analyst.get_view_summary()
+        from agents_langchain.macro_agent import MacroAgent
+        agent = MacroAgent()
+        goal = (
+            "Fetch relevant macro news (Fed policy, yields, inflation, GDP) and treasury yields, "
+            "then provide a brief macro overview as a single JSON object with keys: "
+            "outlook (1-2 sentences), key_themes (list of strings), risk_factors (list, max 3), "
+            "confidence (0.0-1.0). No prose outside the JSON."
+        )
+        result = agent._agent.invoke({"messages": [{"role": "user", "content": goal}]})
+        overview = extract_json(get_final_message(result))
         out = json.dumps(overview, indent=2, default=str)
         cache_set("macro_overview", out)
         return out

@@ -11,7 +11,7 @@ Demonstrates how analysts can:
 import sys
 sys.path.insert(0, '.')
 
-from agents.company_analyst_agent import CompanyAnalystAgent
+from agents_langchain.company_analyst_agent import CompanyAnalystAgent
 
 
 def test_consensus_understanding(ticker='NVDA'):

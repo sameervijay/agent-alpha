@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agents.company_analyst_agent import CompanyAnalystAgent
+from agents_langchain.company_analyst_agent import CompanyAnalystAgent
 from docx import Document
 
 

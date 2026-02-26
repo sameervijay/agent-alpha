@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import config
-from agents.pm_agent import PMAgent
+from agents_langchain.pm_agent import PMAgent
 
 def test_pm_agent_initialization():
     """Test that PM agent initializes all DCF engines."""
