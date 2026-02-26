@@ -44,6 +44,7 @@ At minimum, you need:
 
 ```bash
 OPENAI_API_KEY=sk-...
+LANGSMITH_API_KEY=sk-...
 ```
 
 Optional but recommended (uncomment / add as needed):
