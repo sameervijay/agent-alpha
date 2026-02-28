@@ -19,6 +19,118 @@ Requires-Dist: langgraph-sdk>=0.1
 
 # agent-alpha
 
-PM-led multi-agent allocation pipeline. Package management uses [uv](https://docs.astral.sh/uv/).
+PM-led multi-agent allocation pipeline for the semiconductor value chain, built with LangGraph + LangChain.  
+Package management uses [uv](https://docs.astral.sh/uv/).
 
-**Setup:** `uv sync` then `uv run langgraph dev` (or `uv run python main.py ...`).
+## Prerequisites
+
+- Python 3.11+ (recommended)
+- [`uv`](https://docs.astral.sh/uv/) installed
+- OpenAI account and `OPENAI_API_KEY`
+- (Optional) API keys for external data sources:
+  - `NEWS_API_KEY` (newsapi.org)
+  - `ELSEVIER_API_KEY`
+  - `SPRINGER_OA_API_KEY`, `SPRINGER_META_API_KEY`
+  - `ADZUNA_APP_ID`, `ADZUNA_APP_KEY`
+
+## 1. Clone and install dependencies
+
+From your terminal:
+
+```bash
+git clone <this-repo-url>
+cd agent-alpha
+
+# Install all Python dependencies
+uv sync
+```
+
+If you don’t have `uv` yet, follow the official install instructions:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+## 2. Configure environment variables
+
+Create a `.env` file in the project root (same directory as `config.py` and `main.py`):
+
+```bash
+cp .env.example .env    # if you have a template, otherwise create .env manually
+```
+
+At minimum, you need:
+
+```bash
+OPENAI_API_KEY=sk-...
+LANGSMITH_API_KEY=sk-...
+```
+
+Optional but recommended (uncomment / add as needed):
+
+```bash
+NEWS_API_KEY=...
+ELSEVIER_API_KEY=...
+SPRINGER_OA_API_KEY=...
+SPRINGER_META_API_KEY=...
+ADZUNA_APP_ID=...
+ADZUNA_APP_KEY=...
+```
+
+These are loaded by `config.py` via `python-dotenv`.
+
+## 3. Run the LangGraph dev server (local graph UI)
+
+To bring up the LangGraph dev server and inspect/run the allocation pipeline locally:
+
+```bash
+uv run langgraph dev
+```
+
+This starts a local server (by default on `http://127.0.0.1:2024`) where you can:
+
+- Inspect the `pipeline` graph defined in `langgraph_pipeline.py`
+- Trigger runs with different inputs
+- Iterate on graph/agent behavior while developing
+
+This is the same entry point used when deploying to LangSmith Cloud (see `DEPLOYMENT.md` for details).
+
+## 4. Run the CLI agents directly
+
+You can also run the Council of Agents from the CLI via `main.py`:
+
+```bash
+# Default: PM-led allocation (LangGraph graph invoked locally)
+uv run python main.py                               # $1000 budget, last 1h, autonomous event
+
+# Full event → detect → causal → debate → DCF pipeline for NVDA
+uv run python main.py --event "US announces new AI chip export controls"
+
+# Same pipeline but target a different company
+uv run python main.py --event "TSMC raises capex guidance" --company NVDA
+
+# Run only a specific phase
+uv run python main.py --phase detect --event "Fed raises rates 25bps"
+
+# Historical backtest
+uv run python main.py --backtest
+
+# PM-led allocation pipeline (LangGraph graph invoked locally) with explicit flag
+uv run python main.py --langgraph-alloc                    # $1000 budget, last 1h, autonomous event
+uv run python main.py --langgraph-alloc --budget 500 --event "Focus on Fed"
+```
+
+If you run `uv run python main.py` with no arguments, it now defaults to the PM-led allocation pipeline (`--langgraph-alloc` with `$1000` budget, last `1h`, autonomous event).
+
+## 5. Where to edit agents
+
+- Core configuration: `config.py` (API keys, model settings, company definitions)
+- LangChain agents (PM, company analysts, macro analyst, etc.): `agents_langchain/`
+- Financial / valuation engines: `models/` and `financial_models/`
+- LangGraph pipeline entry point: `langgraph_pipeline.py`
+
+To work on or extend the agents:
+
+1. Make changes in the relevant `agents_langchain/*` or `models/*` files.
+2. Run the LangGraph dev server (`uv run langgraph dev`) or the CLI (`uv run python main.py ...`) with test inputs.
+3. Iterate until the behaviors and outputs align with your PM / research goals.

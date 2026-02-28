@@ -62,6 +62,8 @@ class PipelineState(TypedDict, total=False):
 
 def _initialize(state: PipelineState) -> PipelineState:
     clear_session_cache()
+    from dcf_grounding import clear_engine_cache
+    clear_engine_cache()
     event = (state.get("event") or "").strip()
     if not event:
         event = (
@@ -172,24 +174,51 @@ def _merge_and_route_events(state: PipelineState) -> PipelineState:
 def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
     budget = float(state.get("budget") or 1000.0)
     company_events = state.get("company_event_map", {}).get(ticker, [])
-    print("  [analyst_%s] Analyzing %d routed event(s); forming thesis and allocation stance..." % (ticker, len(company_events)))
+    print("  [analyst_%s] Analyzing %d routed event(s); forming DCF-grounded thesis..." % (ticker, len(company_events)))
     analyst = CompanyAnalystAgent(ticker)
 
+    # ── DCF grounding ──────────────────────────────────────────
+    from dcf_grounding import format_dcf_context_for_analyst, get_engine
+    dcf_context = format_dcf_context_for_analyst(ticker)
+    engine = get_engine(ticker)
+    driver_names = list(engine.drivers.keys()) if engine else []
+    driver_periods: list[str] = []
+    if engine and driver_names:
+        first_driver = engine.drivers[driver_names[0]]
+        driver_periods = list(first_driver.keys())
+
     events_block = json.dumps(company_events[:8], indent=2, default=str)
+
     goal = (
         f"You are the fundamental analyst for {ticker}.\n\n"
-        "Review the recent routed events (last-hour domain changes), then produce "
-        "a concise investment stance for this company.\n\n"
+        "Review the recent routed events AND the DCF model context below, then produce "
+        "a concise, DCF-grounded investment stance for this company.\n\n"
         f"ROUTED_EVENTS:\n{events_block}\n\n"
+        f"{dcf_context}\n\n"
+    )
+
+    if driver_names:
+        goal += (
+            "IMPORTANT: Your proposed_driver_deltas must use ONLY these driver names:\n"
+            f"  {driver_names}\n"
+            f"Valid periods: {driver_periods}\n\n"
+        )
+
+    goal += (
         "Return ONLY JSON with keys:\n"
         "  ticker,\n"
-        "  thesis (2-4 sentences),\n"
+        "  thesis (2-4 sentences grounded in the DCF model and events),\n"
         "  key_drivers (list of strings),\n"
         "  key_risks (list of strings),\n"
         "  conviction (0.0-1.0),\n"
         f"  recommended_dollars (0-{budget}),\n"
         "  recommended_weight (0.0-1.0),\n"
-        "  challenge_to_others (1-2 sentences).\n"
+        "  challenge_to_others (1-2 sentences),\n"
+        "  proposed_driver_deltas (dict of driver_name -> {period: delta_value} — "
+        "these are ADDITIVE changes to the baseline model drivers, "
+        "e.g. {'datacenter_growth': {'FY2028': 0.05}} means +5pp to datacenter growth),\n"
+        "  dcf_implied_price (float — the baseline implied price from the model),\n"
+        "  rationale_for_deltas (1-2 sentences explaining why you propose these changes).\n"
     )
 
     try:
@@ -213,6 +242,7 @@ def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
                 "recommended_dollars": 0.0,
                 "recommended_weight": 0.0,
                 "challenge_to_others": "",
+                "proposed_driver_deltas": {},
             }],
             "errors": [f"analyst_{ticker.lower()} failed: {exc}"],
         }
@@ -265,6 +295,48 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         return {"error": "No company briefs generated.", "allocation_dollars": {}}
 
     print("  [PM] Facilitating cross-company debate and allocating $%.0f..." % budget)
+
+    # ── DCF valuations from analyst-proposed deltas ─────────────
+    from dcf_grounding import compute_baseline, apply_deltas_and_compute
+
+    dcf_results: dict[str, dict] = {}
+    for brief in briefs:
+        ticker = brief.get("ticker", "")
+        deltas = brief.get("proposed_driver_deltas", {})
+
+        if deltas:
+            dcf_result = apply_deltas_and_compute(ticker, deltas)
+        else:
+            baseline = compute_baseline(ticker)
+            dcf_result = {
+                'baseline_price': baseline['implied_price'],
+                'adjusted_price': baseline['implied_price'],
+                'current_price': baseline['current_price'],
+                'upside': baseline['upside'],
+                'alpha_vs_baseline': 0.0,
+            } if baseline else None
+
+        if dcf_result:
+            dcf_results[ticker] = dcf_result
+            print("  [PM] DCF %s: baseline=$%.2f, adjusted=$%.2f, upside=%.1f%%, alpha=$%.2f" % (
+                ticker,
+                dcf_result.get('baseline_price', 0),
+                dcf_result.get('adjusted_price', 0),
+                dcf_result.get('upside', 0) * 100,
+                dcf_result.get('alpha_vs_baseline', 0),
+            ))
+
+    dcf_summary_lines = []
+    for ticker, dr in dcf_results.items():
+        dcf_summary_lines.append(
+            f"  {ticker}: baseline=${dr.get('baseline_price',0):.2f}, "
+            f"analyst-adjusted=${dr.get('adjusted_price',0):.2f}, "
+            f"market=${dr.get('current_price',0):.2f}, "
+            f"upside={dr.get('upside',0):+.1%}, "
+            f"alpha_vs_baseline=${dr.get('alpha_vs_baseline',0):+.2f}"
+        )
+    dcf_block = "\n".join(dcf_summary_lines) if dcf_summary_lines else "(no DCF models available)"
+
     pm = PMAgent()
     debate_goal = (
         "You are the PM facilitating a cross-company analyst debate and final capital allocation.\n\n"
@@ -272,14 +344,18 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         f"COVERED_COMPANIES: {', '.join(COMPANY_TICKERS)}\n\n"
         f"RECENT_DOMAIN_EVENTS:\n{json.dumps(merged_events[:15], indent=2, default=str)}\n\n"
         f"COMPANY_ANALYST_BRIEFS:\n{json.dumps(briefs, indent=2, default=str)}\n\n"
+        f"DCF VALUATIONS (analyst-adjusted):\n{dcf_block}\n\n"
         "Task:\n"
         "1) Summarize key agreements/disagreements across analysts.\n"
         "2) Challenge weak claims and identify highest-conviction opportunities.\n"
-        "3) Allocate the FULL fixed budget across companies.\n\n"
+        "3) Use the DCF-implied upside to weight your allocation — "
+        "companies with larger DCF upside AND high analyst conviction should receive more capital.\n"
+        "4) Allocate the FULL fixed budget across companies.\n\n"
         "Return ONLY JSON with keys:\n"
         "  debate_summary (string),\n"
-        "  rationale (string),\n"
+        "  rationale (string referencing DCF upside/downside),\n"
         "  risk_notes (list of strings),\n"
+        "  dcf_informed_rankings (list of {ticker, upside, conviction, rationale}),\n"
         "  allocation_dollars (dict ticker->float) including all covered companies."
     )
 
@@ -290,6 +366,7 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         alloc_pct = {t: round(v / budget, 4) for t, v in alloc_dollars.items()} if budget > 0 else {
             t: 0.0 for t in COMPANY_TICKERS
         }
+        debate_result['dcf_valuations'] = dcf_results
         summary = (debate_result.get("debate_summary") or "")[:120]
         print("  [PM] → allocation done. Debate summary: %s" % (summary + "..." if len(debate_result.get("debate_summary") or "") > 120 else summary))
         return {
@@ -320,6 +397,7 @@ def _finalize(state: PipelineState) -> PipelineState:
         "debate_summary": state.get("debate", {}).get("debate_summary", ""),
         "rationale": state.get("debate", {}).get("rationale", ""),
         "risk_notes": state.get("debate", {}).get("risk_notes", []),
+        "dcf_valuations": state.get("debate", {}).get("dcf_valuations", {}),
         "errors": state.get("errors", []),
     }
     return {"result": result, "error": state.get("error")}

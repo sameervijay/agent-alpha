@@ -11,6 +11,14 @@ from dotenv import load_dotenv
 _PROJECT_ROOT = Path(__file__).parent
 load_dotenv(_PROJECT_ROOT / '.env')
 
+# ── LangSmith Tracing ─────────────────────────────────────
+LANGSMITH_API_KEY = os.getenv('LANGSMITH_API_KEY', '')
+LANGCHAIN_PROJECT = os.getenv('LANGCHAIN_PROJECT', 'agent-alpha')
+if LANGSMITH_API_KEY:
+    os.environ.setdefault('LANGCHAIN_TRACING_V2', 'true')
+    os.environ.setdefault('LANGCHAIN_API_KEY', LANGSMITH_API_KEY)
+    os.environ.setdefault('LANGCHAIN_PROJECT', LANGCHAIN_PROJECT)
+
 # ── LLM Configuration ──────────────────────────────────────
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 

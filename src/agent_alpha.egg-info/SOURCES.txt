@@ -11,9 +11,11 @@ tests/test_all_dcf_engines.py
 tests/test_balance_portfolio.py
 tests/test_commodities_agent_brief.py
 tests/test_commodity_monitoring.py
+tests/test_consensus.py
 tests/test_expert_call.py
 tests/test_historical_events.py
 tests/test_langgraph_pipeline.py
 tests/test_memory_pricing_monitor.py
 tests/test_pm_agent_langchain.py
+tests/test_request_update.py
 tests/test_stock_prices.py

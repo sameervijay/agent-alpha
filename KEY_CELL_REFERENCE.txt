@@ -1,0 +1,310 @@
+================================================================================
+QUICK REFERENCE: KEY DCF CELLS BY COMPANY
+================================================================================
+Date: February 17, 2026
+Purpose: Fast lookup for cell locations in analyst models
+
+================================================================================
+1. REVENUE & GROWTH
+================================================================================
+
+METRIC                          | TSMC       | CoreWeave  | ASML
+--------------------------------|------------|------------|----------
+Total Revenue (mm)              | Row 25     | Row 7      | Row 41
+Y/Y Revenue Growth (%)          | Row 28     | Row 10     | Row 51
+Q/Q Revenue Growth (%)          | Row 27     | Row 9      | N/A
+
+Revenue Segments                | Row 7-22   | N/A        | Row 7-40
+  - Smartphone/Segment 1        | Row 7      | N/A        | (product mix)
+  - HPC/Segment 2               | Row 10     | N/A        | (product mix)
+  - IoT/Segment 3               | Row 13     | N/A        | (product mix)
+  - Automotive/Segment 4        | Row 16     | N/A        | (product mix)
+  - Digital Consumer/Segment 5  | Row 19     | N/A        | (product mix)
+
+Segment Growth (Y/Y %)
+  - Segment 1                   | Row 9      | N/A        | N/A
+  - Segment 2                   | Row 12     | N/A        | N/A
+  - Segment 3                   | Row 15     | N/A        | N/A
+  - Segment 4                   | Row 18     | N/A        | N/A
+  - Segment 5                   | Row 21     | N/A        | N/A
+
+KEY COLUMN REFERENCE (For FY2025+):
+  FY2025 Annual    : TSMC/ASML Col L  | CoreWeave Col S
+  FY2026 Annual    : TSMC/ASML Col Q  | CoreWeave Col X
+  FY2027 Annual    : TSMC/ASML Col V  | CoreWeave Col AC
+  FY2028 Annual    : TSMC/ASML Col AA | CoreWeave Col AH
+
+
+================================================================================
+2. PROFITABILITY METRICS
+================================================================================
+
+METRIC                          | TSMC       | CoreWeave     | ASML
+--------------------------------|------------|---------------|----------
+Gross Profit (mm)               | Row 36     | Row 42 (GAAP) | Row 72
+Gross Margin (%)                | Row 38     | Row 44 (GAAP) | Row 74
+Y/Y GM Improvement (bps)        | Row 40     | Row 45        | Row 76
+
+R&D Expense (mm)                | Row 42     | Row 57 (GAAP) | Row 78
+R&D Margin (%)                  | Row 44     | Row 59 (GAAP) | Row 80
+Y/Y R&D Margin Improvement (bps)| Row 45     | Row 60        | Row 81
+
+SG&A Margin (%)                 | Row 49-55* | Row 87 (GAAP) | Row 85
+  (* G&A row 49, S&M row 54)
+Y/Y SG&A Margin Improvement     | Row 50, 55 | Row 88        | Row 86
+
+Operating Income / EBIT (mm)    | Row 59     | Row 99 (GAAP) | Row 89
+EBIT Margin (%)                 | Row 61     | Row 101       | Row 92
+Y/Y EBIT Margin Improvement     | Row 62     | Row 102       | Row 94
+
+EBITDA (mm)                     | Calc*      | Row 12 (Non-G)| Row 98
+EBITDA Margin (%)               | Calc*      | Row 15        | Row 100
+  *TSMC: EBIT + D&A (Row 59 + Row 72)
+
+Net Income (mm)                 | Row 82     | Row 26 (Non-G)| N/A (search)
+
+IMPORTANT NOTES:
+  - CoreWeave: Use GAAP metrics (rows 44, 59, 87, 99) for DCF
+  - CoreWeave: Reports Non-GAAP separately (rows 53, 68, 104, 113)
+  - TSMC/ASML: All metrics use consistent GAAP basis
+
+
+================================================================================
+3. CASH FLOW ITEMS
+================================================================================
+
+METRIC                          | TSMC       | CoreWeave  | ASML
+--------------------------------|------------|------------|----------
+Depreciation (mm)               | Row 72     | Row 127    | Row 107
+Amortization (mm)               | Row 76     | Row 128    | Row 111
+Total D&A (mm)                  | Row 72*    | Row 129    | Row 113
+  *TSMC: Use Row 72 for D&A
+
+D&A as % of Revenue             | Calc*      | Row 127-129| Calc*
+  *Divide D&A / Revenue
+
+
+Stock-Based Compensation (SBC)  | Embedded   | Row 62     | Row 251
+Impacting Margins:
+  - CoreWeave COGS SBC          | N/A        | Row 48     | N/A
+  - CoreWeave R&D SBC           | N/A        | Row 63     | N/A
+  - CoreWeave S&M SBC           | N/A        | Row 77     | N/A
+
+
+CapEx (Capital Expenditure)
+  - Amount (mm or bn)           | Row 86 (bn)| Row 216    | N/A*
+  - CapEx % of Revenue          | Calc       | Calc       | N/A*
+  *ASML: Search "capital" or "capex" in model
+
+
+Free Cash Flow (mm)             | N/A        | Row 182    | N/A
+LTM FCF Margin (%)              | N/A        | Row 186    | N/A
+
+
+Working Capital Items (Search):
+  - Accounts Receivable (AR)    | Search     | Search     | Search
+  - Inventory                   | Search     | Search     | Search
+  - Accounts Payable (AP)       | Search     | Search     | Search
+  - Net Working Capital (NWC)   | Search     | Search     | Search
+
+  USE APPROXIMATION: NWC = 10% of Revenue (typical for tech)
+
+
+================================================================================
+4. SHARES OUTSTANDING & VALUATION
+================================================================================
+
+METRIC                          | TSMC       | CoreWeave     | ASML
+--------------------------------|------------|---------------|----------
+EPS - Diluted (WAD, USD/share)  | Row 83     | Row 31 (Non-G) | Search
+  To Calculate Shares:
+    Shares = Net Income / EPS
+
+EPS - ADR Basis                 | Row 84     | N/A           | N/A
+
+Stock Price (Override)          | Front Page | Front Page    | Front Page
+  Formula: ='Front Page'!H20 (typical location)
+
+
+================================================================================
+5. COLUMN STRUCTURE FOR PROJECTIONS
+================================================================================
+
+STANDARD PATTERN (TSMC & ASML - 81 columns):
+
+  Col C-G:  Historical years (FY2009-FY2013 era)
+  Col H-K:  Recent quarters (Q1-Q4 of a recent FY)
+  Col L:    Full year anchor
+  Col M-P:  Next quarters (Q1-Q4)
+  Col Q:    Full year
+  Col R-U:  Quarters
+  Col V:    Full year
+  ...continuing this pattern through Col AW
+
+  KEY FORECAST COLUMNS:
+    L = FY2025 full year
+    Q = FY2026 full year
+    V = FY2027 full year
+    AA = FY2028 full year
+    AF = FY2029 full year
+    AK = FY2030 full year
+
+
+COMPRESSED PATTERN (CoreWeave - 48 columns):
+
+  Col C-N:  Historical years (FY2019-FY2024 era)
+  Col O-R:  Recent quarters (Q1-Q4)
+  Col S:    FY2025 full year
+  Col T-W:  Q1-Q4 2026
+  Col X:    FY2026 full year
+  Col Y-AB: Q1-Q4 2027
+  Col AC:   FY2027 full year
+  Col AD-AG: Q1-Q4 2028
+  Col AH:   FY2028 full year
+
+
+================================================================================
+6. PERIOD LABELS (Row 5)
+================================================================================
+
+How to identify columns dynamically:
+  1. Read Row 5 for all columns
+  2. Search for text patterns:
+     - "FY2025", "FY2026", etc. → Annual columns
+     - "Q1-26", "Q2-26", etc. → Quarterly columns
+     - "2025" or "2026" → Year identifier
+  3. Map column letters to period labels
+  4. Use in Python with openpyxl: ws.cell(5, col_idx).value
+
+
+Example mapping function:
+  def get_column_for_period(ws, target_period):
+      """
+      target_period = "FY2025" or "Q1-26"
+      returns column letter: "L" or "H"
+      """
+      for col_idx in range(3, ws.max_column + 1):
+          label = ws.cell(5, col_idx).value
+          if label and str(target_period) in str(label):
+              return get_column_letter(col_idx)
+      return None
+
+
+================================================================================
+7. MARGIN IMPROVEMENT DRIVERS (FOR PM AGENT)
+================================================================================
+
+Each margin drives as basis points (bps) change from baseline.
+
+Cumulative Effect:
+  Margin (%) = Baseline Margin + Y/Y Improvement (bps) / 10000
+
+Example:
+  Gross Margin FY2025: 50%
+  Y/Y Improvement: 200 bps
+  Gross Margin FY2026: 50% + (200 / 10000) = 50% + 0.02 = 50.2%
+
+
+KEY MARGIN ROWS FOR IMPROVEMENT:
+
+  TSMC:
+    - Gross Margin bps: Row 40
+    - R&D Margin bps: Row 45
+    - G&A Margin bps: Row 50
+    - S&M Margin bps: Row 55
+    - EBIT Margin bps: Row 62
+
+  CoreWeave:
+    - Gross Margin bps: Row 45
+    - R&D Margin bps: Row 60
+    - S&M Margin bps: Row 74
+    - G&A Margin bps: Row 88
+    - Op Inc Margin bps: Row 102
+
+  ASML:
+    - Gross Margin bps: Row 76
+    - R&D Margin bps: Row 81
+    - SG&A Margin bps: Row 86
+    - EBIT Margin bps: Row 94
+
+
+================================================================================
+8. USAGE EXAMPLES FOR DCF ENGINE
+================================================================================
+
+Example 1: Extract FY2026 Total Revenue (TSMC)
+  column = "Q"  # FY2026 annual column for TSMC
+  revenue_row = 25
+  fy2026_revenue = ws[f"{column}{revenue_row}"].value
+
+Example 2: Extract Gross Margin for Q1 2026 (CoreWeave)
+  column = "T"  # Q1-2026 column for CoreWeave
+  margin_row = 44  # GAAP Gross Margin
+  q1_2026_margin = ws[f"{column}{margin_row}"].value
+
+Example 3: Calculate EBITDA from EBIT + D&A (ASML)
+  ebit_row = 89
+  da_row = 113
+  ebit_col = "Q"  # FY2026
+  ebitda = ws[f"{ebit_col}{ebit_row}"].value + ws[f"{ebit_col}{da_row}"].value
+
+Example 4: Dynamic Period Mapping
+  # Read header to find FY2026 column
+  for col_idx in range(3, 82):
+      label = ws.cell(5, col_idx).value
+      if "FY2026" in str(label):
+          fy2026_col = get_column_letter(col_idx)
+          break
+
+  revenue_fy2026 = ws[f"{fy2026_col}25"].value  # Row 25 = Total Revenue
+
+
+================================================================================
+9. FILE PATHS
+================================================================================
+
+TSMC:
+  /Users/matthewwolfman/Documents/CS372_Assignment3/agent-alpha/financial_models/Taiwan Semiconductor Manufacturing Company TSM US.xlsx
+
+CoreWeave:
+  /Users/matthewwolfman/Documents/CS372_Assignment3/agent-alpha/financial_models/CoreWeave CRWV US.xlsx
+
+ASML:
+  /Users/matthewwolfman/Documents/CS372_Assignment3/agent-alpha/financial_models/ASML Holding ASML NA.xlsx
+
+
+================================================================================
+10. VALIDATION CHECKS
+================================================================================
+
+Before using extracted data, validate:
+
+1. Revenue Integrity:
+   - Total Revenue (Row 25/7/41) = Sum of segments (if applicable)
+   - Growth rates are reasonable (typically -10% to +50% for hardware)
+
+2. Margin Integrity:
+   - Gross Margin < 100% and > 0%
+   - EBIT Margin < Gross Margin (because of OpEx)
+   - Margin % values should be in range [0, 100]
+
+3. D&A Integrity:
+   - D&A / Revenue typically 5-15% for capital-intensive hardware
+   - D&A should be positive
+   - Total D&A = Depreciation + Amortization (if separate rows exist)
+
+4. CapEx Integrity:
+   - CapEx / Revenue typically 10-30% for hardware companies
+   - CapEx should be positive
+   - CapEx in billions should be converted to millions
+
+5. Period Consistency:
+   - All columns in Row 4 should have dates
+   - All columns in Row 5 should have period labels
+   - Period sequence should be chronological
+
+
+================================================================================
+Last Updated: 2026-02-17
+Next Review: When analyst models are updated (typically quarterly)
+================================================================================
