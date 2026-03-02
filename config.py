@@ -134,3 +134,10 @@ DEFAULT_WACC_RANGE_BPS = 200
 DEFAULT_WACC_STEP_BPS = 50
 UPSIDE_THRESHOLD = 0.15  # 15% upside for BUY signal
 MAX_POSITION_WEIGHT = 0.30  # 30% max per name
+
+# ── Debate Gate ─────────────────────────────────────────────
+# Debate rounds only fire when analysts genuinely disagree.
+# Gate metric: mean absolute deviation (MAD) of short_term_event_conviction
+# across all analyst briefs. If MAD < threshold, analysts broadly agree on
+# the event's near-term direction and debate would just add noise.
+DEBATE_DISAGREEMENT_THRESHOLD = 0.12  # ~12pp avg spread triggers debate

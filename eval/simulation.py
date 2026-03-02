@@ -106,6 +106,153 @@ EVENTS: list[dict] = [
         "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
         "exclude_tickers": ["CRWV"],
     },
+    # ── 7 additional events ────────────────────────────────────────────────────
+    {
+        "id": "nvda_q4fy23_first_ai_signal",
+        "name": "NVIDIA Q4 FY2023 — First ChatGPT/AI Demand Signal",
+        "event_date": "2023-02-23",
+        "description": (
+            "NVIDIA reports Q4 FY2023 (January quarter) after close on Feb 22, 2023: "
+            "revenue $6.05B in-line but Q1 FY2024 guidance of $6.5B ± 2% versus $6.35B consensus. "
+            "CEO Jensen Huang explicitly cites 'accelerating demand for AI and ChatGPT-like applications' "
+            "as a new datacenter demand driver — the first such language on an NVDA earnings call. "
+            "Data center revenue $3.62B, gaming still de-stocking but recovering. "
+            "NVIDIA stock surges 13% on Feb 23 open as the market begins pricing in an AI infrastructure "
+            "buildout: TSMC as sole H100 manufacturer, ASML EUV on the critical path, CDNS EDA tools "
+            "essential for hyperscaler AI ASIC programs. This is the inflection-point print before "
+            "the Q2 FY2024 blowout — a smaller but directionally clean beat-and-raise."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "tsmc_capex_cut_2022",
+        "name": "TSMC Q3 2022 Earnings — Capex Cut Signals Equipment Downturn",
+        "event_date": "2022-10-13",
+        "description": (
+            "TSMC reports Q3 2022 earnings: revenue NT$613B (+35.9% YoY), beats consensus, "
+            "but sharply cuts full-year 2022 capex guidance to ~$36B from prior $40-44B range — "
+            "the first capex reduction since 2019. Management cites weakening smartphone/PC demand, "
+            "elevated customer inventory, and desire to preserve cash amid demand uncertainty. "
+            "N3 (3nm) ramp on track but N2 timeline pushed. "
+            "ASML is the direct casualty: EUV tool deliveries likely to be deferred into 2023-2024, "
+            "threatening ASML booking momentum. CDNS faces lower near-term tape-out volume as "
+            "foundry utilization drops below 90%. NVIDIA not directly impacted (data center demand "
+            "still robust from hyperscalers) but the capex discipline narrative raises concern about "
+            "AI accelerator supply if discipline persists into 2023. Intel also cutting orders, "
+            "compounding ASML booking headwinds. Semi equipment stocks broadly re-rate lower."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "us_china_chip_controls_oct23",
+        "name": "BIS Expands AI Chip Export Controls — A800/H800 Banned",
+        "event_date": "2023-10-17",
+        "description": (
+            "US Bureau of Industry and Security (BIS) announces expanded semiconductor export "
+            "controls effective immediately: NVIDIA A800 and H800 — chips specifically designed to "
+            "comply with prior August 2022 restrictions — are now banned for export to China. "
+            "New performance density thresholds close the loophole that allowed NVDA to sell "
+            "China-specific variants. NVIDIA China revenue estimated at $2.0-2.5B annually is "
+            "now at acute risk. Huawei Ascend 910B positioned as domestic Chinese alternative. "
+            "TSMC manufacturing of advanced node chips for Chinese AI firms faces heightened scrutiny. "
+            "ASML's EUV tools already cannot export to China; additional DUV restrictions discussed. "
+            "CDNS EDA software licenses to Chinese chip firms also under compliance review. "
+            "NVIDIA stock drops 4-5% on the announcement. The market debates whether China revenue "
+            "loss is already priced in versus the signal of escalating US-China technology decoupling."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "tsmc_q3_2023_soft_guide",
+        "name": "TSMC Q3 2023 Earnings — Revenue Decline, Cautious 2024 Capex",
+        "event_date": "2023-10-19",
+        "description": (
+            "TSMC reports Q3 2023: revenue NT$546.7B, down 10.8% YoY — steepest annual decline "
+            "in over a decade, driven by smartphone/PC inventory digestion. Gross margin 54.3%, "
+            "down from 59.8% a year ago due to lower utilization rates. Q4 2023 guidance of "
+            "$18.8-19.6B (USD) roughly in-line but cautious. Full-year 2023 capex guided to "
+            "'slightly below' $32B (prior guidance $32-36B). Management: N3 ramp proceeding, "
+            "N2 (2nm) delayed to H2 2025. HPC segment (AI/datacenter) now 42% of revenue and "
+            "sole growth driver; smartphone 35%. ASML read-through: TSMC capex discipline means "
+            "EUV orders back-loaded into 2024; near-term order visibility worsens. NVIDIA H100 "
+            "supply on N3 on track but capacity for B100 Blackwell (2025) still unconfirmed. "
+            "CDNS: chiplet designs and 3D-IC proliferating, supporting EDA tool demand despite "
+            "lower tape-out volumes. Overall a cautious print that challenges the AI-drives-all "
+            "capex narrative."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvda_q1fy25_blackwell_reveal",
+        "name": "NVIDIA Q1 FY2025 Earnings + Blackwell Architecture Reveal",
+        "event_date": "2024-05-23",
+        "description": (
+            "NVIDIA reports Q1 FY2025 (April quarter) after close on May 22, 2024: revenue "
+            "$26.04B vs $24.59B consensus (+262% YoY), data center $22.6B vs $21.1B consensus — "
+            "the highest single-quarter data center revenue in semiconductor history at the time. "
+            "Q2 FY2025 guidance of $28.0B ± 2% vs $26.6B consensus. Gross margin 78.9% vs 77.1% "
+            "consensus. $10B share buyback authorized. Blackwell GPU architecture confirmed: "
+            "B100/B200 GPUs deliver 4x training and 30x inference speedup over H100, with "
+            "production ramp beginning Q2 2024. CoWoS advanced packaging demand at TSMC set to "
+            "double in 2024. ASML EUV tools required for B100 at TSMC N4P — order books extending "
+            "into 2025. CDNS EDA tools essential for Blackwell chiplet architecture design. "
+            "NVIDIA stock surges 10% on May 23. CoreWeave (pre-IPO) GPU contract utilization near 100%."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvda_q3fy25_margin_concern",
+        "name": "NVIDIA Q3 FY2025 Earnings — Revenue Beat, Gross Margin Miss",
+        "event_date": "2024-11-21",
+        "description": (
+            "NVIDIA reports Q3 FY2025 (October quarter) after close on Nov 20, 2024: revenue "
+            "$35.08B vs $33.17B consensus (+94% YoY), data center $30.8B — beats on revenue. "
+            "However, gross margin 74.6% misses the 75.0% guidance midpoint and 75.1% consensus, "
+            "driven by Blackwell GPU manufacturing complexity and CoWoS packaging costs at TSMC. "
+            "Q4 FY2025 guidance of $37.5B ± 2% vs $37.1B consensus — a small beat. CFO warns "
+            "Blackwell supply will remain 'tight' through Q1 FY2026 due to CoWoS constraints. "
+            "NVIDIA stock falls 3% after hours then partially recovers. Market concern: compressed "
+            "Blackwell gross margins may be structural rather than transient. TSMC CoWoS capacity "
+            "is the binding constraint. ASML EUV demand robust as Blackwell uses N4P. "
+            "CDNS: Blackwell chiplet complexity drives EDA tool spending. "
+            "CoreWeave (pre-IPO): Blackwell allocation highly sought; tight supply limits expansion plans."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "liberation_day_tariffs",
+        "name": "Liberation Day Tariffs — Semiconductor Supply Chain Shock",
+        "event_date": "2025-04-03",
+        "description": (
+            "President Trump announces 'Liberation Day' tariffs after market close on April 2, 2025: "
+            "10% baseline tariff on all imports, 145% tariff on Chinese goods, 32% tariff on Taiwan "
+            "(subsequently paused for 90 days). Semiconductors initially exempted from highest tiers "
+            "but face 10% baseline plus uncertainty. Markets open sharply lower on April 3: "
+            "NVDA -7%, TSM -8%, ASML -5%, CDNS -4%. "
+            "Key concerns: TSMC Arizona fab economics worsen if Taiwan tariffs resume; "
+            "NVIDIA China revenue already restricted but supply chain costs rise; "
+            "ASML has globally distributed supply chain (German optics, Dutch assembly) — "
+            "system costs rise with each tariff layer; "
+            "CDNS software licensing is largely tariff-immune but hardware acceleration impacted; "
+            "CoreWeave GPU import costs could increase if NVIDIA passes through tariff pressure. "
+            "The tariff shock resets near-term capex expectations across the semiconductor supply chain."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV post-IPO (IPO March 28 2025) — included",
+        "exclude_tickers": [],
+    },
 ]
 
 HOLDING_DAYS = [5, 10, 20]
