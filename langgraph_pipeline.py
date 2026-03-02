@@ -13,11 +13,14 @@ from __future__ import annotations
 
 import json
 import operator
+import re
+import time
 from typing import Annotated, Any, Optional, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
 import config
+from tools import slack_notifier
 from agents_langchain.base import clear_session_cache, extract_json, get_final_message
 from agents_langchain.commodities_agent import CommoditiesAgent
 from agents_langchain.company_analyst_agent import CompanyAnalystAgent
@@ -38,12 +41,54 @@ DOMAIN_AGENT_NAMES = (
     "tech_publications_agent",
 )
 
+# ── Rate-limit retry ───────────────────────────────────────────────────────────
+_RETRY_AFTER_RE = re.compile(r'try again in (\d+(?:\.\d+)?)\s*(ms|s)', re.IGNORECASE)
+
+
+def _parse_retry_after(err_str: str, default: float = 65.0) -> float:
+    """Parse the 'retry after X s/ms' hint from an OpenAI 429 error string.
+
+    Returns seconds to wait, with a 10-second safety buffer added on top, and
+    a minimum floor of 20 seconds so concurrent sibling agents have a chance to
+    finish their own in-flight requests before we retry.
+    """
+    m = _RETRY_AFTER_RE.search(err_str)
+    if not m:
+        return default
+    value, unit = float(m.group(1)), m.group(2).lower()
+    seconds = value / 1000.0 if unit == "ms" else value
+    return max(seconds + 10.0, 20.0)
+
+
+def _invoke_with_rate_retry(fn, label: str, max_retries: int = 3):
+    """Call fn(); on 429 rate-limit errors parse Retry-After, sleep, and retry.
+
+    Any non-429 exception is re-raised immediately.
+    After exhausting retries the last exception is re-raised so callers can log it.
+    """
+    last_exc: Exception | None = None
+    for attempt in range(max_retries + 1):
+        try:
+            return fn()
+        except Exception as exc:
+            last_exc = exc
+            err = str(exc)
+            if "429" in err:
+                wait_s = _parse_retry_after(err)
+                print(f"  [rate_limit] {label} — 429, waiting {wait_s:.0f}s "
+                      f"(attempt {attempt + 1}/{max_retries + 1})...")
+                time.sleep(wait_s)
+            else:
+                raise
+    raise last_exc  # type: ignore[misc]
+
 
 class PipelineState(TypedDict, total=False):
     # Inputs
     event: str
     lookback_hours: int
     budget: float
+    debate_rounds: int  # 0=one-shot, N=N cross-analyst challenge rounds
     # Detection phase (parallel fan-out reducers)
     domain_outputs: Annotated[list[dict[str, Any]], operator.add]
     errors: Annotated[list[str], operator.add]
@@ -105,7 +150,10 @@ def _run_domain_detector(agent: Any, agent_name: str, state: PipelineState) -> P
     lookback = int(state.get("lookback_hours") or 1)
     print("  [%s] Scanning last %s hour(s) for relevant changes..." % (agent_name, lookback))
     try:
-        events = agent.detect_events(_domain_prompt_context(state)) or []
+        events = _invoke_with_rate_retry(
+            lambda: agent.detect_events(_domain_prompt_context(state)),
+            agent_name,
+        ) or []
         serialised = [e for e in (_safe_event_to_dict(ev) for ev in events) if e]
         headlines = [e.get("headline", "")[:60] for e in serialised[:5]]
         if serialised:
@@ -168,10 +216,34 @@ def _merge_and_route_events(state: PipelineState) -> PipelineState:
 
     routed = " | ".join("%s: %d" % (t, len(company_event_map[t])) for t in COMPANY_TICKERS)
     print("  [merge] → %d unique events; routed by company: %s" % (len(merged_events), routed))
+
+    # Post scout results to Slack: per-agent event headlines + routing
+    scout_lines = []
+    for domain_output in state.get("domain_outputs", []):
+        agent_name = domain_output.get("agent", "?").replace("_agent", "")
+        evts = domain_output.get("events", [])
+        if evts:
+            headlines = "; ".join((e.get("headline") or "")[:55] for e in evts[:3])
+            tickers_hit = sorted({t for e in evts for t in e.get("affected_companies", []) if t in COMPANY_TICKERS})
+            scout_lines.append(f"• *{agent_name}* ({len(evts)} events → {', '.join(tickers_hit) or 'none'}): _{headlines}_")
+        else:
+            scout_lines.append(f"• *{agent_name}*: no material changes")
+    routing_summary = "  ".join(f"{t}:{len(company_event_map[t])}" for t in COMPANY_TICKERS)
+    slack_notifier.post(
+        f"*Domain Scouts — {len(merged_events)} unique events routed*\n"
+        + "\n".join(scout_lines)
+        + f"\n\n`{routing_summary}`"
+    )
+
     return {"merged_events": merged_events, "company_event_map": company_event_map}
 
 
 def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
+    # Stagger analyst LLM calls to stay under 30k TPM cap (~3-4k tokens each, 5 parallel agents)
+    stagger_s = COMPANY_TICKERS.index(ticker) * 15
+    if stagger_s:
+        time.sleep(stagger_s)
+
     budget = float(state.get("budget") or 1000.0)
     company_events = state.get("company_event_map", {}).get(ticker, [])
     print("  [analyst_%s] Analyzing %d routed event(s); forming DCF-grounded thesis..." % (ticker, len(company_events)))
@@ -210,7 +282,10 @@ def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
         "  thesis (2-4 sentences grounded in the DCF model and events),\n"
         "  key_drivers (list of strings),\n"
         "  key_risks (list of strings),\n"
-        "  conviction (0.0-1.0),\n"
+        "  conviction (0.0-1.0 — long-term fundamental conviction),\n"
+        "  short_term_event_conviction (0.0-1.0 — how confident are you this event "
+        "creates a near-term price opportunity in the NEXT 2-4 WEEKS, independent of long-term DCF value),\n"
+        "  recovery_thesis (1 sentence on expected price direction over next 2-4 weeks given the event),\n"
         f"  recommended_dollars (0-{budget}),\n"
         "  recommended_weight (0.0-1.0),\n"
         "  challenge_to_others (1-2 sentences),\n"
@@ -222,13 +297,26 @@ def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
     )
 
     try:
-        result = analyst._agent.invoke({"messages": [{"role": "user", "content": goal}]})
+        result = _invoke_with_rate_retry(
+            lambda: analyst._agent.invoke({"messages": [{"role": "user", "content": goal}]}),
+            f"analyst_{ticker}",
+        )
         brief = extract_json(get_final_message(result))
         brief["ticker"] = ticker
         conv = brief.get("conviction", 0)
+        st_conv = brief.get("short_term_event_conviction", 0)
         rec_d = brief.get("recommended_dollars", 0)
         thesis_preview = (brief.get("thesis") or "")[:80]
-        print("  [analyst_%s] → conviction=%.2f, recommended=$%.0f | %s" % (ticker, conv, rec_d, thesis_preview + ("..." if len(brief.get("thesis") or "") > 80 else "")))
+        recovery = (brief.get("recovery_thesis") or "")[:100]
+        print("  [analyst_%s] → conviction=%.2f, st_event_conv=%.2f, recommended=$%.0f | %s" % (
+            ticker, conv, st_conv, rec_d,
+            thesis_preview + ("..." if len(brief.get("thesis") or "") > 80 else ""),
+        ))
+        slack_notifier.post(
+            f"*[Analyst: {ticker}]* conviction={conv:.0%}, event_conv={st_conv:.0%}, recommended=${rec_d:.0f}\n"
+            f"_{brief.get('thesis', '')[:200]}_\n"
+            f"Near-term: _{recovery}_"
+        )
         return {"company_briefs_raw": [brief]}
     except Exception as exc:
         print("  [analyst_%s] → ERROR: %s" % (ticker, exc))
@@ -266,6 +354,235 @@ def _analyze_tsm(state: PipelineState) -> PipelineState:
 
 def _analyze_asml(state: PipelineState) -> PipelineState:
     return _analyze_company("ASML", state)
+
+
+# Map of names an analyst can use when requesting scout intel
+_SCOUT_AGENT_MAP = {
+    "commodities": CommoditiesAgent,
+    "commodities_agent": CommoditiesAgent,
+    "macro": MacroAgent,
+    "macro_agent": MacroAgent,
+    "politics": PoliticsAgent,
+    "politics_agent": PoliticsAgent,
+    "stock_market": StockMarketAgent,
+    "stock_market_agent": StockMarketAgent,
+    "tech_publications": TechPublicationsAgent,
+    "tech_publications_agent": TechPublicationsAgent,
+    "tech": TechPublicationsAgent,
+}
+
+
+def _execute_info_requests(
+    info_requests: list[dict[str, Any]],
+) -> dict[str, list[str]]:
+    """Execute analyst intel requests against live domain scouts.
+
+    Args:
+        info_requests: list of {requester, domain_agent, question}
+
+    Returns:
+        {requester_ticker: [formatted_response_strings]}
+    """
+    responses: dict[str, list[str]] = {}
+    for req in info_requests:
+        requester = req.get("requester", "?")
+        domain = (req.get("domain_agent") or "").lower().strip()
+        question = (req.get("question") or "").strip()
+        if not domain or not question:
+            continue
+        agent_cls = _SCOUT_AGENT_MAP.get(domain)
+        if not agent_cls:
+            print(f"  [intel_req] Unknown domain '{domain}' requested by {requester} — skipping")
+            continue
+        print(f"  [intel_req] {requester} → {domain}: {question[:80]}...")
+        slack_notifier.post(f"_:mag: {requester} requests intel from *{domain}*: {question[:200]}_")
+        try:
+            agent = agent_cls()
+            events = _invoke_with_rate_retry(
+                lambda: agent.detect_events(question),
+                f"intel_{domain}",
+            ) or []
+            if events:
+                lines = []
+                for ev in events[:4]:
+                    d = ev.to_dict() if hasattr(ev, "to_dict") else (ev if isinstance(ev, dict) else {})
+                    lines.append(f"  • {d.get('headline', str(ev))[:120]}")
+                intel_text = f"[{domain}] {len(events)} finding(s):\n" + "\n".join(lines)
+            else:
+                intel_text = f"[{domain}] No new findings for: {question[:100]}"
+            responses.setdefault(requester, []).append(intel_text)
+            slack_notifier.post(f"*Scout response to {requester} ({domain}):*\n```\n{intel_text[:600]}\n```")
+        except Exception as exc:
+            print(f"  [intel_req] {domain} failed: {exc}")
+    return responses
+
+
+def _run_challenge_round(
+    round_num: int,
+    briefs: list[dict[str, Any]],
+    prior_challenges: list[dict[str, Any]],
+    budget: float,
+    scout_intel: dict[str, list[str]] | None = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Two-pass debate round: challenge pass then forced response pass.
+
+    Pass 1 — each analyst generates outgoing challenges to peers.
+    Pass 2 — each analyst sees ONLY the challenges directed at them and must
+              respond directly: either update conviction by ≥5pp or provide a
+              specific quantitative rebuttal. No vague "I disagree."
+
+    Returns:
+        (challenges + responses, raw_info_requests)
+    """
+    challenges: list[dict[str, Any]] = []
+    raw_info_requests: list[dict[str, Any]] = []
+
+    # ── Pass 1: outgoing challenges ──────────────────────────────────────────
+    for brief in briefs:
+        ticker = brief.get("ticker", "?")
+        other_briefs = [b for b in briefs if b.get("ticker") != ticker]
+        prior_to_me = [c for c in prior_challenges if any(
+            ch.get("target_ticker") == ticker for ch in c.get("challenges", [])
+        )]
+
+        goal = (
+            f"You are the {ticker} analyst. This is debate round {round_num}, challenge pass.\n\n"
+            f"YOUR CURRENT POSITION:\n{json.dumps(brief, indent=2, default=str)}\n\n"
+            f"OTHER ANALYSTS' POSITIONS:\n{json.dumps(other_briefs, indent=2, default=str)}\n\n"
+        )
+        if prior_to_me:
+            goal += f"CHALLENGES DIRECTED AT YOU IN PRIOR ROUNDS:\n{json.dumps(prior_to_me, indent=2, default=str)}\n\n"
+        if scout_intel and scout_intel.get(ticker):
+            intel_block = "\n".join(scout_intel[ticker])
+            goal += f"ADDITIONAL INTELLIGENCE (from your prior-round scout requests):\n{intel_block}\n\n"
+
+        # Position floor: prevent zeroing out any name with meaningful event conviction
+        floor_note = (
+            "POSITION FLOOR RULE: Do not recommend $0 for any company whose "
+            "short_term_event_conviction > 0.5 — even fundamentally challenged names deserve "
+            "a small position when they have near-term event momentum.\n"
+        )
+        goal += (
+            "Task: Challenge the analyst(s) whose thesis you most disagree with. "
+            "Reference specific claims. For each analyst you challenge, you MUST also state ONE "
+            "reason their near-term bull case might be correct (steel-man).\n"
+            f"{floor_note}"
+            "If you need specific data to strengthen or refute a claim, request it from a domain scout.\n\n"
+            "Return ONLY JSON with:\n"
+            "  challenger (your ticker string),\n"
+            "  challenges (list of {target_ticker, point_of_contention, your_counter_evidence, "
+            "steel_man: one sentence on why their near-term bull case might still be right}),\n"
+            "  updated_conviction (0.0-1.0),\n"
+            "  updated_short_term_event_conviction (0.0-1.0 — revised near-term view after this round),\n"
+            f"  updated_recommended_dollars (0-{budget:.0f}),\n"
+            "  updated_thesis (1-2 sentences),\n"
+            "  information_requests (list of {domain_agent: one of [commodities, macro, politics, "
+            "stock_market, tech_publications], question: specific data question} — "
+            "optional, max 2, only if truly needed to resolve a disagreement)."
+        )
+        try:
+            analyst = CompanyAnalystAgent(ticker)
+            result = _invoke_with_rate_retry(
+                lambda: analyst._agent.invoke({"messages": [{"role": "user", "content": goal}]}),
+                f"debate_r{round_num}_{ticker}",
+            )
+            challenge = extract_json(get_final_message(result))
+            challenge["challenger"] = ticker
+            challenges.append(challenge)
+            for ch in (challenge.get("challenges") or [])[:2]:
+                target = ch.get("target_ticker", "?")
+                evidence = (ch.get("your_counter_evidence") or ch.get("point_of_contention") or "")[:200]
+                print(f"  [debate_r{round_num}] {ticker} → {target}: {evidence[:80]}...")
+                slack_notifier.post(
+                    f"*Round {round_num} — {ticker} challenges {target}:*\n_{evidence}_"
+                )
+            for req in (challenge.get("information_requests") or [])[:2]:
+                req["requester"] = ticker
+                raw_info_requests.append(req)
+        except Exception as exc:
+            print(f"  [debate_r{round_num}] {ticker} failed: {exc}")
+
+    # ── Pass 2: forced direct responses to incoming challenges ───────────────
+    # Build a map of which challenges are directed at each ticker
+    incoming: dict[str, list[dict]] = {}
+    for ch_block in challenges:
+        challenger = ch_block.get("challenger", "")
+        for ch in (ch_block.get("challenges") or []):
+            target = ch.get("target_ticker", "")
+            if target:
+                incoming.setdefault(target, []).append({
+                    "from": challenger,
+                    "point": ch.get("point_of_contention", ""),
+                    "evidence": ch.get("your_counter_evidence", ""),
+                })
+
+    responses: list[dict[str, Any]] = []
+    for brief in briefs:
+        ticker = brief.get("ticker", "?")
+        directed_at_me = incoming.get(ticker, [])
+        if not directed_at_me:
+            continue  # no challenges to respond to this round
+
+        n_challenges = len(directed_at_me)
+        goal = (
+            f"You are the {ticker} analyst. This is the RESPONSE PASS of debate round {round_num}.\n\n"
+            f"YOUR CURRENT POSITION:\n{json.dumps(brief, indent=2, default=str)}\n\n"
+            f"{n_challenges} analyst(s) have directly challenged your thesis:\n"
+            f"{json.dumps(directed_at_me, indent=2)}\n\n"
+            "Task: Respond to EACH challenge individually.\n"
+            "  - If you find a challenge ≥50% compelling: state exactly what convinced you "
+            "and update your conviction by AT LEAST 5pp in the appropriate direction.\n"
+            "  - If you reject a challenge: provide ONE specific quantitative counterargument "
+            "(a number, a ratio, a consensus estimate) — not a vague 'I disagree'.\n"
+            f"  - If {n_challenges} or more challenges target you and you reject ALL of them, "
+            "you MUST state the single data point that would change your mind.\n"
+            "ALSO: Consider whether the market reaction to this event is overdone. "
+            "High-quality semis frequently rebound 10-20% within 4 weeks of a panic selloff. "
+            "If you believe a name has been oversold, increase its st_event_conviction.\n\n"
+            "Return ONLY JSON with:\n"
+            "  responder (your ticker),\n"
+            "  challenge_responses (list of {challenge_from, agreed: bool, "
+            "reasoning, conviction_delta: float}),\n"
+            "  response_conviction (0.0-1.0 — conviction AFTER processing challenges),\n"
+            "  response_st_event_conviction (0.0-1.0),\n"
+            f"  response_recommended_dollars (0-{budget:.0f}),\n"
+            "  what_would_change_my_mind (1 sentence — the specific data that would shift you)."
+        )
+        try:
+            analyst = CompanyAnalystAgent(ticker)
+            result = _invoke_with_rate_retry(
+                lambda: analyst._agent.invoke({"messages": [{"role": "user", "content": goal}]}),
+                f"resp_r{round_num}_{ticker}",
+            )
+            resp = extract_json(get_final_message(result))
+            resp["responder"] = ticker
+            resp["_pass"] = "response"
+            responses.append(resp)
+
+            old_conv = brief.get("conviction", 0)
+            new_conv = resp.get("response_conviction", old_conv)
+            delta = round(new_conv - old_conv, 2)
+            print(f"  [resp_r{round_num}] {ticker}: conviction {old_conv:.2f} → {new_conv:.2f} "
+                  f"({delta:+.2f}) | {resp.get('what_would_change_my_mind', '')[:60]}")
+            slack_notifier.post(
+                f"*Response pass R{round_num} — {ticker}:* "
+                f"conviction {old_conv:.0%} → {new_conv:.0%} ({delta:+.0%})\n"
+                f"_To change my mind: {resp.get('what_would_change_my_mind', '')[:200]}_"
+            )
+
+            # Apply response updates to the live brief immediately so later
+            # responders in this same pass see the updated state
+            brief["conviction"] = new_conv
+            brief["short_term_event_conviction"] = resp.get(
+                "response_st_event_conviction", brief.get("short_term_event_conviction", 0)
+            )
+            brief["recommended_dollars"] = resp.get(
+                "response_recommended_dollars", brief.get("recommended_dollars", 0)
+            )
+        except Exception as exc:
+            print(f"  [resp_r{round_num}] {ticker} response failed: {exc}")
+
+    return challenges + responses, raw_info_requests
 
 
 def _normalise_allocations(raw_alloc: dict[str, Any], budget: float) -> dict[str, float]:
@@ -337,7 +654,150 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         )
     dcf_block = "\n".join(dcf_summary_lines) if dcf_summary_lines else "(no DCF models available)"
 
+    if dcf_summary_lines:
+        slack_notifier.post("*DCF Valuations (analyst-adjusted):*\n```\n" + "\n".join(
+            f"{t}: adj=${dr.get('adjusted_price', 0):.2f}  mkt=${dr.get('current_price', 0):.2f}  "
+            f"upside={dr.get('upside', 0):+.1%}"
+            for t, dr in dcf_results.items()
+        ) + "\n```")
+
     pm = PMAgent()
+
+    # ── Optional multi-round cross-analyst debate ────────────────
+    debate_rounds = int(state.get("debate_rounds") or 0)
+    all_challenges: list[dict[str, Any]] = []
+    pm_probe: str = ""
+    probe_responses: list[dict[str, Any]] = []
+
+    if debate_rounds > 0:
+        slack_notifier.post(
+            f"*Cross-Analyst Debate — {debate_rounds} challenge round(s) starting*\n"
+            f"_{len(briefs)} analysts will challenge each other's theses_"
+        )
+        scout_intel: dict[str, list[str]] = {}
+        for rn in range(1, debate_rounds + 1):
+            print("  [PM] Running analyst challenge round %d/%d..." % (rn, debate_rounds))
+            slack_notifier.post(f"*── Challenge Round {rn}/{debate_rounds} ──*")
+            round_challenges, info_requests = _run_challenge_round(
+                rn, briefs, all_challenges, budget, scout_intel
+            )
+            all_challenges.extend(round_challenges)
+            # Execute any scout intel requests and feed results into next round
+            if info_requests:
+                print("  [PM] Executing %d scout intel request(s)..." % len(info_requests))
+                scout_intel = _execute_info_requests(info_requests)
+
+        # ── Merge final challenge-round positions back into briefs ──────────────
+        # The PM sees the original analyst briefs; after N rounds analysts may have
+        # revised their conviction and recommended_dollars. Apply those updates so
+        # the PM synthesizes against the most current analyst stances, not stale ones.
+        # Prefer response-pass values (response_*) over challenge-pass values (updated_*)
+        # since response pass is later and reflects absorbed challenges
+        latest_challenge: dict[str, dict] = {}
+        latest_response: dict[str, dict] = {}
+        for ch in all_challenges:
+            if ch.get("_pass") == "response":
+                t = ch.get("responder", "")
+                if t:
+                    latest_response[t] = ch
+            else:
+                t = ch.get("challenger", "")
+                if t:
+                    latest_challenge[t] = ch
+
+        updated_count = 0
+        for brief in briefs:
+            t = brief.get("ticker", "")
+            resp = latest_response.get(t)
+            ch = latest_challenge.get(t)
+            if resp:
+                # Response-pass values take priority — they reflect direct challenge engagement
+                if "response_conviction" in resp:
+                    brief["conviction"] = resp["response_conviction"]
+                if "response_st_event_conviction" in resp:
+                    brief["short_term_event_conviction"] = resp["response_st_event_conviction"]
+                if "response_recommended_dollars" in resp:
+                    brief["recommended_dollars"] = resp["response_recommended_dollars"]
+                updated_count += 1
+            elif ch:
+                if "updated_conviction" in ch:
+                    brief["conviction"] = ch["updated_conviction"]
+                if "updated_short_term_event_conviction" in ch:
+                    brief["short_term_event_conviction"] = ch["updated_short_term_event_conviction"]
+                if "updated_recommended_dollars" in ch:
+                    brief["recommended_dollars"] = ch["updated_recommended_dollars"]
+                if "updated_thesis" in ch:
+                    brief["thesis"] = ch["updated_thesis"]
+                updated_count += 1
+        if updated_count:
+            print(f"  [PM] Applied post-debate position updates for {updated_count} analyst(s).")
+
+        # PM probing question: target mean-reversion and the most-challenged name
+        print("  [PM] Formulating probing question...")
+        most_challenged = {}
+        for ch_block in all_challenges:
+            for ch in (ch_block.get("challenges") or []):
+                t = ch.get("target_ticker", "")
+                if t:
+                    most_challenged[t] = most_challenged.get(t, 0) + 1
+        top_challenged = max(most_challenged, key=most_challenged.get) if most_challenged else "NVDA"
+        pm_probe = pm._pm_invoke(
+            f"The most-challenged company in this debate is {top_challenged} "
+            f"({most_challenged.get(top_challenged, 0)} challenges directed at it).\n\n"
+            "Ask ONE sharp contrarian probing question about whether the market reaction to "
+            f"this event is OVERDONE for {top_challenged}. High-quality semis frequently "
+            "rebound 10-20% within 4 weeks of a panic selloff — force analysts to explicitly "
+            "price the mean-reversion probability.\n\n"
+            f"ANALYST_BRIEFS:\n{json.dumps(briefs, indent=2, default=str)}\n\n"
+            f"CHALLENGE_TRANSCRIPT:\n{json.dumps(all_challenges, indent=2, default=str)}\n\n"
+            "Return JSON with key 'question'."
+        ).get("question", "")
+        if pm_probe:
+            print("  [PM probe] %s" % pm_probe[:100])
+            slack_notifier.post(f"_PM probe: {pm_probe[:400]}_")
+
+        # ── Analysts answer the PM probe ─────────────────────────────────────
+        # Each analyst gets one chance to respond directly to the PM's sharpest
+        # question, allowing the PM to weight final allocation against those answers.
+        probe_responses: list[dict[str, Any]] = []
+        if pm_probe:
+            print("  [PM] Collecting analyst probe responses...")
+            slack_notifier.post("*Analysts respond to PM probe:*")
+            for i, brief in enumerate(briefs):
+                t = brief.get("ticker", "?")
+                if i > 0:
+                    time.sleep(12)  # stagger to avoid TPM spike
+                response_goal = (
+                    f"You are the {t} analyst. The PM has asked the following sharp question:\n\n"
+                    f"QUESTION: {pm_probe}\n\n"
+                    f"YOUR CURRENT POSITION:\n{json.dumps(brief, indent=2, default=str)}\n\n"
+                    "Answer directly and concisely, citing specific data from your DCF model or "
+                    "the events you analyzed. Do NOT deflect — take a clear stance.\n\n"
+                    "Return ONLY JSON with keys:\n"
+                    "  ticker (string),\n"
+                    "  probe_response (2-4 sentences answering the question),\n"
+                    "  position_change ('strengthen' | 'weaken' | 'neutral' — did this probe shift your view?)."
+                )
+                try:
+                    analyst = CompanyAnalystAgent(t)
+                    result = _invoke_with_rate_retry(
+                        lambda: analyst._agent.invoke(
+                            {"messages": [{"role": "user", "content": response_goal}]}
+                        ),
+                        f"probe_resp_{t}",
+                    )
+                    resp = extract_json(get_final_message(result))
+                    resp["ticker"] = t
+                    probe_responses.append(resp)
+                    resp_text = (resp.get("probe_response") or "")[:150]
+                    pos_change = resp.get("position_change", "neutral")
+                    print(f"  [probe_resp_{t}] [{pos_change}] {resp_text}...")
+                    slack_notifier.post(
+                        f"• *{t}* [{pos_change}]: _{resp_text}_"
+                    )
+                except Exception as exc:
+                    print(f"  [probe_resp_{t}] failed: {exc}")
+
     debate_goal = (
         "You are the PM facilitating a cross-company analyst debate and final capital allocation.\n\n"
         f"FIXED_BUDGET_DOLLARS: {budget}\n"
@@ -345,17 +805,35 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         f"RECENT_DOMAIN_EVENTS:\n{json.dumps(merged_events[:15], indent=2, default=str)}\n\n"
         f"COMPANY_ANALYST_BRIEFS:\n{json.dumps(briefs, indent=2, default=str)}\n\n"
         f"DCF VALUATIONS (analyst-adjusted):\n{dcf_block}\n\n"
+    )
+    if all_challenges:
+        debate_goal += (
+            f"DEBATE_TRANSCRIPT ({len(all_challenges)} challenges across "
+            f"{debate_rounds} round(s)):\n{json.dumps(all_challenges, indent=2, default=str)}\n\n"
+        )
+    if pm_probe:
+        debate_goal += f"PM_PROBING_QUESTION: {pm_probe}\n\n"
+    if probe_responses:
+        debate_goal += (
+            f"ANALYST_PROBE_RESPONSES ({len(probe_responses)} analysts answered):\n"
+            f"{json.dumps(probe_responses, indent=2, default=str)}\n\n"
+        )
+    debate_goal += (
         "Task:\n"
         "1) Summarize key agreements/disagreements across analysts.\n"
-        "2) Challenge weak claims and identify highest-conviction opportunities.\n"
-        "3) Use the DCF-implied upside to weight your allocation — "
-        "companies with larger DCF upside AND high analyst conviction should receive more capital.\n"
+        "2) Identify the companies with the highest short_term_event_conviction — "
+        "these are your primary allocation targets for this event-driven portfolio.\n"
+        "3) Weight allocation primarily by short_term_event_conviction × conviction. "
+        "Favor CONCENTRATION in the top 1-2 names with the strongest event-driven signal; "
+        "do NOT spread evenly just to diversify — event-driven portfolios should be decisive. "
+        "Use DCF upside only as a secondary risk filter: if a company has deeply negative DCF upside "
+        "(<-30%) AND low event conviction, trim modestly, but never zero out based on valuation alone.\n"
         "4) Allocate the FULL fixed budget across companies.\n\n"
         "Return ONLY JSON with keys:\n"
         "  debate_summary (string),\n"
-        "  rationale (string referencing DCF upside/downside),\n"
+        "  rationale (string referencing event conviction and DCF risk-filter applied),\n"
         "  risk_notes (list of strings),\n"
-        "  dcf_informed_rankings (list of {ticker, upside, conviction, rationale}),\n"
+        "  event_conviction_rankings (list of {ticker, short_term_event_conviction, conviction, rationale}),\n"
         "  allocation_dollars (dict ticker->float) including all covered companies."
     )
 
@@ -367,8 +845,24 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
             t: 0.0 for t in COMPANY_TICKERS
         }
         debate_result['dcf_valuations'] = dcf_results
+        debate_result['debate_rounds_run'] = debate_rounds
+        debate_result['challenge_transcript'] = all_challenges
+        debate_result['pre_debate_briefs'] = briefs  # for benchmark comparison
         summary = (debate_result.get("debate_summary") or "")[:120]
         print("  [PM] → allocation done. Debate summary: %s" % (summary + "..." if len(debate_result.get("debate_summary") or "") > 120 else summary))
+
+        # Post PM debate summary
+        slack_notifier.post(
+            f"*PM Debate Summary:*\n_{(debate_result.get('debate_summary') or '')[:400]}_\n\n"
+            f"*Rationale:* {(debate_result.get('rationale') or '')[:300]}"
+        )
+
+        # Post final allocation
+        alloc_lines = "\n".join(
+            f"  {t}: ${v:.0f} ({v / budget:.0%})" for t, v in alloc_dollars.items()
+        )
+        slack_notifier.post(f"*Final Allocation (budget=${budget:.0f}):*\n```\n{alloc_lines}\n```")
+
         return {
             "debate": debate_result,
             "allocation_dollars": alloc_dollars,
@@ -383,7 +877,75 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
 def _finalize(state: PipelineState) -> PipelineState:
     budget = float(state.get("budget") or 1000.0)
     allocation = state.get("allocation_dollars", {})
+    debate = state.get("debate", {})
+    debate_rounds_run = int(debate.get("debate_rounds_run") or 0)
     print("  [finalize] Pipeline complete. Total allocated: $%.2f" % sum(allocation.values()))
+
+    # ── Benchmark: pre-debate vs post-debate allocation comparison ──
+    briefs = debate.get("pre_debate_briefs", state.get("company_briefs_raw", []))
+    dcf_vals = debate.get("dcf_valuations", {})
+
+    # Pre-debate allocation = analyst recommended_dollars, normalized to budget
+    pre_raw = {b.get("ticker", ""): float(b.get("recommended_dollars") or 0) for b in briefs}
+    pre_total = sum(pre_raw.values())
+    pre_alloc = (
+        {t: round(v * budget / pre_total, 2) for t, v in pre_raw.items()}
+        if pre_total > 0 else {t: round(budget / len(COMPANY_TICKERS), 2) for t in COMPANY_TICKERS}
+    )
+
+    def _score(alloc: dict[str, float], briefs_: list[dict], dcf_: dict[str, dict]) -> float:
+        """Conviction-weighted DCF-upside score: sum(weight * conviction * max(upside, 0))."""
+        conv_map = {b.get("ticker", ""): float(b.get("conviction") or 0) for b in briefs_}
+        total = sum(alloc.values()) or 1.0
+        score = 0.0
+        for t, dollars in alloc.items():
+            weight = dollars / total
+            conviction = conv_map.get(t, 0.0)
+            upside = max(0.0, dcf_.get(t, {}).get("upside", 0.0))
+            score += weight * conviction * upside
+        return round(score, 6)
+
+    pre_score = _score(pre_alloc, briefs, dcf_vals)
+    post_score = _score(allocation, briefs, dcf_vals)
+    score_delta = round(post_score - pre_score, 6)
+
+    # Print benchmark table
+    print("\n  ── DEBATE BENCHMARK (%s) ──" % (
+        f"{debate_rounds_run}-round debate" if debate_rounds_run > 0 else "one-shot"
+    ))
+    print("  %-6s  %10s  %10s  %10s" % ("Ticker", "Pre-debate", "Post-debate", "Shift"))
+    for t in COMPANY_TICKERS:
+        pre_d = pre_alloc.get(t, 0)
+        post_d = allocation.get(t, 0)
+        shift = post_d - pre_d
+        print("  %-6s  %10.2f  %10.2f  %+10.2f" % (t, pre_d, post_d, shift))
+    print("  Conv×Upside score — pre: %.4f  post: %.4f  delta: %+.4f" % (
+        pre_score, post_score, score_delta
+    ))
+
+    # Post benchmark to Slack
+    bench_lines = "\n".join(
+        f"  {t}: pre=${pre_alloc.get(t, 0):.0f} → post=${allocation.get(t, 0):.0f}"
+        f"  ({allocation.get(t, 0) - pre_alloc.get(t, 0):+.0f})"
+        for t in COMPANY_TICKERS
+    )
+    slack_notifier.post(
+        f"*Benchmark ({debate_rounds_run}-round debate vs analyst pre-debate):*\n"
+        f"```\n{bench_lines}\n```\n"
+        f"Conv×Upside score: {pre_score:.4f} → {post_score:.4f}  ({score_delta:+.4f})"
+    )
+
+    # Build conviction trajectory from initial briefs + challenge transcript
+    initial_convictions = {
+        b.get("ticker", ""): {
+            "conviction": b.get("conviction"),
+            "short_term_event_conviction": b.get("short_term_event_conviction"),
+            "recommended_dollars": b.get("recommended_dollars"),
+        }
+        for b in briefs
+    }
+    challenge_transcript = debate.get("challenge_transcript", [])
+
     result = {
         "budget": budget,
         "lookback_hours": int(state.get("lookback_hours") or 1),
@@ -394,10 +956,22 @@ def _finalize(state: PipelineState) -> PipelineState:
         },
         "allocation_dollars": allocation,
         "allocation_pct": state.get("allocation_pct", {}),
-        "debate_summary": state.get("debate", {}).get("debate_summary", ""),
-        "rationale": state.get("debate", {}).get("rationale", ""),
-        "risk_notes": state.get("debate", {}).get("risk_notes", []),
-        "dcf_valuations": state.get("debate", {}).get("dcf_valuations", {}),
+        "debate_summary": debate.get("debate_summary", ""),
+        "rationale": debate.get("rationale", ""),
+        "risk_notes": debate.get("risk_notes", []),
+        "dcf_valuations": dcf_vals,
+        "benchmark": {
+            "debate_rounds": debate_rounds_run,
+            "pre_debate_allocation": pre_alloc,
+            "post_debate_allocation": allocation,
+            "pre_score": pre_score,
+            "post_score": post_score,
+            "score_delta": score_delta,
+        },
+        "conviction_trajectory": {
+            "initial": initial_convictions,
+            "challenge_rounds": challenge_transcript,
+        },
         "errors": state.get("errors", []),
     }
     return {"result": result, "error": state.get("error")}

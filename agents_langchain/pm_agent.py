@@ -31,6 +31,7 @@ from models.debate import (DebatePosition, DebateRound, DebateResolution,
                             DebateSession)
 
 import config
+from tools import slack_notifier
 
 from models.pm_agent_interface import NVDADCFEngine
 from models.cdns_engine import CDNSDCFEngine
@@ -295,6 +296,10 @@ class PMAgent:
             return session
 
         print(f"  Debating {len(metrics_to_debate)} metric(s)...\n")
+        slack_notifier.post(
+            f"*Debate starting* — _{event.headline}_\n"
+            f"{len(metrics_to_debate)} metric(s) to debate across agents."
+        )
 
         for i, metric_info in enumerate(metrics_to_debate, 1):
             metric = metric_info['metric']
@@ -302,6 +307,9 @@ class PMAgent:
             periods = metric_info['periods']
 
             print(f"  --- Debate [{i}/{len(metrics_to_debate)}]: {metric} / {company} ---")
+            slack_notifier.post(
+                f"*Round {i}/{len(metrics_to_debate)} — `{metric}` / `{company}`*"
+            )
 
             for period in periods:
                 positions = []
@@ -334,6 +342,10 @@ class PMAgent:
                         positions.append(pos)
                         print(f"    {agent.name}: {pos.proposed_value:+.4f} "
                               f"(conf: {pos.confidence:.0%})")
+                        slack_notifier.post(
+                            f"• *{agent.name}:* `{pos.proposed_value:+.4f}` "
+                            f"({pos.confidence:.0%} conf) — {pos.reasoning[:150]}..."
+                        )
                     except Exception as e:
                         print(f"    {agent.name}: Error - {e}")
 
@@ -344,6 +356,7 @@ class PMAgent:
                 pm_question = self._ask_probing_question(event, metric, company, period, positions)
                 debate_round.pm_probing_question = pm_question
                 print(f"    PM probe: {pm_question[:100]}...")
+                slack_notifier.post(f"_PM asks: {pm_question[:300]}_")
 
                 # PM: devil's advocate (LangChain agent)
                 print(f"    Running devil's advocate...")
@@ -359,12 +372,19 @@ class PMAgent:
                 session.add_resolution(resolution)
                 print(f"    RESOLVED: {resolution.resolved_values} "
                       f"(conf: {resolution.confidence:.0%})\n")
+                slack_notifier.post(
+                    f"Resolved `{metric}` / `{company}` ({period}): "
+                    f"`{resolution.resolved_values}` ({resolution.confidence:.0%} conf)\n"
+                    f"_{resolution.rationale[:250]}_"
+                )
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = config.DEBATES_DIR / f"{timestamp}_{event.id}_debate.json"
         session.save(str(filepath))
         print(f"  Saved debate → {filepath}")
-        print(f"  Phase 3 complete in {time.time() - phase_start:.1f}s")
+        slack_notifier.post(
+            f"*Debate complete* — {len(session.rounds)} rounds in {elapsed:.1f}s"
+        )
         return session
 
     def _ask_probing_question(self, event, metric, company, period, positions) -> str:

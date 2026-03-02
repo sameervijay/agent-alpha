@@ -29,6 +29,10 @@ SPRINGER_OA_API_KEY = os.getenv('SPRINGER_OA_API_KEY', '')    # api.springernatu
 SPRINGER_META_API_KEY = os.getenv('SPRINGER_META_API_KEY', '') # api.springernature.com/meta
 ADZUNA_APP_ID = os.getenv('ADZUNA_APP_ID', '')   # api.adzuna.com — job postings
 ADZUNA_APP_KEY = os.getenv('ADZUNA_APP_KEY', '')
+FRED_API_KEY = os.getenv('FRED_API_KEY', '')      # fred.stlouisfed.org/docs/api/api_key.html (free)
+SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN', '')
+SLACK_DEBATE_CHANNEL = os.getenv('SLACK_DEBATE_CHANNEL', 'C0AENBHCUM7')
+
 PRIMARY_MODEL = "gpt-4o-2024-08-06"
 TEMPERATURE = 0.2
 MAX_TOKENS = 4096

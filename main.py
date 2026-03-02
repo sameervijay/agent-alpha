@@ -75,6 +75,10 @@ def main():
         '--lookback-hours', type=int, default=1,
         help='Lookback window in hours for domain scouts (default: 1)'
     )
+    parser.add_argument(
+        '--debate-rounds', type=int, default=0,
+        help='Number of cross-analyst challenge rounds before PM allocates (0=one-shot, default; 1-3=round-by-round)'
+    )
 
     args = parser.parse_args()
 
@@ -85,6 +89,7 @@ def main():
         args.budget = 1000.0
         args.lookback_hours = 1
         args.event = None
+        args.debate_rounds = 0
 
     if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc:
         parser.print_help()
@@ -106,11 +111,13 @@ def main():
         print("\n" + "=" * 70)
         print("  LANGGRAPH ALLOCATION PIPELINE (local)")
         print("=" * 70)
-        print(f"  Budget: ${args.budget:.0f}  |  Lookback: {args.lookback_hours}h  |  Event: {args.event or '(autonomous)'}\n")
+        debate_mode = f"{getattr(args, 'debate_rounds', 0)}-round debate" if getattr(args, 'debate_rounds', 0) > 0 else "one-shot"
+        print(f"  Budget: ${args.budget:.0f}  |  Lookback: {args.lookback_hours}h  |  Debate: {debate_mode}  |  Event: {args.event or '(autonomous)'}\n")
         state = {
             "event": args.event or "",
             "lookback_hours": args.lookback_hours,
             "budget": args.budget,
+            "debate_rounds": getattr(args, "debate_rounds", 0),
         }
         out = graph.invoke(state)
         if out.get("error"):
