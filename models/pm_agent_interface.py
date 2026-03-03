@@ -433,10 +433,20 @@ class NVDADCFEngine:
             ebit_margin[fy] = m['gm'] - m['rd'] - m['sga']
             ebit[fy] = total_rev[fy] * ebit_margin[fy]
 
-        print(f"    [DCF] Step 4/7: Computing UFCF (unlevered free cash flow)...")
-        # ── Step 4: UFCF ─────────────────────────────────────
+        # ── Step 3b: EBITDA, Net Income, EPS ────────────────
+        ebitda = {}
+        net_income = {}
+        eps = {}
         a = self._dcf_assumptions
         tax_rate = a['tax']
+        shares = self._bs['shares'] if self._bs['shares'] > 0 else 1.0
+        for fy in _PROJ_FY:
+            ebitda[fy] = ebit[fy] + self._annual[fy]['da']
+            net_income[fy] = ebit[fy] * (1 - tax_rate)
+            eps[fy] = net_income[fy] / shares
+
+        print(f"    [DCF] Step 4/7: Computing UFCF (unlevered free cash flow)...")
+        # ── Step 4: UFCF ─────────────────────────────────────
 
         # NWC from baseline (scale with revenue)
         nwc = {}
@@ -495,6 +505,9 @@ class NVDADCFEngine:
             'margins': margins,
             'ebit': ebit,
             'ebit_margin': ebit_margin,
+            'ebitda': ebitda,
+            'net_income': net_income,
+            'eps': eps,
             'ufcf': ufcf,
             'pv_ufcf': pv_ufcf,
             'nwc': nwc,

@@ -128,6 +128,36 @@ def apply_deltas_and_compute(ticker: str, driver_deltas: dict) -> Optional[dict]
         return None
 
 
+def compute_financials(ticker: str) -> Optional[dict]:
+    """Return model-implied financials (rev, EBITDA, EPS) for FY2026 and FY2027.
+
+    These come straight from the DCF engine's compute_dcf() output.
+    Returns None if the engine can't be loaded or doesn't produce the needed fields.
+    """
+    engine = get_engine(ticker)
+    if engine is None:
+        return None
+    try:
+        result = engine.compute_dcf()
+        total_rev = result.get('total_rev', {})
+        ebitda = result.get('ebitda', {})
+        eps = result.get('eps', {})
+        return {
+            'rev_2026': round(total_rev.get('FY2026', 0), 1),
+            'rev_2027': round(total_rev.get('FY2027', 0), 1),
+            'ebitda_2026': round(ebitda.get('FY2026', 0), 1),
+            'ebitda_2027': round(ebitda.get('FY2027', 0), 1),
+            'eps_2026': round(eps.get('FY2026', 0), 2),
+            'eps_2027': round(eps.get('FY2027', 0), 2),
+            'shares': result.get('shares', 0),
+            'net_debt': round(result.get('net_debt', 0), 1),
+            'current_price': round(result.get('current_price', 0), 2),
+        }
+    except Exception as e:
+        print(f"  [dcf_grounding] compute_financials failed for {ticker}: {e}")
+        return None
+
+
 def load_analyst_view(ticker: str) -> Optional[dict]:
     """Load stored analyst view from ``data/analyst_views/``."""
     views_dir = config.ANALYST_VIEWS_DIR

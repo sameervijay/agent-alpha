@@ -310,7 +310,12 @@ def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
         "  proposed_driver_deltas (dict of driver_name -> {period: delta_value} — "
         "these are ADDITIVE changes to the baseline model drivers, "
         "e.g. {'datacenter_growth': {'FY2028': 0.05}} means +5pp to datacenter growth),\n"
-        "  dcf_implied_price (float — the baseline implied price from the model),\n"
+        "  suggested_multiples (dict with exactly 6 keys: "
+        "ev_rev_2026, ev_rev_2027, ev_ebitda_2026, ev_ebitda_2027, pe_2026, pe_2027 — "
+        "each a float representing the fair forward multiple you believe the market should apply "
+        "given current events, growth trajectory, and risk profile; "
+        "e.g. {'ev_rev_2026': 12.0, 'ev_rev_2027': 10.5, 'ev_ebitda_2026': 21.0, "
+        "'ev_ebitda_2027': 19.0, 'pe_2026': 28.0, 'pe_2027': 26.0}),\n"
         "  rationale_for_deltas (1-2 sentences explaining why you propose these changes).\n"
     )
 
@@ -1068,9 +1073,10 @@ def _finalize(state: PipelineState) -> PipelineState:
 
 
 def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> None:
-    """Write/update analyst view JSONs with latest brief data and driver deltas."""
+    """Write/update analyst view JSONs with latest brief data, financials, and multiples."""
     from datetime import datetime
     from pathlib import Path
+    from dcf_grounding import compute_financials
 
     views_dir = Path(config.ANALYST_VIEWS_DIR)
     views_dir.mkdir(parents=True, exist_ok=True)
@@ -1093,7 +1099,51 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
 
         # Merge: keep established_at from existing, update everything else
         established = existing.get("established_at", now)
-        company_info = config.COMPANIES.get(ticker, {})
+
+        # ── Model financials from DCF engine ──
+        financials = compute_financials(ticker)
+        model_fin = {}
+        if financials:
+            model_fin = {
+                "rev_2026": financials["rev_2026"],
+                "rev_2027": financials["rev_2027"],
+                "ebitda_2026": financials["ebitda_2026"],
+                "ebitda_2027": financials["ebitda_2027"],
+                "eps_2026": financials["eps_2026"],
+                "eps_2027": financials["eps_2027"],
+            }
+
+        # ── Suggested multiples from analyst brief ──
+        suggested = brief.get("suggested_multiples", existing.get("suggested_multiples", {}))
+
+        # ── Compute multiples-implied prices ──
+        implied_prices = {}
+        if financials and suggested:
+            shares = financials.get("shares", 0)
+            net_debt = financials.get("net_debt", 0)
+            if shares > 0:
+                # EV-based: implied_price = (metric × multiple - net_debt) / shares
+                for key, metric_key in [
+                    ("ev_rev_2026", "rev_2026"),
+                    ("ev_rev_2027", "rev_2027"),
+                    ("ev_ebitda_2026", "ebitda_2026"),
+                    ("ev_ebitda_2027", "ebitda_2027"),
+                ]:
+                    mult = suggested.get(key)
+                    metric = financials.get(metric_key, 0)
+                    if mult and metric:
+                        implied_tev = metric * mult
+                        implied_prices[key] = round((implied_tev - net_debt) / shares, 2)
+
+                # P/E-based: implied_price = EPS × multiple
+                for key, eps_key in [
+                    ("pe_2026", "eps_2026"),
+                    ("pe_2027", "eps_2027"),
+                ]:
+                    mult = suggested.get(key)
+                    eps_val = financials.get(eps_key, 0)
+                    if mult and eps_val:
+                        implied_prices[key] = round(eps_val * mult, 2)
 
         view = {
             "ticker": ticker,
@@ -1116,11 +1166,10 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
                 "rationale_for_deltas",
                 existing.get("rationale_for_deltas", ""),
             ),
-            "dcf_implied_price": brief.get(
-                "dcf_implied_price",
-                dcf_vals.get(ticker, {}).get("baseline_price"),
-            ),
-            "dcf_upside": dcf_vals.get(ticker, {}).get("upside"),
+            "model_financials": model_fin,
+            "suggested_multiples": suggested,
+            "multiples_implied_prices": implied_prices,
+            "current_price": financials.get("current_price") if financials else None,
             "recommended_dollars": brief.get("recommended_dollars", 0),
             "recommended_weight": brief.get("recommended_weight", 0),
             "challenge_to_others": brief.get("challenge_to_others", ""),
