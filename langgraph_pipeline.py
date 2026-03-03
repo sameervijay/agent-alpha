@@ -27,6 +27,7 @@ from agents_langchain.company_analyst_agent import CompanyAnalystAgent
 from agents_langchain.macro_agent import MacroAgent
 from agents_langchain.pm_agent import PMAgent
 from agents_langchain.politics_agent import PoliticsAgent
+from agents_langchain.sp500_agent import SP500Agent
 from agents_langchain.stock_market_agent import StockMarketAgent
 from agents_langchain.tech_publications_agent import TechPublicationsAgent
 from models.event import Event
@@ -97,6 +98,7 @@ class PipelineState(TypedDict, total=False):
     company_event_map: dict[str, list[dict[str, Any]]]
     # Company analysis phase (parallel fan-out reducers)
     company_briefs_raw: Annotated[list[dict[str, Any]], operator.add]
+    benchmark_brief: dict[str, Any]
     # PM output
     debate: dict[str, Any]
     allocation_dollars: dict[str, float]
@@ -356,6 +358,61 @@ def _analyze_asml(state: PipelineState) -> PipelineState:
     return _analyze_company("ASML", state)
 
 
+def _analyze_sp500(state: PipelineState) -> PipelineState:
+    """Run S&P 500 benchmark agent in parallel with company analysts."""
+    budget = float(state.get("budget") or 1000.0)
+    event_context = state.get("event", "")
+    print("  [benchmark_sp500] Building S&P 500 benchmark view...")
+    agent = SP500Agent()
+    try:
+        brief = _invoke_with_rate_retry(
+            lambda: agent.build_benchmark_brief(event_context, budget),
+            "benchmark_sp500",
+        )
+        ticker = brief.get("ticker", "SPY")
+        conv = float(brief.get("conviction", 0.0) or 0.0)
+        st_conv = float(brief.get("short_term_event_conviction", 0.0) or 0.0)
+        rec_d = float(brief.get("recommended_dollars", 0.0) or 0.0)
+        thesis_preview = (brief.get("thesis") or "")[:100]
+        print(
+            "  [benchmark_sp500] → ticker=%s, conviction=%.2f, st_event_conv=%.2f, "
+            "recommended=$%.0f | %s"
+            % (
+                ticker,
+                conv,
+                st_conv,
+                rec_d,
+                thesis_preview + ("..." if len(thesis_preview) == 100 else ""),
+            )
+        )
+        slack_notifier.post(
+            f"*[Benchmark: S&P 500]* conviction={conv:.0%}, event_conv={st_conv:.0%}, "
+            f"recommended=${rec_d:.0f}\n"
+            f"_{(brief.get('thesis') or '')[:240]}_"
+        )
+        return {"benchmark_brief": brief}
+    except Exception as exc:
+        print("  [benchmark_sp500] → ERROR: %s" % exc)
+        fallback = {
+            "ticker": "SPY",
+            "thesis": f"S&P 500 benchmark agent error: {exc}",
+            "benchmark_role": "Fallback passive benchmark allocation.",
+            "near_term_view": "Unable to compute detailed view — treat as neutral baseline.",
+            "risk_notes": [str(exc)],
+            "conviction": 0.5,
+            "short_term_event_conviction": 0.5,
+            "recommended_dollars": round(budget * 0.2, 2),
+            "recommended_weight": 0.2,
+        }
+        slack_notifier.post(
+            "*[Benchmark: S&P 500]* error — using fallback neutral benchmark allocation."
+        )
+        return {
+            "benchmark_brief": fallback,
+            "errors": [f"benchmark_sp500 failed: {exc}"],
+        }
+
+
 # Map of names an analyst can use when requesting scout intel
 _SCOUT_AGENT_MAP = {
     "commodities": CommoditiesAgent,
@@ -586,14 +643,17 @@ def _run_challenge_round(
 
 
 def _normalise_allocations(raw_alloc: dict[str, Any], budget: float) -> dict[str, float]:
-    alloc = {ticker: float(raw_alloc.get(ticker, 0.0) or 0.0) for ticker in COMPANY_TICKERS}
+    # Include any extra tickers (e.g., SPY benchmark) that the PM returned
+    tickers = list({*COMPANY_TICKERS, *raw_alloc.keys()})
+    alloc = {ticker: float(raw_alloc.get(ticker, 0.0) or 0.0) for ticker in tickers}
     total = sum(alloc.values())
     if total <= 0:
-        equal = round(budget / len(COMPANY_TICKERS), 2)
-        fallback = {t: equal for t in COMPANY_TICKERS}
+        equal = round(budget / len(tickers), 2)
+        fallback = {t: equal for t in tickers}
         # rounding guard for exact budget match
         diff = round(budget - sum(fallback.values()), 2)
-        fallback[COMPANY_TICKERS[0]] = round(fallback[COMPANY_TICKERS[0]] + diff, 2)
+        if tickers:
+            fallback[tickers[0]] = round(fallback[tickers[0]] + diff, 2)
         return fallback
 
     scaled = {t: round(v * budget / total, 2) for t, v in alloc.items()}
@@ -624,6 +684,7 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
     budget = float(state.get("budget") or 1000.0)
     briefs = state.get("company_briefs_raw", [])
     merged_events = state.get("merged_events", [])
+    benchmark_brief = state.get("benchmark_brief")
 
     if not briefs:
         return {"error": "No company briefs generated.", "allocation_dollars": {}}
@@ -840,11 +901,17 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
     debate_goal = (
         "You are the PM facilitating a cross-company analyst debate and final capital allocation.\n\n"
         f"FIXED_BUDGET_DOLLARS: {budget}\n"
-        f"COVERED_COMPANIES: {', '.join(COMPANY_TICKERS)}\n\n"
+        f"COVERED_COMPANIES: {', '.join(COMPANY_TICKERS)}\n"
+        "BENCHMARK_INDEX: S&P 500 (via SPY ETF).\n\n"
         f"RECENT_DOMAIN_EVENTS:\n{json.dumps(merged_events[:15], indent=2, default=str)}\n\n"
         f"COMPANY_ANALYST_BRIEFS:\n{json.dumps(briefs, indent=2, default=str)}\n\n"
         f"DCF VALUATIONS (analyst-adjusted):\n{dcf_block}\n\n"
     )
+    if benchmark_brief:
+        debate_goal += (
+            "BENCHMARK_SP500_VIEW:\n"
+            f"{json.dumps(benchmark_brief, indent=2, default=str)}\n\n"
+        )
     if all_challenges:
         debate_goal += (
             f"DEBATE_TRANSCRIPT ({len(all_challenges)} challenges across "
@@ -862,18 +929,21 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         "1) Summarize key agreements/disagreements across analysts.\n"
         "2) Identify the companies with the highest short_term_event_conviction — "
         "these are your primary allocation targets for this event-driven portfolio.\n"
+        "   Always compare their expected near-term risk/return to the S&P 500 benchmark.\n"
         "3) Weight allocation primarily by short_term_event_conviction × conviction. "
         "Favor CONCENTRATION in the top 1-2 names with the strongest event-driven signal; "
         "do NOT spread evenly just to diversify — event-driven portfolios should be decisive. "
         "Use DCF upside only as a secondary risk filter: if a company has deeply negative DCF upside "
         "(<-30%) AND low event conviction, trim modestly, but never zero out based on valuation alone.\n"
-        "4) Allocate the FULL fixed budget across companies.\n\n"
+        "4) Allocate the FULL fixed budget across companies AND the S&P 500 benchmark. "
+        "Always include a non-zero allocation to S&P 500 (SPY) unless the event is truly idiosyncratic "
+        "to semiconductors and you have extremely high conviction in concentrated stock bets.\n\n"
         "Return ONLY JSON with keys:\n"
         "  debate_summary (string),\n"
         "  rationale (string referencing event conviction and DCF risk-filter applied),\n"
         "  risk_notes (list of strings),\n"
         "  event_conviction_rankings (list of {ticker, short_term_event_conviction, conviction, rationale}),\n"
-        "  allocation_dollars (dict ticker->float) including all covered companies."
+        "  allocation_dollars (dict ticker->float) including all covered companies AND 'SPY' for the benchmark."
     )
 
     try:
@@ -949,11 +1019,12 @@ def _finalize(state: PipelineState) -> PipelineState:
     score_delta = round(post_score - pre_score, 6)
 
     # Print benchmark table
+    tickers_for_benchmark = sorted({*COMPANY_TICKERS, *allocation.keys()})
     print("\n  ── DEBATE BENCHMARK (%s) ──" % (
         f"{debate_rounds_run}-round debate" if debate_rounds_run > 0 else "one-shot"
     ))
     print("  %-6s  %10s  %10s  %10s" % ("Ticker", "Pre-debate", "Post-debate", "Shift"))
-    for t in COMPANY_TICKERS:
+    for t in tickers_for_benchmark:
         pre_d = pre_alloc.get(t, 0)
         post_d = allocation.get(t, 0)
         shift = post_d - pre_d
@@ -966,7 +1037,7 @@ def _finalize(state: PipelineState) -> PipelineState:
     bench_lines = "\n".join(
         f"  {t}: pre=${pre_alloc.get(t, 0):.0f} → post=${allocation.get(t, 0):.0f}"
         f"  ({allocation.get(t, 0) - pre_alloc.get(t, 0):+.0f})"
-        for t in COMPANY_TICKERS
+        for t in tickers_for_benchmark
     )
     slack_notifier.post(
         f"*Benchmark ({debate_rounds_run}-round debate vs analyst pre-debate):*\n"
@@ -1032,12 +1103,13 @@ def build_graph():
     graph.add_node("detect_tech_publications", _detect_tech_publications)
     graph.add_node("merge_and_route_events", _merge_and_route_events)
 
-    # Parallel company analysis
+    # Parallel company analysis (+ benchmark)
     graph.add_node("analyze_nvda", _analyze_nvda)
     graph.add_node("analyze_cdns", _analyze_cdns)
     graph.add_node("analyze_crwv", _analyze_crwv)
     graph.add_node("analyze_tsm", _analyze_tsm)
     graph.add_node("analyze_asml", _analyze_asml)
+    graph.add_node("analyze_sp500", _analyze_sp500)
 
     # PM finalization
     graph.add_node("pm_debate_and_allocate", _pm_debate_and_allocate)
@@ -1058,12 +1130,13 @@ def build_graph():
     graph.add_edge("detect_stock_market", "merge_and_route_events")
     graph.add_edge("detect_tech_publications", "merge_and_route_events")
 
-    # Fan out to company analysts
+    # Fan out to company analysts + S&P 500 benchmark
     graph.add_edge("merge_and_route_events", "analyze_nvda")
     graph.add_edge("merge_and_route_events", "analyze_cdns")
     graph.add_edge("merge_and_route_events", "analyze_crwv")
     graph.add_edge("merge_and_route_events", "analyze_tsm")
     graph.add_edge("merge_and_route_events", "analyze_asml")
+    graph.add_edge("merge_and_route_events", "analyze_sp500")
 
     # Fan in to PM
     graph.add_edge("analyze_nvda", "pm_debate_and_allocate")
@@ -1071,6 +1144,7 @@ def build_graph():
     graph.add_edge("analyze_crwv", "pm_debate_and_allocate")
     graph.add_edge("analyze_tsm", "pm_debate_and_allocate")
     graph.add_edge("analyze_asml", "pm_debate_and_allocate")
+    graph.add_edge("analyze_sp500", "pm_debate_and_allocate")
 
     graph.add_edge("pm_debate_and_allocate", "finalize")
     graph.add_edge("finalize", END)
