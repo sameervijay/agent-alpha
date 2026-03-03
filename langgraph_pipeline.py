@@ -89,6 +89,7 @@ class PipelineState(TypedDict, total=False):
     lookback_hours: int
     budget: float
     debate_rounds: int  # 0=one-shot, N=N cross-analyst challenge rounds
+    no_analysts: bool   # True=skip analyst briefs entirely (PM allocates from events+valuations only)
     # Detection phase (parallel fan-out reducers)
     domain_outputs: Annotated[list[dict[str, Any]], operator.add]
     errors: Annotated[list[str], operator.add]
@@ -123,6 +124,7 @@ def _initialize(state: PipelineState) -> PipelineState:
         "event": event,
         "lookback_hours": lookback,
         "budget": budget,
+        "no_analysts": bool(state.get("no_analysts", False)),
     }
 
 
@@ -239,6 +241,22 @@ def _merge_and_route_events(state: PipelineState) -> PipelineState:
 
 
 def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
+    # ── no_analysts bypass: return empty brief instantly ──
+    if state.get("no_analysts", False):
+        print("  [analyst_%s] SKIPPED (no_analysts mode)" % ticker)
+        return {"company_briefs_raw": [{
+            "ticker": ticker,
+            "thesis": "",
+            "key_drivers": [],
+            "key_risks": [],
+            "conviction": 0.0,
+            "short_term_event_conviction": 0.0,
+            "recommended_dollars": 0.0,
+            "recommended_weight": 0.0,
+            "challenge_to_others": "",
+            "proposed_driver_deltas": {},
+        }]}
+
     # Stagger analyst LLM calls to stay under 30k TPM cap (~3-4k tokens each, 5 parallel agents)
     stagger_s = COMPANY_TICKERS.index(ticker) * 15
     if stagger_s:
@@ -837,14 +855,25 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
                     except Exception as exc:
                         print(f"  [probe_resp_{t}] failed: {exc}")
 
+    # Detect no_analysts mode (all briefs have zero conviction)
+    is_no_analysts = all(float(b.get("conviction", 0)) == 0 for b in briefs)
+
     debate_goal = (
-        "You are the PM facilitating a cross-company analyst debate and final capital allocation.\n\n"
+        "You are the PM facilitating final capital allocation.\n\n"
         f"FIXED_BUDGET_DOLLARS: {budget}\n"
         f"COVERED_COMPANIES: {', '.join(COMPANY_TICKERS)}\n\n"
         f"RECENT_DOMAIN_EVENTS:\n{json.dumps(merged_events[:15], indent=2, default=str)}\n\n"
-        f"COMPANY_ANALYST_BRIEFS:\n{json.dumps(briefs, indent=2, default=str)}\n\n"
-        f"DCF VALUATIONS (analyst-adjusted):\n{dcf_block}\n\n"
     )
+    if is_no_analysts:
+        debate_goal += (
+            "NOTE: No analyst input available for this allocation. "
+            "You must allocate based SOLELY on domain events and DCF/multiples valuations below.\n\n"
+        )
+    else:
+        debate_goal += (
+            f"COMPANY_ANALYST_BRIEFS:\n{json.dumps(briefs, indent=2, default=str)}\n\n"
+        )
+    debate_goal += f"DCF VALUATIONS (analyst-adjusted):\n{dcf_block}\n\n"
     if all_challenges:
         debate_goal += (
             f"DEBATE_TRANSCRIPT ({len(all_challenges)} challenges across "
@@ -857,17 +886,30 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
             f"ANALYST_PROBE_RESPONSES ({len(probe_responses)} analysts answered):\n"
             f"{json.dumps(probe_responses, indent=2, default=str)}\n\n"
         )
+    if is_no_analysts:
+        debate_goal += (
+            "Task (NO ANALYST INPUT — allocate from events + valuations only):\n"
+            "1) Analyze domain events and identify which companies are most affected.\n"
+            "2) Use DCF/multiples valuations to assess relative value.\n"
+            "3) Allocate the FULL fixed budget across companies. "
+            "Favor CONCENTRATION in the 1-2 names most impacted by events with favorable valuations. "
+            "Do NOT spread evenly.\n"
+            "4) Provide rationale grounded in events and valuations.\n\n"
+        )
+    else:
+        debate_goal += (
+            "Task:\n"
+            "1) Summarize key agreements/disagreements across analysts.\n"
+            "2) Identify the companies with the highest short_term_event_conviction — "
+            "these are your primary allocation targets for this event-driven portfolio.\n"
+            "3) Weight allocation primarily by short_term_event_conviction × conviction. "
+            "Favor CONCENTRATION in the top 1-2 names with the strongest event-driven signal; "
+            "do NOT spread evenly just to diversify — event-driven portfolios should be decisive. "
+            "Use DCF upside only as a secondary risk filter: if a company has deeply negative DCF upside "
+            "(<-30%) AND low event conviction, trim modestly, but never zero out based on valuation alone.\n"
+            "4) Allocate the FULL fixed budget across companies.\n\n"
+        )
     debate_goal += (
-        "Task:\n"
-        "1) Summarize key agreements/disagreements across analysts.\n"
-        "2) Identify the companies with the highest short_term_event_conviction — "
-        "these are your primary allocation targets for this event-driven portfolio.\n"
-        "3) Weight allocation primarily by short_term_event_conviction × conviction. "
-        "Favor CONCENTRATION in the top 1-2 names with the strongest event-driven signal; "
-        "do NOT spread evenly just to diversify — event-driven portfolios should be decisive. "
-        "Use DCF upside only as a secondary risk filter: if a company has deeply negative DCF upside "
-        "(<-30%) AND low event conviction, trim modestly, but never zero out based on valuation alone.\n"
-        "4) Allocate the FULL fixed budget across companies.\n\n"
         "Return ONLY JSON with keys:\n"
         "  debate_summary (string),\n"
         "  rationale (string referencing event conviction and DCF risk-filter applied),\n"
@@ -885,6 +927,7 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         }
         debate_result['dcf_valuations'] = dcf_results
         debate_result['debate_rounds_run'] = debate_rounds
+        debate_result['debate_gated'] = debate_gated
         debate_result['challenge_transcript'] = all_challenges
         debate_result['pre_debate_briefs'] = briefs  # for benchmark comparison
         summary = (debate_result.get("debate_summary") or "")[:120]
@@ -999,9 +1042,11 @@ def _finalize(state: PipelineState) -> PipelineState:
         "rationale": debate.get("rationale", ""),
         "risk_notes": debate.get("risk_notes", []),
         "dcf_valuations": dcf_vals,
+        "no_analysts": bool(state.get("no_analysts", False)),
         "benchmark": {
             "debate_rounds": debate_rounds_run,
-            "debate_gated": debate_gated,
+            "no_analysts": bool(state.get("no_analysts", False)),
+            "debate_gated": debate.get("debate_gated", False),
             "analyst_disagreement_mad": round(_compute_analyst_disagreement(briefs), 4),
             "pre_debate_allocation": pre_alloc,
             "post_debate_allocation": allocation,
@@ -1015,7 +1060,76 @@ def _finalize(state: PipelineState) -> PipelineState:
         },
         "errors": state.get("errors", []),
     }
+
+    # ── Persist analyst views to data/analyst_views/{TICKER}_view.json ──
+    _persist_analyst_views(briefs, dcf_vals)
+
     return {"result": result, "error": state.get("error")}
+
+
+def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> None:
+    """Write/update analyst view JSONs with latest brief data and driver deltas."""
+    from datetime import datetime
+    from pathlib import Path
+
+    views_dir = Path(config.ANALYST_VIEWS_DIR)
+    views_dir.mkdir(parents=True, exist_ok=True)
+    now = datetime.now().isoformat()
+
+    for brief in briefs:
+        ticker = brief.get("ticker", "")
+        if not ticker:
+            continue
+
+        view_path = views_dir / f"{ticker}_view.json"
+
+        # Load existing view if present
+        existing = {}
+        if view_path.exists():
+            try:
+                existing = json.loads(view_path.read_text())
+            except (json.JSONDecodeError, OSError):
+                pass
+
+        # Merge: keep established_at from existing, update everything else
+        established = existing.get("established_at", now)
+        company_info = config.COMPANIES.get(ticker, {})
+
+        view = {
+            "ticker": ticker,
+            "established_at": established,
+            "last_updated": now,
+            "summary": brief.get("thesis", existing.get("summary", "")),
+            "conviction": brief.get("conviction", existing.get("conviction", 0)),
+            "short_term_event_conviction": brief.get(
+                "short_term_event_conviction",
+                existing.get("short_term_event_conviction", 0),
+            ),
+            "recovery_thesis": brief.get("recovery_thesis", ""),
+            "key_drivers": brief.get("key_drivers", existing.get("key_drivers", [])),
+            "key_risks": brief.get("key_risks", existing.get("key_risks", [])),
+            "proposed_driver_deltas": brief.get(
+                "proposed_driver_deltas",
+                existing.get("proposed_driver_deltas", {}),
+            ),
+            "rationale_for_deltas": brief.get(
+                "rationale_for_deltas",
+                existing.get("rationale_for_deltas", ""),
+            ),
+            "dcf_implied_price": brief.get(
+                "dcf_implied_price",
+                dcf_vals.get(ticker, {}).get("baseline_price"),
+            ),
+            "dcf_upside": dcf_vals.get(ticker, {}).get("upside"),
+            "recommended_dollars": brief.get("recommended_dollars", 0),
+            "recommended_weight": brief.get("recommended_weight", 0),
+            "challenge_to_others": brief.get("challenge_to_others", ""),
+            "seen_headlines": existing.get("seen_headlines", []),
+            "confidence": brief.get("conviction", existing.get("confidence", 0)),
+        }
+
+        view_path.write_text(json.dumps(view, indent=2, default=str))
+        print("  [finalize] Updated analyst view: %s" % view_path.name)
 
 
 def build_graph():

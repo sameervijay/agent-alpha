@@ -16,6 +16,7 @@ Requires-Dist: langchain-openai>=0.2
 Requires-Dist: langgraph>=0.2
 Requires-Dist: langgraph-cli[inmem]>=0.2
 Requires-Dist: langgraph-sdk>=0.1
+Requires-Dist: slack-bolt>=1.18
 
 # agent-alpha
 

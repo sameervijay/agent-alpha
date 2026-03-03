@@ -12,6 +12,11 @@ Usage:
     python main.py --backtest
     python main.py --langgraph-alloc                    # PM-led allocation ($1000, last 1h)
     python main.py --langgraph-alloc --budget 500 --event "Focus on Fed"
+    python main.py --langgraph-alloc --debate-rounds 1               # with 1 debate round
+    python main.py --langgraph-alloc --no-analysts                   # PM only (no analyst input)
+    python main.py --ablation                                        # debate ablation experiment
+    python main.py --ablation --init-portfolios                      # ablation + init portfolio per condition
+    python main.py --ablation --backtest                             # ablation on historical events
 """
 
 import argparse
@@ -79,6 +84,18 @@ def main():
         '--debate-rounds', type=int, default=0,
         help='Number of cross-analyst challenge rounds before PM allocates (0=one-shot, default; 1-3=round-by-round)'
     )
+    parser.add_argument(
+        '--no-analysts', action='store_true',
+        help='Skip company analysts; PM allocates from events + DCF/multiples only'
+    )
+    parser.add_argument(
+        '--ablation', action='store_true',
+        help='Run debate ablation experiment (3 conditions: no-analysts, analysts-only, full-debate)'
+    )
+    parser.add_argument(
+        '--init-portfolios', action='store_true',
+        help='With --ablation: initialize/rebalance a portfolio for each condition'
+    )
 
     args = parser.parse_args()
 
@@ -91,7 +108,7 @@ def main():
         args.event = None
         args.debate_rounds = 0
 
-    if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc:
+    if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc and not args.ablation:
         parser.print_help()
         print("\nExample:")
         print('  python main.py --event "US Bureau of Industry and Security '
@@ -105,6 +122,25 @@ def main():
         print("Create a .env file in Final_Project/ with: OPENAI_API_KEY=sk-...")
         sys.exit(1)
 
+    # Debate ablation experiment
+    if args.ablation:
+        from eval.debate_ablation import (
+            run_ablation, run_backtest_ablation, print_comparison,
+            save_ablation_results,
+        )
+        init_p = getattr(args, "init_portfolios", False)
+        if args.backtest:
+            results = run_backtest_ablation(args.budget, args.debate_rounds or 1)
+        else:
+            event = args.event or ""
+            results = run_ablation(
+                event, args.budget, args.lookback_hours, args.debate_rounds or 1,
+                init_portfolios=init_p,
+            )
+            print_comparison(results)
+        save_ablation_results(results)
+        return
+
     # LangGraph allocation pipeline (runs graph directly; no full PM init needed)
     if args.langgraph_alloc:
         from langgraph_pipeline import graph
@@ -112,12 +148,14 @@ def main():
         print("  LANGGRAPH ALLOCATION PIPELINE (local)")
         print("=" * 70)
         debate_mode = f"{getattr(args, 'debate_rounds', 0)}-round debate" if getattr(args, 'debate_rounds', 0) > 0 else "one-shot"
-        print(f"  Budget: ${args.budget:.0f}  |  Lookback: {args.lookback_hours}h  |  Debate: {debate_mode}  |  Event: {args.event or '(autonomous)'}\n")
+        analysts_mode = "NO ANALYSTS" if getattr(args, "no_analysts", False) else "with analysts"
+        print(f"  Budget: ${args.budget:.0f}  |  Lookback: {args.lookback_hours}h  |  Debate: {debate_mode}  |  Analysts: {analysts_mode}  |  Event: {args.event or '(autonomous)'}\n")
         state = {
             "event": args.event or "",
             "lookback_hours": args.lookback_hours,
             "budget": args.budget,
             "debate_rounds": getattr(args, "debate_rounds", 0),
+            "no_analysts": getattr(args, "no_analysts", False),
         }
         out = graph.invoke(state)
         if out.get("error"):
