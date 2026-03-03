@@ -111,6 +111,20 @@ class ASMLDCFEngine:
         print(f"    [DCF] Step 7/7: Equity bridge...")
         result = self._equity_bridge(pv_ufcf, pv_tv, current_price, wacc)
 
+        # Add financials for multiples valuation
+        tax_rate = self._dcf_assumptions['tax_rate']
+        shares = result.get('shares_mm', 900)
+        da = {p: revenues[p] * 0.04 for p in revenues}  # 4% of revenue
+        ebitda = {p: ebit[p] + da[p] for p in ebit}
+        net_income = {p: ebit[p] * (1 - tax_rate) for p in ebit}
+        eps = {p: net_income[p] / shares if shares > 0 else 0 for p in net_income}
+        result['total_rev'] = revenues
+        result['ebit'] = ebit
+        result['ebitda'] = ebitda
+        result['net_income'] = net_income
+        result['eps'] = eps
+        result['shares'] = shares
+
         self._last_result = result
         print(f"    [DCF] Done — implied price: ${result['implied_price']:,.2f} "
               f"(WACC: {wacc:.1%}, TEV: ${result['tev']:,.0f})")
