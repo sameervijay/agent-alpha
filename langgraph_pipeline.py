@@ -647,6 +647,8 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
     budget = float(state.get("budget") or 1000.0)
     briefs = state.get("company_briefs_raw", [])
     merged_events = state.get("merged_events", [])
+    debate_rounds = int(state.get("debate_rounds") or 0)
+    debate_gated = False  # True when debate was skipped due to analyst consensus
 
     if not briefs:
         return {"error": "No company briefs generated.", "allocation_dollars": {}}
@@ -704,15 +706,13 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
     pm = PMAgent()
 
     # ── Optional multi-round cross-analyst debate ────────────────
-    debate_rounds = int(state.get("debate_rounds") or 0)
     all_challenges: list[dict[str, Any]] = []
     pm_probe: str = ""
     probe_responses: list[dict[str, Any]] = []
-    debate_gated = False  # True when debate was skipped due to analyst consensus
 
     if debate_rounds > 0:
         disagreement = _compute_analyst_disagreement(briefs)
-        threshold = config.DEBATE_DISAGREEMENT_THRESHOLD
+        threshold = getattr(config, 'DEBATE_DISAGREEMENT_THRESHOLD', 0.12)
         conviction_vals = [
             f"{b.get('ticker','?')}={b.get('short_term_event_conviction', 0):.2f}"
             for b in briefs if b.get("ticker")
@@ -958,7 +958,11 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
         }
     except Exception as exc:
         print("  [PM] → ERROR: %s" % exc)
-        return {"error": f"PM debate/allocation failed: {exc}", "allocation_dollars": {}}
+        return {
+            "error": f"PM debate/allocation failed: {exc}",
+            "allocation_dollars": {},
+            "debate": {"debate_gated": debate_gated, "debate_rounds_run": debate_rounds},
+        }
 
 
 def _finalize(state: PipelineState) -> PipelineState:
