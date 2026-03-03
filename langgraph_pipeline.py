@@ -878,6 +878,8 @@ def _pm_debate_and_allocate(state: PipelineState) -> PipelineState:
 
     try:
         debate_result = pm._pm_invoke(debate_goal)
+        # Persist whether debate was gated so _finalize can benchmark correctly.
+        debate_result["debate_gated"] = debate_gated
         raw_alloc = debate_result.get("allocation_dollars", {})
         alloc_dollars = _normalise_allocations(raw_alloc, budget)
         alloc_pct = {t: round(v / budget, 4) for t, v in alloc_dollars.items()} if budget > 0 else {
@@ -917,6 +919,7 @@ def _finalize(state: PipelineState) -> PipelineState:
     budget = float(state.get("budget") or 1000.0)
     allocation = state.get("allocation_dollars", {})
     debate = state.get("debate", {})
+    debate_gated = bool(debate.get("debate_gated", False))
     debate_rounds_run = int(debate.get("debate_rounds_run") or 0)
     print("  [finalize] Pipeline complete. Total allocated: $%.2f" % sum(allocation.values()))
 

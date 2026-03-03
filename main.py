@@ -68,6 +68,10 @@ def main():
         help='Run LangGraph PM-led allocation pipeline (domain scouts → company analysts → debate → $ allocation)'
     )
     parser.add_argument(
+        '--langgraph-panel-alloc', action='store_true',
+        help='Run LangGraph PM-led allocation pipeline with single-shot PM panel synthesis (no multi-round debate)'
+    )
+    parser.add_argument(
         '--budget', type=float, default=1000.0,
         help='Fixed budget in dollars for --langgraph-alloc (default: 1000)'
     )
@@ -91,7 +95,13 @@ def main():
         args.event = None
         args.debate_rounds = 0
 
-    if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc:
+    if (
+        not args.event
+        and not args.backtest
+        and not args.request_update
+        and not args.langgraph_alloc
+        and not args.langgraph_panel_alloc
+    ):
         parser.print_help()
         print("\nExample:")
         print('  python main.py --event "US Bureau of Industry and Security '
@@ -105,7 +115,41 @@ def main():
         print("Create a .env file in Final_Project/ with: OPENAI_API_KEY=sk-...")
         sys.exit(1)
 
-    # LangGraph allocation pipeline (runs graph directly; no full PM init needed)
+    # LangGraph allocation pipelines (run graph directly; no full PM init needed)
+    if args.langgraph_panel_alloc:
+        from langgraph_pipeline_panel import graph_panel
+        print("\n" + "=" * 70)
+        print("  LANGGRAPH ALLOCATION PIPELINE (local, PANEL SYNTHESIS)")
+        print("=" * 70)
+        print(
+            f"  Budget: ${args.budget:.0f}  |  Lookback: {args.lookback_hours}h  |  "
+            f"Mode: panel-synthesis  |  Event: {args.event or '(autonomous)'}\n"
+        )
+        state = {
+            "event": args.event or "",
+            "lookback_hours": args.lookback_hours,
+            "budget": args.budget,
+            # debate_rounds is ignored by the panel pipeline but included for consistency
+            "debate_rounds": getattr(args, "debate_rounds", 0),
+        }
+        out = graph_panel.invoke(state)
+        if out.get("error"):
+            print(f"  Error: {out['error']}\n")
+            sys.exit(1)
+        result = out.get("result", {})
+        alloc = result.get("allocation_dollars", {})
+        print("  ALLOCATION (dollars):")
+        for ticker, dollars in sorted(alloc.items(), key=lambda x: -x[1]):
+            pct = result.get("allocation_pct", {}).get(ticker, 0) * 100
+            print(f"    {ticker}: ${dollars:.2f}  ({pct:.1f}%)")
+        print(f"  Total: ${sum(alloc.values()):.2f}")
+        if result.get("rationale"):
+            print(f"\n  Rationale: {result['rationale'][:400]}...")
+        if result.get("errors"):
+            print(f"\n  Warnings: {result['errors']}")
+        print("=" * 70 + "\n")
+        return
+
     if args.langgraph_alloc:
         from langgraph_pipeline import graph
         print("\n" + "=" * 70)
