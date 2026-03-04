@@ -173,6 +173,55 @@ _DRIVER_MODEL_CONFIGS = {
             ('sm_improvement_bps', 88),
         ]),
     },
+    'TSM': {
+        # Row 5: BN=Q4-25, BO=FY25, BP=Q1-26 .. BS=Q4-26, BT=FY26,
+        #         BU=Q1-27 .. BX=Q4-27, BY=FY27, BZ=FY28, CA=FY29
+        'period_columns': OrderedDict([
+            ('Q4-26', 'BS'), ('Q1-27', 'BU'), ('Q2-27', 'BV'),
+            ('Q3-27', 'BW'), ('Q4-27', 'BX'),
+            ('FY2028', 'BZ'), ('FY2029', 'CA'),
+        ]),
+        'drivers': OrderedDict([
+            ('smartphone_growth', 9),       # Y/Y Smartphone revenue growth
+            ('hpc_growth', 12),             # Y/Y High performance computing growth
+            ('iot_growth', 15),             # Y/Y Internet of things growth
+            ('automotive_growth', 18),      # Y/Y Automotive growth
+            ('digital_consumer_growth', 21),# Y/Y Digital consumer electronics growth
+            ('gm_improvement_bps', 40),     # Y/Y Gross Margin improvement, bps
+            ('opex_improvement_bps', 45),   # Y/Y R&D Margin improvement, bps
+            ('ga_improvement_bps', 50),     # Y/Y G&A Margin improvement, bps
+        ]),
+    },
+    'CRWV': {
+        # Row 5: AL=Q4-25, AM=FY25, AN=Q1-26 .. AQ=Q4-26, AR=FY26,
+        #         AS=FY27, AT=FY28, AU=FY29  (annual only after FY26)
+        'period_columns': OrderedDict([
+            ('Q4-26', 'AQ'),
+            ('FY2027', 'AS'), ('FY2028', 'AT'), ('FY2029', 'AU'),
+        ]),
+        'drivers': OrderedDict([
+            ('revenue_growth', 10),         # Y/Y Total revenue growth
+            ('gm_improvement_bps', 55),     # Y/Y Non-GAAP Gross Margin improvement, bps
+            ('rd_improvement_bps', 69),     # Y/Y Non-GAAP R&D Margin improvement, bps
+            ('sm_improvement_bps', 83),     # Y/Y Non-GAAP S&M Margin improvement, bps
+            ('ga_improvement_bps', 97),     # Y/Y Non-GAAP G&A Margin improvement, bps
+        ]),
+    },
+    'ASML': {
+        # Row 5: same as TSM — BN=Q4-25 .. BS=Q4-26, BT=FY26 .. BY=FY27, BZ=FY28, CA=FY29
+        # Note: ASML uses a unit-sales model for revenue; growth rate rows (43-48)
+        # are computed formulas. Only margin bps rows are hardcoded inputs.
+        'period_columns': OrderedDict([
+            ('Q4-26', 'BS'), ('Q1-27', 'BU'), ('Q2-27', 'BV'),
+            ('Q3-27', 'BW'), ('Q4-27', 'BX'),
+            ('FY2028', 'BZ'), ('FY2029', 'CA'),
+        ]),
+        'drivers': OrderedDict([
+            ('gm_improvement_bps', 76),     # Y/Y Gross Margin improvement, bps
+            ('rd_improvement_bps', 81),     # Y/Y R&D margin improvement, bps
+            ('sga_improvement_bps', 86),    # Y/Y SG&A margin improvement, bps
+        ]),
+    },
 }
 
 # Delta grid layout in Agent Documentation tab
@@ -664,18 +713,17 @@ def write_driver_deltas_to_model(ticker: str, deltas: dict) -> None:
         # Build the formula: =<baseline>+'Agent Documentation'!<doc_cell>
         formula = f"={baseline}+'Agent Documentation'!{doc_cell}"
 
+        # Track ALL linked cells for purple formatting
+        model_row = drivers[driver_name]
+        model_col = periods[period]
+        green_cells.append((_col_to_index(model_col), model_row - 1))
+
         # Only write to Model tab if this is the first time (no existing link formula)
-        # or if we need to update the doc_cell reference
         if not already_linked:
             model_updates.append({
                 'range': model_cell,
                 'values': [[formula]],
             })
-
-            # Track for green formatting
-            model_row = drivers[driver_name]
-            model_col = periods[period]
-            green_cells.append((_col_to_index(model_col), model_row - 1))
 
     # Write formulas to Model tab
     if model_updates:
@@ -684,12 +732,13 @@ def write_driver_deltas_to_model(ticker: str, deltas: dict) -> None:
             f"write_model_formulas_{ticker}",
         )
 
-    # ── Step 4: Format Model tab formula cells with green text ──
+    # ── Step 4: Format Model tab formula cells with purple text ──
+    # Purple distinguishes agent-linked formulas from standard green cross-tab refs
     model_sheet_id = model_ws.id
-    green_requests = []
+    purple_requests = []
 
     for col_0, row_0 in green_cells:
-        green_requests.append({
+        purple_requests.append({
             'repeatCell': {
                 'range': {
                     'sheetId': model_sheet_id,
@@ -699,16 +748,16 @@ def write_driver_deltas_to_model(ticker: str, deltas: dict) -> None:
                     'endColumnIndex': col_0 + 1,
                 },
                 'cell': {'userEnteredFormat': {'textFormat': {
-                    'foregroundColorStyle': {'rgbColor': {'red': 0, 'green': 0.498, 'blue': 0}},
+                    'foregroundColorStyle': {'rgbColor': {'red': 0.502, 'green': 0, 'blue': 0.502}},
                 }}},
                 'fields': 'userEnteredFormat.textFormat',
             }
         })
 
-    if green_requests:
+    if purple_requests:
         _with_retry(
-            lambda: spreadsheet.batch_update({'requests': green_requests}),
-            f"fmt_model_green_{ticker}",
+            lambda: spreadsheet.batch_update({'requests': purple_requests}),
+            f"fmt_model_purple_{ticker}",
         )
 
     total_written = len(model_updates)
