@@ -67,22 +67,26 @@ def get_company_price_and_financials(ticker: str) -> str:
 
 @tool
 def get_consensus_estimates(ticker: str) -> str:
-    """Read analyst consensus revenue and earnings estimates from the consensus Excel file for a ticker."""
+    """Read analyst consensus revenue, earnings, and valuation data from the company's Google Sheet.
+
+    Returns financials (revenue, EBITDA, EPS for FY2026/FY2027), current multiples,
+    implied share prices, and the analyst's prior thesis/conviction from the
+    Agent View and Agent Documentation tabs.
+    """
     key = f"consensus:{ticker}"
     cached = cache_get(key)
     if cached:
         return cached
     try:
-        from tools.consensus_reader import ConsensusReader
-        reader = ConsensusReader(ticker)
-        consensus = reader.get_consensus()
-        out = json.dumps(consensus, indent=2, default=str)
-        cache_set(key, out)
-        return out
-    except FileNotFoundError:
-        return f"No consensus file found for {ticker}."
+        from sheets_client import load_analyst_view
+        view = load_analyst_view(ticker)
+        if view:
+            out = json.dumps(view, indent=2, default=str)
+            cache_set(key, out)
+            return out
+        return f"No Google Sheet data found for {ticker}."
     except Exception as e:
-        return f"Consensus read error for {ticker}: {e}"
+        return f"Google Sheets read error for {ticker}: {e}"
 
 
 @tool

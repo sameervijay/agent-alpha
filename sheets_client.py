@@ -14,6 +14,7 @@ Usage:
 import base64
 import json
 import os
+import random
 import time
 from datetime import datetime
 from typing import Any, Optional
@@ -21,6 +22,27 @@ from typing import Any, Optional
 import gspread
 
 import config
+
+# ── Rate Limiting ──────────────────────────────────────────────────────────
+# Google Sheets API allows 60 read requests per minute per user.
+# With 5 companies × multiple reads, we can hit this easily.
+
+_SHEETS_RETRY_MAX = 3
+_SHEETS_RETRY_BASE_DELAY = 5  # seconds
+
+
+def _with_retry(fn, label: str = "sheets"):
+    """Execute a Sheets API call with exponential backoff on 429 errors."""
+    for attempt in range(_SHEETS_RETRY_MAX):
+        try:
+            return fn()
+        except gspread.exceptions.APIError as e:
+            if '429' in str(e) and attempt < _SHEETS_RETRY_MAX - 1:
+                delay = _SHEETS_RETRY_BASE_DELAY * (2 ** attempt) + random.uniform(0, 2)
+                print(f"  [sheets_client] Rate limited on {label}, retrying in {delay:.0f}s...")
+                time.sleep(delay)
+            else:
+                raise
 
 # ── Authentication ────────────────────────────────────────────────────────
 
@@ -142,9 +164,9 @@ def read_agent_view(ticker: str) -> Optional[dict]:
         ws = _get_worksheet(ticker, 'Agent View')
         layout = _layout_for(ticker)
 
-        # Batch-read all cells we need
+        # Batch-read all cells we need (with rate-limit retry)
         cell_refs = list(layout.values())
-        results = ws.batch_get(cell_refs)
+        results = _with_retry(lambda: ws.batch_get(cell_refs), f"read_agent_view({ticker})")
 
         vals = {}
         for key, cell_ref in layout.items():
@@ -200,7 +222,7 @@ def read_agent_documentation(ticker: str) -> Optional[dict]:
     try:
         ws = _get_worksheet(ticker, 'Agent Documentation')
 
-        # Batch-read all cells
+        # Batch-read all cells (with rate-limit retry)
         ranges = (
             ['C5', 'C6', 'C7', 'C8', 'C9', 'C10']      # thesis & conviction
             + [f'C{r}' for r in range(14, 19)]             # drivers (C14-C18)
@@ -211,7 +233,7 @@ def read_agent_documentation(ticker: str) -> Optional[dict]:
             + ['C44']                                       # challenge
             + [f'A{r}' for r in range(48, 63)]             # headlines (A48-A62)
         )
-        results = ws.batch_get(ranges)
+        results = _with_retry(lambda: ws.batch_get(ranges), f"read_agent_documentation({ticker})")
 
         def _val(idx):
             r = results[idx] if idx < len(results) else []

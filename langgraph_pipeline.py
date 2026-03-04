@@ -1100,7 +1100,7 @@ def _finalize(state: PipelineState) -> PipelineState:
 
 
 def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> None:
-    """Write/update analyst view JSONs with latest brief data, financials, and multiples."""
+    """Persist analyst views to Google Sheets (primary) with JSON backup."""
     from datetime import datetime
     from pathlib import Path
     from dcf_grounding import compute_financials
@@ -1114,15 +1114,13 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
         if not ticker:
             continue
 
-        view_path = views_dir / f"{ticker}_view.json"
-
-        # Load existing view if present
+        # Load existing view from Google Sheets (primary source)
         existing = {}
-        if view_path.exists():
-            try:
-                existing = json.loads(view_path.read_text())
-            except (json.JSONDecodeError, OSError):
-                pass
+        try:
+            from sheets_client import load_analyst_view as _sheets_load
+            existing = _sheets_load(ticker) or {}
+        except Exception:
+            pass
 
         # Merge: keep established_at from existing, update everything else
         established = existing.get("established_at", now)
@@ -1204,10 +1202,7 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
             "confidence": brief.get("conviction", existing.get("confidence", 0)),
         }
 
-        view_path.write_text(json.dumps(view, indent=2, default=str))
-        print("  [finalize] Updated analyst view: %s" % view_path.name)
-
-        # ── Write to Google Sheets (Agent Documentation + Agent View multiples) ──
+        # ── Primary: Write to Google Sheets ──
         try:
             from sheets_client import write_agent_documentation, write_agent_view_multiples
             write_agent_documentation(ticker, view)
@@ -1215,6 +1210,13 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
                 write_agent_view_multiples(ticker, suggested)
         except Exception as sheets_err:
             print("  [finalize] Google Sheets write failed for %s: %s" % (ticker, sheets_err))
+
+        # ── Backup: Write JSON locally ──
+        try:
+            view_path = views_dir / f"{ticker}_view.json"
+            view_path.write_text(json.dumps(view, indent=2, default=str))
+        except Exception:
+            pass
 
 
 def build_graph():
