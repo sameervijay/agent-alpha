@@ -136,6 +136,17 @@ DEFAULT_WACC_STEP_BPS = 50
 UPSIDE_THRESHOLD = 0.15  # 15% upside for BUY signal
 MAX_POSITION_WEIGHT = 0.30  # 30% max per name
 
+# ── Google Sheets Integration ─────────────────────────────
+# Each company's Canalyst model lives in a shared Google Sheet with
+# Agent View (quantitative) and Agent Documentation (qualitative) tabs.
+GOOGLE_SHEET_IDS = {
+    'NVDA': '1PMYaH_sHXOxjAr_zjMWGWNCydl5mPdoVoYIQFKfC2io',
+    'TSM':  '1TeUmlVdEJyEu4p24M59wTvJrPC5NHYyUBARAzf8XgsI',
+    'CDNS': '14SzOEAAUW3cOs2aiMj0YRGVz13SyeZJa_vQcIYbkrMs',
+    'CRWV': '1u8Ds9GrLJZ36eBEGKWUSM-quGoNOlVKZbNHb55iWrqo',
+    'ASML': '1flHoFLfiFZGN6cFOsmWps07YpsFOPou-7kOYGchfCAo',
+}
+
 # ── Debate Gate ─────────────────────────────────────────────
 # Debate rounds only fire when analysts genuinely disagree.
 # Gate metric: mean absolute deviation (MAD) of short_term_event_conviction

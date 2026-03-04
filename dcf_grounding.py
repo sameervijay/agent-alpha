@@ -159,7 +159,21 @@ def compute_financials(ticker: str) -> Optional[dict]:
 
 
 def load_analyst_view(ticker: str) -> Optional[dict]:
-    """Load stored analyst view from ``data/analyst_views/``."""
+    """Load stored analyst view, preferring Google Sheets over local JSON.
+
+    Reads from the company's Google Sheet (Agent View + Agent Documentation tabs)
+    first. Falls back to ``data/analyst_views/`` JSON if Sheets are unavailable.
+    """
+    # Try Google Sheets first
+    try:
+        from sheets_client import load_analyst_view as _sheets_load
+        view = _sheets_load(ticker)
+        if view:
+            return view
+    except Exception as e:
+        print(f"  [dcf_grounding] Google Sheets read failed for {ticker}, falling back to JSON: {e}")
+
+    # Fallback to local JSON
     views_dir = config.ANALYST_VIEWS_DIR
     for suffix in ['_thesis.json', '_view.json']:
         path = views_dir / f"{ticker}{suffix}"

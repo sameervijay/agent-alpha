@@ -277,6 +277,28 @@ def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
         first_driver = engine.drivers[driver_names[0]]
         driver_periods = list(first_driver.keys())
 
+    # ── Google Sheets financials (from Model tab via Agent View) ──
+    sheets_context = ""
+    try:
+        from sheets_client import read_agent_view
+        av = read_agent_view(ticker)
+        if av and av.get('model_financials'):
+            mf = av['model_financials']
+            sheets_context = (
+                f"GOOGLE_SHEET_FINANCIALS for {ticker} (from Canalyst Model tab):\n"
+                f"  FY2026 Revenue: ${mf.get('rev_2026', 0):,.0f}M\n"
+                f"  FY2027 Revenue: ${mf.get('rev_2027', 0):,.0f}M\n"
+                f"  FY2026 EBITDA: ${mf.get('ebitda_2026', 0):,.0f}M\n"
+                f"  FY2027 EBITDA: ${mf.get('ebitda_2027', 0):,.0f}M\n"
+                f"  FY2026 EPS: ${mf.get('eps_2026', 0):.2f}\n"
+                f"  FY2027 EPS: ${mf.get('eps_2027', 0):.2f}\n"
+                f"  Current Price: ${av.get('current_price', 0):,.2f}\n"
+                f"  Avg Implied Price: ${av.get('avg_implied_price', 0):,.2f}\n"
+                f"  Upside/Downside: {av.get('upside', 0):+.1%}\n\n"
+            )
+    except Exception as e:
+        print("  [analyst_%s] Sheets context unavailable: %s" % (ticker, e))
+
     events_block = json.dumps(company_events[:8], indent=2, default=str)
 
     goal = (
@@ -285,6 +307,7 @@ def _analyze_company(ticker: str, state: PipelineState) -> PipelineState:
         "a concise, DCF-grounded investment stance for this company.\n\n"
         f"ROUTED_EVENTS:\n{events_block}\n\n"
         f"{dcf_context}\n\n"
+        f"{sheets_context}"
     )
 
     if driver_names:
@@ -1183,6 +1206,15 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
 
         view_path.write_text(json.dumps(view, indent=2, default=str))
         print("  [finalize] Updated analyst view: %s" % view_path.name)
+
+        # ── Write to Google Sheets (Agent Documentation + Agent View multiples) ──
+        try:
+            from sheets_client import write_agent_documentation, write_agent_view_multiples
+            write_agent_documentation(ticker, view)
+            if suggested:
+                write_agent_view_multiples(ticker, suggested)
+        except Exception as sheets_err:
+            print("  [finalize] Google Sheets write failed for %s: %s" % (ticker, sheets_err))
 
 
 def build_graph():
