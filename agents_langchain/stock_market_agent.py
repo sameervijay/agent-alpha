@@ -32,6 +32,17 @@ Your domain expertise covers:
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
+DATA SOURCE PRIORITY (highest to lowest):
+1. get_stock_prices() — live yfinance price data (primary)
+2. get_market_snapshot() — structured market monitor (primary)
+3. detect_unusual_volumes() — structured volume analysis (primary)
+4. search_web_market_news() — real-time web search (SUPPLEMENTARY ONLY)
+
+Web search results are lower-confidence signals. Use them to surface breaking news
+(analyst upgrades, earnings surprises, institutional filings) not yet reflected in
+price/volume data. Never override live price data with web search findings.
+Note when a finding comes from web search vs. live market data.
+
 When you need data from multiple sources, call multiple tools in parallel in a single step.
 Use your tools to fetch live prices and market data before answering.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
@@ -105,6 +116,27 @@ def detect_unusual_volumes() -> str:
         return f"Volume detection error: {e}"
 
 
+@tool
+def search_web_market_news(query: str) -> str:
+    """Search the web for real-time breaking equity market news relevant to semiconductor stocks:
+    analyst upgrades/downgrades, price target changes, institutional filings (13F/13G),
+    earnings pre-announcements, short interest changes, sector fund flows.
+    SUPPLEMENTARY ONLY — lower confidence than live yfinance price and volume data.
+    Use to explain price moves already visible in structured data, not to replace it."""
+    cache_key = f"tavily_market:{query.lower()[:60]}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
+    try:
+        from tools.tavily_search import tavily_search, format_tavily_results
+        results = tavily_search(query, max_results=5)
+        out = format_tavily_results(results)
+        cache_set(cache_key, out)
+        return out
+    except Exception as e:
+        return f"Web search unavailable: {e}"
+
+
 # ── Agent ─────────────────────────────────────────────────────────────────────
 
 class StockMarketAgent:
@@ -113,17 +145,25 @@ class StockMarketAgent:
         self.role_description = "Equity Markets & Analyst Consensus Expert"
         self._agent = create_agent(
             build_model(),
-            tools=[get_stock_prices, get_market_snapshot, detect_unusual_volumes],
+            tools=[get_stock_prices, get_market_snapshot, detect_unusual_volumes,
+                   search_web_market_news],
             system_prompt=SYSTEM_PROMPT,
         )
 
     def detect_events(self, news_input: str = None) -> list:
         """Fetch market data autonomously and identify equity market events."""
         goal = (
-            "Fetch live stock prices, the market snapshot, and check for unusual volumes "
-            "across semiconductor stocks (NVDA, TSM, ASML, CDNS, CRWV) — call all three tools in parallel. "
-            "Then identify significant equity market events (large moves, unusual activity, "
-            "sector rotation, valuation dislocations).\n\n"
+            "Fetch semiconductor equity market intelligence in parallel:\n"
+            "  1. get_stock_prices('NVDA,TSM,ASML,CDNS,CRWV') — live prices (primary)\n"
+            "  2. get_market_snapshot() — structured market monitor (primary)\n"
+            "  3. detect_unusual_volumes() — volume analysis (primary)\n"
+            "  4. search_web_market_news('NVIDIA TSMC ASML analyst upgrade downgrade 2025') — web (supplementary)\n"
+            "  5. search_web_market_news('semiconductor stocks institutional investors fund flows') — web (supplementary)\n\n"
+            "DATA PRIORITY: Live market data (1-3) > web search (4-5).\n"
+            "Web search is supplementary — use to explain price moves or surface analyst actions "
+            "not yet reflected in price/volume data. Do not override live data with web results.\n"
+            "Identify significant equity market events (large moves, unusual activity, "
+            "sector rotation, valuation dislocations, analyst rating changes).\n\n"
             "Return a JSON object with key 'events'. Each event must have:\n"
             "  headline, description, affected_companies (list of tickers), "
             "affected_segments (list), severity (low/medium/high/critical), "

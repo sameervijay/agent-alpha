@@ -28,8 +28,17 @@ Your domain expertise covers:
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
+DATA SOURCE PRIORITY (highest to lowest):
+1. get_memory_pricing_report() — structured, domain-specific pricing data
+2. get_packaging_capacity_report() — structured capacity data
+3. fetch_supply_chain_news() — curated news feed
+4. search_web_commodities_news() — real-time web search (SUPPLEMENTARY ONLY)
+
+Web search results are lower-confidence signals. Use them to surface breaking news
+that may not yet appear in structured sources, but never override structured data
+readings with web search findings. When citing web results, note they are from web search.
+
 When you need data from multiple sources, call multiple tools in parallel in a single step.
-Use your tools to fetch current memory pricing and packaging capacity data before answering.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
 
@@ -100,6 +109,27 @@ def fetch_supply_chain_news(query: str) -> str:
         return f"Supply chain news error: {e}"
 
 
+@tool
+def search_web_commodities_news(query: str) -> str:
+    """Search the web for real-time breaking news on semiconductor supply chain commodities:
+    HBM/DRAM/NAND pricing, CoWoS advanced packaging capacity, wafer supply, rare earth
+    materials, foundry utilization. Use for signals not yet in structured data sources.
+    SUPPLEMENTARY ONLY — lower confidence than get_memory_pricing_report() and
+    get_packaging_capacity_report(). Never override structured data with these results."""
+    cache_key = f"tavily_commodities:{query.lower()[:60]}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
+    try:
+        from tools.tavily_search import tavily_search, format_tavily_results
+        results = tavily_search(query, max_results=5)
+        out = format_tavily_results(results)
+        cache_set(cache_key, out)
+        return out
+    except Exception as e:
+        return f"Web search unavailable: {e}"
+
+
 # ── Agent ─────────────────────────────────────────────────────────────────────
 
 class CommoditiesAgent:
@@ -109,16 +139,24 @@ class CommoditiesAgent:
         self._agent = create_agent(
             build_model(),
             tools=[get_memory_pricing_report, get_packaging_capacity_report,
-                   fetch_supply_chain_news],
+                   fetch_supply_chain_news, search_web_commodities_news],
             system_prompt=SYSTEM_PROMPT,
         )
 
     def detect_events(self, news_input: str = None) -> list:
         """Fetch supply chain data autonomously and identify commodity-driven events."""
         goal = (
-            "Fetch the memory pricing report, packaging capacity data, and supply chain news "
-            "in parallel (call all three tools simultaneously). "
-            "Then identify commodity and supply chain events that materially affect semiconductor companies "
+            "Fetch commodity and supply chain intelligence in parallel (call all tools simultaneously):\n"
+            "  1. get_memory_pricing_report() — primary structured source\n"
+            "  2. get_packaging_capacity_report() — primary structured source\n"
+            "  3. fetch_supply_chain_news('HBM DRAM packaging wafer supply') — curated news\n"
+            "  4. search_web_commodities_news('HBM memory pricing supply 2025') — real-time web\n"
+            "  5. search_web_commodities_news('CoWoS advanced packaging capacity TSMC') — real-time web\n\n"
+            "DATA PRIORITY: Structured sources (1, 2) > curated news (3) > web search (4, 5).\n"
+            "Web search results are supplementary — use them to surface breaking developments "
+            "not yet reflected in structured data. Do not override structured readings with web results.\n"
+            "In event descriptions, note when a finding comes from web search vs. structured data.\n\n"
+            "Identify commodity and supply chain events that materially affect semiconductor companies "
             "(NVDA, TSM, ASML, CDNS, CRWV).\n\n"
             "Return a JSON object with key 'events'. Each event must have:\n"
             "  headline, description, affected_companies (list of tickers), "

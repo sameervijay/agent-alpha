@@ -52,6 +52,17 @@ IMPORTANT: Only surface events where the macro transmission mechanism is SPECIFI
 that will delay ASML orders"). Skip generic inflation/rate readings that don't connect to
 an investment decision.
 
+DATA SOURCE PRIORITY (highest to lowest):
+1. get_semiconductor_cycle_data() — FRED + yfinance structured data
+2. get_currency_rates() — live FX from yfinance + FRED
+3. get_hyperscaler_capex_snapshot() — curated earnings-based data
+4. fetch_macro_news() — curated news feed
+5. search_web_macro_news() — real-time web search (SUPPLEMENTARY ONLY)
+
+Web search results are lower-confidence signals. Use them to surface breaking macro
+news (e.g., surprise capex guidance, emergency rate moves) not yet in structured sources.
+Never override FRED/yfinance readings with web search. Note the source when using web results.
+
 When you need data from multiple sources, call multiple tools in parallel in a single step.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
@@ -277,6 +288,27 @@ def fetch_macro_news(query: str) -> str:
         return f"News fetch error: {e}"
 
 
+@tool
+def search_web_macro_news(query: str) -> str:
+    """Search the web for real-time breaking macro news relevant to semiconductor capex:
+    hyperscaler capex guidance revisions, Fed policy surprises, semiconductor cycle signals,
+    enterprise IT budget changes, inventory build/drawdown announcements.
+    SUPPLEMENTARY ONLY — lower confidence than FRED, yfinance, and hyperscaler snapshot.
+    Use to surface breaking developments; do not override structured data with web results."""
+    cache_key = f"tavily_macro:{query.lower()[:60]}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
+    try:
+        from tools.tavily_search import tavily_search, format_tavily_results
+        results = tavily_search(query, max_results=5)
+        out = format_tavily_results(results)
+        cache_set(cache_key, out)
+        return out
+    except Exception as e:
+        return f"Web search unavailable: {e}"
+
+
 # ── Agent ─────────────────────────────────────────────────────────────────────
 
 class MacroAgent:
@@ -290,6 +322,7 @@ class MacroAgent:
                 get_currency_rates,
                 get_hyperscaler_capex_snapshot,
                 fetch_macro_news,
+                search_web_macro_news,
             ],
             system_prompt=SYSTEM_PROMPT,
         )
@@ -302,10 +335,13 @@ class MacroAgent:
                 "Your task: assess the MACRO TRANSMISSION MECHANISM — how does the current "
                 "macro environment amplify or dampen this event's investment impact?\n\n"
                 "Fetch in parallel:\n"
-                "1. Semiconductor cycle data (capacity utilization, FEDFUNDS, yield spread)\n"
-                "2. Currency rates (USD/TWD, USD/EUR)\n"
-                "3. Hyperscaler capex snapshot\n"
-                "4. Relevant macro news (capex changes, inventory, utilization)\n\n"
+                "1. get_semiconductor_cycle_data() — FRED structured data (primary)\n"
+                "2. get_currency_rates() — live FX (primary)\n"
+                "3. get_hyperscaler_capex_snapshot() — curated earnings data (primary)\n"
+                "4. fetch_macro_news('hyperscaler capex semiconductor cycle') — curated news\n"
+                "5. search_web_macro_news('hyperscaler AI capex spending outlook 2025') — web (supplementary)\n\n"
+                "DATA PRIORITY: Structured sources (1-3) > curated news (4) > web search (5).\n"
+                "Web search is supplementary — use for breaking macro news not yet in structured data.\n"
                 "Surface only events where the macro transmission is CONCRETE and SPECIFIC "
                 "to NVDA, TSM, ASML, CDNS, or CRWV. Skip generic inflation readings.\n\n"
                 "Return a JSON object with key 'events'. Each event must have:\n"
@@ -315,9 +351,16 @@ class MacroAgent:
             )
         else:
             goal = (
-                "Sweep for macro signals affecting the semiconductor capex cycle. "
-                "Fetch in parallel: semiconductor cycle data, currency rates, "
-                "hyperscaler capex snapshot, and relevant macro news.\n\n"
+                "Sweep for macro signals affecting the semiconductor capex cycle.\n"
+                "Fetch in parallel:\n"
+                "1. get_semiconductor_cycle_data() — FRED structured data (primary)\n"
+                "2. get_currency_rates() — live FX (primary)\n"
+                "3. get_hyperscaler_capex_snapshot() — curated earnings data (primary)\n"
+                "4. fetch_macro_news('hyperscaler capex semiconductor cycle') — curated news\n"
+                "5. search_web_macro_news('hyperscaler AI capex spending outlook 2025') — web (supplementary)\n"
+                "6. search_web_macro_news('semiconductor industry capex cycle inventory') — web (supplementary)\n\n"
+                "DATA PRIORITY: Structured sources (1-3) > curated news (4) > web search (5-6).\n"
+                "Web search is supplementary — surface breaking macro news not yet in structured sources.\n"
                 "Surface only events where the transmission to NVDA/TSM/ASML/CDNS/CRWV "
                 "is specific and material (e.g., capex acceleration/deceleration, "
                 "utilization inflection, currency move affecting margins). "

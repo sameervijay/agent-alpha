@@ -30,6 +30,7 @@ SPRINGER_META_API_KEY = os.getenv('SPRINGER_META_API_KEY', '') # api.springernat
 ADZUNA_APP_ID = os.getenv('ADZUNA_APP_ID', '')   # api.adzuna.com — job postings
 ADZUNA_APP_KEY = os.getenv('ADZUNA_APP_KEY', '')
 FRED_API_KEY = os.getenv('FRED_API_KEY', '')      # fred.stlouisfed.org/docs/api/api_key.html (free)
+TAVILY_API_KEY = os.getenv('TAVILY_API_KEY', '')  # app.tavily.com — real-time web search for scouts
 SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN', '')
 SLACK_APP_TOKEN = os.getenv('SLACK_APP_TOKEN', '')  # xapp-... for Socket Mode
 SLACK_DEBATE_CHANNEL = os.getenv('SLACK_DEBATE_CHANNEL', 'C0AENBHCUM7')

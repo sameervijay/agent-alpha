@@ -67,8 +67,21 @@ Your domain expertise covers:
 
 Companies you analyze: NVIDIA (NVDA), TSMC (TSM), ASML (ASML), Cadence (CDNS), CoreWeave (CRWV)
 
+DATA SOURCE PRIORITY (highest to lowest):
+1. fetch_industry_publications() — EE Times, Semiconductor Engineering, IEEE Spectrum (primary)
+2. fetch_arxiv_papers() — peer-reviewed chip architecture research (primary)
+3. fetch_elsevier_papers() / fetch_springer_openaccess() / fetch_springer_meta() — journal papers (primary)
+4. get_semi_equipment_billings() / get_packaging_capacity_data() — structured industry data (primary)
+5. fetch_tech_news() — curated news feed
+6. fetch_job_postings() — structured hiring signals (primary)
+7. search_web_tech_news() — real-time web search (SUPPLEMENTARY ONLY)
+
+Web search results are lower-confidence signals. Use them to surface breaking technology
+announcements (new chip reveals, surprise architecture disclosures) not yet in industry
+publications or academic databases. Never override structured/peer-reviewed sources with
+web search. Note when a finding comes from web search vs. peer-reviewed/industry sources.
+
 When you need data from multiple sources, call multiple tools in parallel in a single step.
-Use your tools to fetch current technology intelligence before answering.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
 # Ticker → Adzuna company search name
@@ -548,6 +561,28 @@ def fetch_job_postings(query: str) -> str:
         return f"Adzuna job postings fetch error: {e}"
 
 
+@tool
+def search_web_tech_news(query: str) -> str:
+    """Search the web for real-time breaking semiconductor technology news:
+    new chip architecture announcements, process node milestones, packaging technology
+    breakthroughs, product launches, SEMI equipment news, AI hardware developments.
+    SUPPLEMENTARY ONLY — lower confidence than industry publications (EE Times, IEEE Spectrum),
+    peer-reviewed papers (arXiv, Elsevier, Springer), and structured data.
+    Use to surface breaking tech announcements not yet in academic/industry databases."""
+    cache_key = f"tavily_tech:{query.lower()[:60]}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
+    try:
+        from tools.tavily_search import tavily_search, format_tavily_results
+        results = tavily_search(query, max_results=5)
+        out = format_tavily_results(results)
+        cache_set(cache_key, out)
+        return out
+    except Exception as e:
+        return f"Web search unavailable: {e}"
+
+
 # ── Agent ─────────────────────────────────────────────────────────────────────
 
 class TechPublicationsAgent:
@@ -566,6 +601,7 @@ class TechPublicationsAgent:
                 fetch_springer_openaccess,
                 fetch_springer_meta,
                 fetch_job_postings,
+                search_web_tech_news,
             ],
             system_prompt=SYSTEM_PROMPT,
         )
@@ -574,18 +610,23 @@ class TechPublicationsAgent:
         """Fetch tech intelligence from all sources and identify technology-driven events."""
         goal = (
             "Fetch semiconductor technology intelligence from all sources in parallel:\n"
-            "  1. fetch_tech_news('semiconductor chip GPU EUV packaging')\n"
-            "  2. fetch_industry_publications('NVIDIA Blackwell TSMC process node') "
-            "— then also fetch_industry_publications('ASML EUV CoWoS HBM')\n"
-            "  3. fetch_arxiv_papers('nvidia gpu accelerator chip memory')\n"
-            "  4. get_semi_equipment_billings()\n"
-            "  5. get_packaging_capacity_data()\n"
-            "  6. fetch_elsevier_papers('gate-all-around transistor EUV yield')\n"
-            "  7. fetch_springer_openaccess('semiconductor chip transistor packaging memory')\n"
-            "  8. fetch_springer_meta('TSMC NVIDIA ASML chip architecture foundry')\n"
-            "  9. fetch_job_postings('NVIDIA GPU architect') — then also "
-            "fetch_job_postings('ASML EUV field service') and "
-            "fetch_job_postings('TSMC process engineer')\n\n"
+            "  1. fetch_tech_news('semiconductor chip GPU EUV packaging') — curated news\n"
+            "  2. fetch_industry_publications('NVIDIA Blackwell TSMC process node') — primary\n"
+            "     also fetch_industry_publications('ASML EUV CoWoS HBM') — primary\n"
+            "  3. fetch_arxiv_papers('nvidia gpu accelerator chip memory') — primary\n"
+            "  4. get_semi_equipment_billings() — primary\n"
+            "  5. get_packaging_capacity_data() — primary\n"
+            "  6. fetch_elsevier_papers('gate-all-around transistor EUV yield') — primary\n"
+            "  7. fetch_springer_openaccess('semiconductor chip transistor packaging memory') — primary\n"
+            "  8. fetch_springer_meta('TSMC NVIDIA ASML chip architecture foundry') — primary\n"
+            "  9. fetch_job_postings('NVIDIA GPU architect') — primary\n"
+            "     also fetch_job_postings('ASML EUV field service') and fetch_job_postings('TSMC process engineer')\n"
+            " 10. search_web_tech_news('NVIDIA chip architecture announcement 2025') — web (supplementary)\n"
+            " 11. search_web_tech_news('TSMC process node ASML EUV technology news') — web (supplementary)\n\n"
+            "DATA PRIORITY: Industry publications + academic papers + structured data (1-9) > web search (10-11).\n"
+            "Web search is supplementary — use to surface breaking tech announcements not yet in\n"
+            "academic databases or industry publications. Do not override peer-reviewed findings\n"
+            "with web search. Note when a finding comes from web search.\n\n"
             "Analyse ALL results. Prioritise: (a) industry publication articles with specific "
             "product/process/capacity data, (b) SEMI billings trends, (c) arXiv and journal "
             "papers from company-affiliated authors hinting at unreleased architectures or "

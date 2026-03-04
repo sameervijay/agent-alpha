@@ -44,6 +44,17 @@ IMPORTANT: Only surface events with direct, specific impact on these companies.
 Do NOT report generic geopolitical background (summits, tariffs on other sectors,
 general US-China trade tension) unless it has a concrete semiconductor-specific mechanism.
 
+DATA SOURCE PRIORITY (highest to lowest):
+1. fetch_export_control_notices() — authoritative Federal Register (primary)
+2. get_taiwan_strait_risk_indicators() — live yfinance market proxies (primary)
+3. fetch_semiconductor_policy_news() — curated news feed
+4. search_web_politics_news() — real-time web search (SUPPLEMENTARY ONLY)
+
+Web search results are lower-confidence signals. Use them to surface breaking policy
+developments (new Executive Orders, surprise Entity List additions, PLA drills) not yet
+indexed by Federal Register or curated news. Do not override official sources with web results.
+Note when a finding comes from web search vs. official/structured sources.
+
 When you need data from multiple sources, call multiple tools in parallel in a single step.
 Always return your final answer as a single JSON object — no prose outside the JSON."""
 
@@ -185,6 +196,28 @@ def get_taiwan_strait_risk_indicators() -> str:
         return f"Taiwan risk fetch error: {e}"
 
 
+@tool
+def search_web_politics_news(query: str) -> str:
+    """Search the web for real-time breaking semiconductor trade policy and geopolitical news:
+    new export control rules, Entity List additions, CHIPS Act disbursements, Taiwan Strait
+    incidents, Chinese IC self-sufficiency milestones, US-China tech decoupling developments.
+    SUPPLEMENTARY ONLY — lower confidence than Federal Register and Taiwan risk indicators.
+    Use to surface breaking policy news; do not override official government sources with
+    web search results."""
+    cache_key = f"tavily_politics:{query.lower()[:60]}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
+    try:
+        from tools.tavily_search import tavily_search, format_tavily_results
+        results = tavily_search(query, max_results=5)
+        out = format_tavily_results(results)
+        cache_set(cache_key, out)
+        return out
+    except Exception as e:
+        return f"Web search unavailable: {e}"
+
+
 # ── Agent ─────────────────────────────────────────────────────────────────────
 
 class PoliticsAgent:
@@ -197,6 +230,7 @@ class PoliticsAgent:
                 fetch_export_control_notices,
                 fetch_semiconductor_policy_news,
                 get_taiwan_strait_risk_indicators,
+                search_web_politics_news,
             ],
             system_prompt=SYSTEM_PROMPT,
         )
@@ -210,11 +244,13 @@ class PoliticsAgent:
                 "Your task: identify GEOPOLITICAL AND REGULATORY FORCES that amplify or dampen "
                 "this event's impact on NVDA, TSM, ASML, CDNS, CRWV.\n\n"
                 "Search in parallel for:\n"
-                "1. Recent Federal Register notices on export controls or CHIPS Act (use "
-                "   fetch_export_control_notices with relevant queries)\n"
-                "2. Semiconductor-specific policy news (entity list, Taiwan risk, Chinese IC "
-                "   self-sufficiency — use fetch_semiconductor_policy_news)\n"
-                "3. Taiwan Strait risk indicators (use get_taiwan_strait_risk_indicators)\n\n"
+                "1. fetch_export_control_notices() — authoritative Federal Register (primary)\n"
+                "2. fetch_semiconductor_policy_news('entity list Taiwan CHIPS Act Chinese IC') — curated\n"
+                "3. get_taiwan_strait_risk_indicators() — live market proxies (primary)\n"
+                "4. search_web_politics_news('US semiconductor export controls China 2025') — web (supplementary)\n"
+                "5. search_web_politics_news('Taiwan geopolitical risk semiconductor TSMC') — web (supplementary)\n\n"
+                "DATA PRIORITY: Official/structured sources (1, 3) > curated news (2) > web search (4, 5).\n"
+                "Web search is supplementary — use for breaking policy news not yet on Federal Register.\n"
                 "Only report events with a CONCRETE mechanism linking them to the affected companies. "
                 "Skip generic geopolitical background noise.\n\n"
                 "Return a JSON object with key 'events'. Each event must have:\n"
@@ -225,9 +261,13 @@ class PoliticsAgent:
         else:
             goal = (
                 "Sweep for fresh semiconductor trade-policy signals. Search in parallel for:\n"
-                "1. Recent Federal Register export control and CHIPS Act notices\n"
-                "2. Entity List additions, EAR rule changes, Taiwan risk, Chinese IC news\n"
-                "3. Taiwan Strait risk indicators\n\n"
+                "1. fetch_export_control_notices('semiconductor export controls') — authoritative (primary)\n"
+                "2. fetch_semiconductor_policy_news('entity list Taiwan CHIPS Act Chinese IC') — curated\n"
+                "3. get_taiwan_strait_risk_indicators() — live market proxies (primary)\n"
+                "4. search_web_politics_news('US semiconductor export controls China 2025') — web (supplementary)\n"
+                "5. search_web_politics_news('CHIPS Act semiconductor fab incentive disbursement') — web (supplementary)\n\n"
+                "DATA PRIORITY: Official/structured sources (1, 3) > curated news (2) > web search (4, 5).\n"
+                "Web search is supplementary — surface breaking policy news not yet on Federal Register.\n"
                 "Only surface events with a direct mechanism affecting NVDA, TSM, ASML, CDNS, or CRWV. "
                 "Skip generic trade/tariff/summit noise.\n\n"
                 "Return a JSON object with key 'events'. Each event must have:\n"

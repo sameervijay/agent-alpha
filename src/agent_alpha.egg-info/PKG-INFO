@@ -17,6 +17,7 @@ Requires-Dist: langgraph>=0.2
 Requires-Dist: langgraph-cli[inmem]>=0.2
 Requires-Dist: langgraph-sdk>=0.1
 Requires-Dist: slack-bolt>=1.18
+Requires-Dist: tavily-python>=0.3
 
 # agent-alpha
 
@@ -123,7 +124,74 @@ uv run python main.py --langgraph-alloc --budget 500 --event "Focus on Fed"
 
 If you run `uv run python main.py` with no arguments, it now defaults to the PM-led allocation pipeline (`--langgraph-alloc` with `$1000` budget, last `1h`, autonomous event).
 
-## 5. Where to edit agents
+## 5. Data layout
+
+All persistent data lives under `data/`:
+
+```
+data/
+├── analyst_views/              # Analyst standing views (updated each pipeline run)
+│   ├── NVDA_view.json          #   ticker, thesis, conviction, proposed_driver_deltas,
+│   ├── TSM_view.json           #   dcf_implied_price, key_drivers, key_risks, etc.
+│   ├── ASML_view.json
+│   ├── CDNS_view.json
+│   └── CRWV_view.json
+├── benchmarks/                 # Portfolio tracking (initialized by --ablation --init-portfolios)
+│   ├── daily_benchmarks.csv    #   Combined: SPY, mcap-weighted semis, 3 PM profiles
+│   ├── pm_trades.csv           #   Full-debate PM: trade log (date, ticker, action, shares, price)
+│   ├── pm_daily_nav.csv        #   Full-debate PM: daily NAV snapshots
+│   ├── pm_nodebate_trades.csv  #   No-debate PM (analysts only, 0 debate rounds)
+│   ├── pm_nodebate_daily_nav.csv
+│   ├── pm_noanalysts_trades.csv #  No-analysts PM (PM + DCF only)
+│   └── pm_noanalysts_daily_nav.csv
+├── debates/                    # Ablation results JSONs (timestamped)
+│   └── 20260302_184500_ablation_results.json
+├── events/                     # Detected events cache
+├── news_cache/                 # Cached news API responses
+├── causal_graphs/              # Causal graph outputs
+├── valuations/                 # DCF valuation snapshots
+├── macro_analyst/              # Macro analyst outputs
+└── update_sessions/            # PM update session logs
+```
+
+### Portfolio profiles
+
+Three PM portfolios track the ablation experiment over time:
+
+| Profile | CSV prefix | Condition | Description |
+|---------|-----------|-----------|-------------|
+| `pm` | `pm_` | Full debate | Analysts + cross-analyst challenges + PM probing |
+| `pm_nodebate` | `pm_nodebate_` | Analysts only | Analyst briefs but no debate rounds |
+| `pm_noanalysts` | `pm_noanalysts_` | PM only | PM allocates from events + DCF/multiples only |
+
+Run `python eval/pm_portfolio.py --status --profile pm` (or `pm_nodebate`, `pm_noanalysts`) to check any profile. Run `python eval/benchmark_tracker.py` to update all benchmarks including SPY and the semis basket.
+
+## 6. Debate ablation experiment
+
+The ablation compares 3 conditions to measure the value of analyst input and debate:
+
+```bash
+# Run ablation (live events, 1 debate round) and initialize all 3 portfolios
+uv run python main.py --ablation --init-portfolios
+
+# Run ablation on historical benchmark events
+uv run python main.py --ablation --backtest
+
+# Run ablation directly (saves results to data/debates/)
+uv run python eval/debate_ablation.py --rounds 2
+```
+
+## 7. Slack bot
+
+The Slack bot responds to `@AgentAlpha` mentions with portfolio status. Requires `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN` in `.env`.
+
+```bash
+uv run python tools/slack_listener.py
+```
+
+Commands: `status`, `status nodebate`, `status noanalysts`, `status all`, `help`.
+
+## 8. Where to edit agents
 
 - Core configuration: `config.py` (API keys, model settings, company definitions)
 - LangChain agents (PM, company analysts, macro analyst, etc.): `agents_langchain/`
