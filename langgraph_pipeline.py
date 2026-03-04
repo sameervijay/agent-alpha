@@ -1204,10 +1204,17 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
 
         # ── Primary: Write to Google Sheets ──
         try:
-            from sheets_client import write_agent_documentation, write_agent_view_multiples
+            from sheets_client import (
+                write_agent_documentation, write_agent_view_multiples,
+                write_driver_deltas_to_model,
+            )
             write_agent_documentation(ticker, view)
             if suggested:
                 write_agent_view_multiples(ticker, suggested)
+            # Write driver delta link formulas to Model tab (NVDA, CDNS)
+            driver_deltas = view.get('proposed_driver_deltas', {})
+            if driver_deltas:
+                write_driver_deltas_to_model(ticker, driver_deltas)
         except Exception as sheets_err:
             print("  [finalize] Google Sheets write failed for %s: %s" % (ticker, sheets_err))
 

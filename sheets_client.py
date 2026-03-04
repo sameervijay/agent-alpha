@@ -15,7 +15,9 @@ import base64
 import json
 import os
 import random
+import re
 import time
+from collections import OrderedDict
 from datetime import datetime
 from typing import Any, Optional
 
@@ -132,6 +134,59 @@ _AGENT_VIEW_LAYOUT = {
         'avg_implied': 'C41', 'current_price': 'C42', 'upside': 'C43',
     },
 }
+
+
+# ── Driver-to-Model-tab cell mapping ─────────────────────────────────────
+# Maps proposed_driver_deltas keys to Google Sheets Model tab rows + period columns.
+# Only companies with Excel-backed driver cells are included.
+
+_DRIVER_MODEL_CONFIGS = {
+    'NVDA': {
+        'period_columns': OrderedDict([
+            ('Q4-26', 'BW'), ('Q1-27', 'BY'), ('Q2-27', 'BZ'),
+            ('Q3-27', 'CA'), ('Q4-27', 'CB'),
+            ('FY2028', 'CD'), ('FY2029', 'CE'), ('FY2030', 'CF'),
+        ]),
+        'drivers': OrderedDict([
+            ('datacenter_growth', 24),
+            ('gaming_growth', 9),
+            ('automotive_growth', 28),
+            ('proviz_growth', 13),
+            ('oem_growth', 32),
+            ('gm_improvement_bps', 62),
+            ('rd_improvement_bps', 77),
+            ('sga_improvement_bps', 92),
+        ]),
+    },
+    'CDNS': {
+        'period_columns': OrderedDict([
+            ('Q3-26', 'BV'), ('Q4-26', 'BW'),
+            ('FY2027', 'BY'), ('FY2028', 'BZ'), ('FY2029', 'CA'),
+        ]),
+        'drivers': OrderedDict([
+            ('core_eda_growth', 14),
+            ('system_interconnect_growth', 17),
+            ('ip_growth', 19),
+            ('gm_improvement_bps', 49),
+            ('rd_improvement_bps', 62),
+            ('ga_improvement_bps', 75),
+            ('sm_improvement_bps', 88),
+        ]),
+    },
+}
+
+# Delta grid layout in Agent Documentation tab
+_DELTA_GRID_HEADER_ROW = 65
+_DELTA_GRID_PERIOD_ROW = 67
+_DELTA_GRID_DATA_START_ROW = 68
+
+
+def _col_to_index(col_str: str) -> int:
+    """Convert column letter(s) to 0-based index. A=0, B=1, ..., Z=25, AA=26."""
+    idx = 0
+    for c in col_str.upper():
+        idx = idx * 26 + (ord(c) - ord('A') + 1)
+    return idx - 1
 
 
 def _layout_for(ticker: str) -> dict:
@@ -412,3 +467,251 @@ def write_agent_view_multiples(ticker: str, multiples: dict) -> None:
 
     except Exception as e:
         print(f"  [sheets_client] write_agent_view_multiples({ticker}) failed: {e}")
+
+
+# ── Model Tab Driver Delta Formulas ──────────────────────────────────────
+
+def write_driver_deltas_to_model(ticker: str, deltas: dict) -> None:
+    """Write driver delta formulas to the Model tab.
+
+    For each driver+period delta:
+      1. Writes the delta value to a fixed cell in the Agent Documentation tab
+         (a structured delta grid starting at row 65).
+      2. Writes a formula to the corresponding Model tab cell:
+             =<baseline_value> + 'Agent Documentation'!<delta_cell>
+         On subsequent runs, only the delta cell is updated; the formula persists.
+      3. Formats the Model tab formula cells with green text (cross-tab reference).
+
+    Only supported for companies with Excel-backed driver cells (NVDA, CDNS).
+    Other tickers are silently skipped.
+
+    Args:
+        ticker: Company ticker (e.g., 'NVDA').
+        deltas: Dict of driver_name -> {period: delta_value}.
+    """
+    ticker = ticker.upper()
+    cfg = _DRIVER_MODEL_CONFIGS.get(ticker)
+    if not cfg:
+        print(f"  [sheets_client] No Model tab driver config for {ticker}, skipping delta formulas")
+        return
+
+    sheet_id = config.GOOGLE_SHEET_IDS.get(ticker)
+    if not sheet_id:
+        return
+
+    gc = get_gspread_client()
+    spreadsheet = _with_retry(lambda: gc.open_by_key(sheet_id), f"open_{ticker}")
+    doc_ws = _with_retry(lambda: spreadsheet.worksheet('Agent Documentation'), f"doc_ws_{ticker}")
+    model_ws = _with_retry(lambda: spreadsheet.worksheet('Model'), f"model_ws_{ticker}")
+
+    drivers = cfg['drivers']           # OrderedDict: driver_name → model_row
+    periods = cfg['period_columns']    # OrderedDict: period_label → model_col
+    driver_list = list(drivers.keys())
+    period_list = list(periods.keys())
+
+    # ── Ensure Agent Documentation tab is large enough for the delta grid ──
+    needed_rows = _DELTA_GRID_DATA_START_ROW + len(driver_list)
+    needed_cols = 2 + len(period_list) + 1  # A, B, then C..J for periods
+    if doc_ws.row_count < needed_rows or doc_ws.col_count < needed_cols:
+        new_rows = max(doc_ws.row_count, needed_rows)
+        new_cols = max(doc_ws.col_count, needed_cols)
+        _with_retry(lambda: doc_ws.resize(rows=new_rows, cols=new_cols), f"resize_doc_{ticker}")
+
+    # ── Step 1: Write delta grid to Agent Documentation tab ──
+    doc_cells = []
+
+    # Section header
+    doc_cells.append({
+        'range': f'A{_DELTA_GRID_HEADER_ROW}',
+        'values': [['DRIVER DELTA GRID (Model Tab Links)']],
+    })
+
+    # Period headers row: A=Driver, C..=period labels
+    header_row = ['Driver', ''] + period_list
+    doc_cells.append({
+        'range': f'A{_DELTA_GRID_PERIOD_ROW}',
+        'values': [header_row],
+    })
+
+    # Driver rows with delta values (default to 0 for unspecified periods)
+    for i, driver_name in enumerate(driver_list):
+        row_num = _DELTA_GRID_DATA_START_ROW + i
+        driver_deltas = deltas.get(driver_name, {})
+        row_vals = [driver_name, '']
+        for period in period_list:
+            val = driver_deltas.get(period, 0)
+            row_vals.append(val if val else 0)
+        doc_cells.append({
+            'range': f'A{row_num}',
+            'values': [row_vals],
+        })
+
+    _with_retry(
+        lambda: doc_ws.batch_update(doc_cells, value_input_option='RAW'),
+        f"write_delta_grid_{ticker}",
+    )
+
+    # ── Step 2: Format delta grid (blue text for agent-written values) ──
+    doc_sheet_id = doc_ws.id
+    fmt_requests = []
+
+    # Section header: dark blue bold
+    fmt_requests.append({
+        'repeatCell': {
+            'range': {
+                'sheetId': doc_sheet_id,
+                'startRowIndex': _DELTA_GRID_HEADER_ROW - 1,
+                'endRowIndex': _DELTA_GRID_HEADER_ROW,
+                'startColumnIndex': 0,
+                'endColumnIndex': 5,
+            },
+            'cell': {'userEnteredFormat': {'textFormat': {
+                'bold': True,
+                'foregroundColorStyle': {'rgbColor': {'red': 0.1, 'green': 0.2, 'blue': 0.5}},
+            }}},
+            'fields': 'userEnteredFormat.textFormat',
+        }
+    })
+
+    # Delta value cells: blue text
+    for i in range(len(driver_list)):
+        r = _DELTA_GRID_DATA_START_ROW + i
+        fmt_requests.append({
+            'repeatCell': {
+                'range': {
+                    'sheetId': doc_sheet_id,
+                    'startRowIndex': r - 1,
+                    'endRowIndex': r,
+                    'startColumnIndex': 2,  # Column C
+                    'endColumnIndex': 2 + len(period_list),
+                },
+                'cell': {'userEnteredFormat': {'textFormat': {
+                    'foregroundColorStyle': {'rgbColor': {'red': 0, 'green': 0, 'blue': 1.0}},
+                }}},
+                'fields': 'userEnteredFormat.textFormat',
+            }
+        })
+
+    if fmt_requests:
+        _with_retry(
+            lambda: spreadsheet.batch_update({'requests': fmt_requests}),
+            f"fmt_delta_grid_{ticker}",
+        )
+
+    # ── Step 3: Read current Model tab values and write formulas ──
+    # Build list of (model_cell, doc_cell_ref, driver, period)
+    cell_info = []
+    for i, driver_name in enumerate(driver_list):
+        model_row = drivers[driver_name]
+        doc_row = _DELTA_GRID_DATA_START_ROW + i
+        for j, period in enumerate(period_list):
+            model_col = periods[period]
+            model_cell = f'{model_col}{model_row}'
+            doc_col = chr(ord('C') + j)
+            doc_cell = f'{doc_col}{doc_row}'
+            cell_info.append((model_cell, doc_cell, driver_name, period))
+
+    # Batch-read current Model tab formulas
+    read_ranges = [ci[0] for ci in cell_info]
+    current_formulas = _with_retry(
+        lambda: model_ws.batch_get(read_ranges, value_render_option='FORMULA'),
+        f"read_model_formulas_{ticker}",
+    )
+    current_values = _with_retry(
+        lambda: model_ws.batch_get(read_ranges, value_render_option='UNFORMATTED_VALUE'),
+        f"read_model_values_{ticker}",
+    )
+
+    # Build Model tab formula updates + formatting list
+    model_updates = []
+    green_cells = []   # (row_0idx, col_0idx) for green formatting
+    _FORMULA_PATTERN = re.compile(r"^=([+-]?\d+(?:\.\d+)?)\+'Agent Documentation'!")
+
+    for idx, (model_cell, doc_cell, driver_name, period) in enumerate(cell_info):
+        raw_formula = None
+        raw_value = None
+
+        if idx < len(current_formulas):
+            r = current_formulas[idx]
+            raw_formula = r[0][0] if r and r[0] else None
+        if idx < len(current_values):
+            r = current_values[idx]
+            raw_value = r[0][0] if r and r[0] else None
+
+        # Determine baseline: extract from existing link formula or use raw value
+        baseline = None
+        already_linked = False
+
+        if isinstance(raw_formula, str) and raw_formula.startswith('='):
+            m = _FORMULA_PATTERN.match(raw_formula)
+            if m:
+                baseline = float(m.group(1))
+                already_linked = True
+            else:
+                # Cell has a different formula — don't overwrite it
+                print(f"  [sheets_client] Skipping {model_cell}: has non-delta formula")
+                continue
+        elif raw_value is not None:
+            try:
+                baseline = float(raw_value)
+            except (ValueError, TypeError):
+                print(f"  [sheets_client] Skipping {model_cell}: non-numeric value {raw_value!r}")
+                continue
+        else:
+            # Empty cell — skip
+            continue
+
+        # Build the formula: =<baseline>+'Agent Documentation'!<doc_cell>
+        formula = f"={baseline}+'Agent Documentation'!{doc_cell}"
+
+        # Only write to Model tab if this is the first time (no existing link formula)
+        # or if we need to update the doc_cell reference
+        if not already_linked:
+            model_updates.append({
+                'range': model_cell,
+                'values': [[formula]],
+            })
+
+            # Track for green formatting
+            model_row = drivers[driver_name]
+            model_col = periods[period]
+            green_cells.append((_col_to_index(model_col), model_row - 1))
+
+    # Write formulas to Model tab
+    if model_updates:
+        _with_retry(
+            lambda: model_ws.batch_update(model_updates, value_input_option='USER_ENTERED'),
+            f"write_model_formulas_{ticker}",
+        )
+
+    # ── Step 4: Format Model tab formula cells with green text ──
+    model_sheet_id = model_ws.id
+    green_requests = []
+
+    for col_0, row_0 in green_cells:
+        green_requests.append({
+            'repeatCell': {
+                'range': {
+                    'sheetId': model_sheet_id,
+                    'startRowIndex': row_0,
+                    'endRowIndex': row_0 + 1,
+                    'startColumnIndex': col_0,
+                    'endColumnIndex': col_0 + 1,
+                },
+                'cell': {'userEnteredFormat': {'textFormat': {
+                    'foregroundColorStyle': {'rgbColor': {'red': 0, 'green': 0.498, 'blue': 0}},
+                }}},
+                'fields': 'userEnteredFormat.textFormat',
+            }
+        })
+
+    if green_requests:
+        _with_retry(
+            lambda: spreadsheet.batch_update({'requests': green_requests}),
+            f"fmt_model_green_{ticker}",
+        )
+
+    total_written = len(model_updates)
+    total_delta_only = len(cell_info) - total_written  # cells with existing formulas (only delta updated)
+    print(f"  [sheets_client] {ticker} Model tab: {total_written} new formulas written, "
+          f"{total_delta_only} existing formula deltas updated")
