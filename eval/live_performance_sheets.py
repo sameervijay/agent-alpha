@@ -42,10 +42,12 @@ _THESIS_HEADER = ['Company', 'Conviction', 'ST Event Conv', 'Thesis (excerpt)', 
 _RUNLOG_HEADER = ['Run #', 'Timestamp', 'NVDA ($)', 'CDNS ($)', 'CRWV ($)', 'TSM ($)', 'ASML ($)', 'Rationale (excerpt)']
 
 # Row anchors for each section within a strategy tab
-_SEC_A_ROW = 1   # Current Portfolio
-_SEC_B_ROW = 10  # NAV History
-_SEC_C_ROW = 30  # Agent Theses
-_SEC_D_ROW = 40  # Run Log
+# Section B (NAV history) and D (run log) grow downward without bound.
+# C and D are placed far enough down that live_1h (~8760 runs/year) never reaches them.
+_SEC_A_ROW = 1     # Current Portfolio  (rows 1-8, fixed)
+_SEC_B_ROW = 10    # NAV History        (rows 10+, append-only, unbounded)
+_SEC_C_ROW = 2000  # Agent Theses       (rows 2000-2007, overwritten each run)
+_SEC_D_ROW = 2010  # Run Log            (rows 2010+, append-only, unbounded)
 
 
 # ── Sheet creation ─────────────────────────────────────────────────────────────
@@ -71,7 +73,7 @@ def scaffold_existing_sheet(sheet_id: str) -> str:
     for profile, cfg in config.LIVE_STRATEGIES.items():
         if profile not in existing_titles:
             tab = _with_retry(
-                lambda p=profile: sh.add_worksheet(title=p, rows=500, cols=20),
+                lambda p=profile: sh.add_worksheet(title=p, rows=5000, cols=20),
                 f'create_tab_{profile}',
             )
         else:
@@ -105,7 +107,7 @@ def create_performance_sheet() -> str:
 
     # Create per-strategy tabs
     for profile, cfg in config.LIVE_STRATEGIES.items():
-        tab = _with_retry(lambda p=profile: sh.add_worksheet(title=p, rows=500, cols=20),
+        tab = _with_retry(lambda p=profile: sh.add_worksheet(title=p, rows=5000, cols=20),
                           f'create_tab_{profile}')
         _scaffold_strategy_tab(tab, profile, cfg['label'])
 
@@ -212,17 +214,7 @@ def write_strategy_tab(
                           round(value, 2), round(weight, 2)])
     _with_retry(lambda: ws.update('A4', port_rows), f'write_portfolio_{profile}')
 
-    # ── Section B: append NAV row ──────────────────────────────────────────────
-    # Read from first data row (skip header at _SEC_B_ROW+1) so nav_data[i] == sheet row _SEC_B_ROW+2+i
-    nav_data = _get_all_values(ws, f'A{_SEC_B_ROW + 2}', 500)
-    next_nav_row = _SEC_B_ROW + 2
-    for i, row in enumerate(nav_data):
-        if not any(cell for cell in row):
-            next_nav_row = _SEC_B_ROW + 2 + i
-            break
-    else:
-        next_nav_row = _SEC_B_ROW + 2 + len(nav_data)
-
+    # ── Section B: append NAV row (unbounded — Section C is at row 2000) ────────
     nav_entry = [
         now_str,
         round(holdings.get('NVDA', 0) * prices.get('NVDA', 0), 2),
@@ -234,7 +226,11 @@ def write_strategy_tab(
         round(portfolio_value, 2),
         round(return_pct, 4),
     ]
-    _with_retry(lambda: ws.update(f'A{next_nav_row}', [nav_entry]), f'append_nav_{profile}')
+    # append_rows finds the next empty row after existing data — no manual scan needed
+    _with_retry(lambda: ws.append_rows([nav_entry], value_input_option='RAW',
+                                        insert_data_option='OVERWRITE',
+                                        table_range=f'A{_SEC_B_ROW + 1}:I{_SEC_C_ROW - 1}'),
+                f'append_nav_{profile}')
 
     # ── Section C: overwrite agent theses (rows SEC_C_ROW+2 to +8) ────────────
     thesis_rows = []
@@ -250,17 +246,7 @@ def write_strategy_tab(
         _with_retry(lambda: ws.update(f'A{_SEC_C_ROW + 2}', thesis_rows),
                     f'write_theses_{profile}')
 
-    # ── Section D: append run log row ─────────────────────────────────────────
-    # Read from first data row (skip header at _SEC_D_ROW+1) so run_data[i] == sheet row _SEC_D_ROW+2+i
-    run_data = _get_all_values(ws, f'A{_SEC_D_ROW + 2}', 200)
-    next_run_row = _SEC_D_ROW + 2
-    for i, row in enumerate(run_data):
-        if not any(cell for cell in row):
-            next_run_row = _SEC_D_ROW + 2 + i
-            break
-    else:
-        next_run_row = _SEC_D_ROW + 2 + len(run_data)
-
+    # ── Section D: append run log row (unbounded) ─────────────────────────────
     run_entry = [
         run_number,
         now_str,
@@ -271,7 +257,10 @@ def write_strategy_tab(
         allocation.get('ASML', 0),
         str(rationale)[:300],
     ]
-    _with_retry(lambda: ws.update(f'A{next_run_row}', [run_entry]), f'append_runlog_{profile}')
+    _with_retry(lambda: ws.append_rows([run_entry], value_input_option='RAW',
+                                        insert_data_option='OVERWRITE',
+                                        table_range=f'A{_SEC_D_ROW + 1}:H{_SEC_D_ROW + 5000}'),
+                f'append_runlog_{profile}')
 
     print(f'  [live_sheets] Updated {profile} tab (run #{run_number}, NAV=${portfolio_value:.2f})')
 
@@ -339,16 +328,7 @@ def write_dashboard(all_nav: dict, spy_value: Optional[float] = None) -> None:
         ])
     _with_retry(lambda: ws.update('A6', strategy_rows), 'dashboard_strategy_rows')
 
-    # Append time-series row
-    ts_data = _get_all_values(ws, f'A{_DASHBOARD_TIMESERIES_HEADER_ROW + 1}', 500)
-    next_ts_row = _DASHBOARD_TIMESERIES_HEADER_ROW + 1
-    for i, row in enumerate(ts_data):
-        if not any(cell for cell in row):
-            next_ts_row = _DASHBOARD_TIMESERIES_HEADER_ROW + 1 + i
-            break
-    else:
-        next_ts_row = _DASHBOARD_TIMESERIES_HEADER_ROW + 1 + len(ts_data)
-
+    # Append time-series row (unbounded)
     ts_entry = [
         now_str,
         spy_portfolio_value if spy_portfolio_value is not None else '',
@@ -357,7 +337,10 @@ def write_dashboard(all_nav: dict, spy_value: Optional[float] = None) -> None:
         if all_nav.get(p, {}).get('portfolio_value') else ''
         for p in config.LIVE_STRATEGIES
     ]
-    _with_retry(lambda: ws.update(f'A{next_ts_row}', [ts_entry]), 'dashboard_timeseries')
+    _with_retry(lambda: ws.append_rows([ts_entry], value_input_option='RAW',
+                                        insert_data_option='OVERWRITE',
+                                        table_range=f'A{_DASHBOARD_TIMESERIES_HEADER_ROW}:F50000'),
+                'dashboard_timeseries')
     print(f'  [live_sheets] Dashboard updated')
 
 
