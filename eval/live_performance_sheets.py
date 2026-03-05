@@ -78,6 +78,9 @@ def scaffold_existing_sheet(sheet_id: str) -> str:
             )
         else:
             tab = sh.worksheet(profile)
+            # Resize to 5000 rows if it's still at the old 500-row limit
+            if tab.row_count < 5000:
+                _with_retry(lambda t=tab: t.resize(rows=5000), f'resize_tab_{profile}')
         _scaffold_strategy_tab(tab, profile, cfg['label'])
 
     url = f'https://docs.google.com/spreadsheets/d/{sheet_id}'
@@ -374,8 +377,8 @@ def read_current_holdings(profile: str) -> dict:
             ticker = str(row[0]).strip()
             if ticker not in TICKERS:
                 continue
-            shares = float(row[1]) if len(row) > 1 and row[1] else 0.0
-            value = float(row[3]) if len(row) > 3 and row[3] else 0.0
+            shares = _safe_float(row[1]) if len(row) > 1 and row[1] else 0.0
+            value = _safe_float(row[3]) if len(row) > 3 and row[3] else 0.0
             holdings[ticker] = shares
             portfolio_value += value
 
@@ -391,6 +394,14 @@ def read_current_holdings(profile: str) -> dict:
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _safe_float(val) -> float:
+    """Parse a float that may use a comma as decimal separator (European locale)."""
+    try:
+        return float(str(val).replace(',', '.'))
+    except (ValueError, TypeError):
+        return 0.0
+
 
 def _get_all_values(ws: gspread.Worksheet, start: str, max_rows: int) -> list:
     """Read a block of cells starting at `start` for up to max_rows rows.
