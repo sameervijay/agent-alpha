@@ -212,8 +212,8 @@ def write_strategy_tab(
     _with_retry(lambda: ws.update('A4', port_rows), f'write_portfolio_{profile}')
 
     # ── Section B: append NAV row ──────────────────────────────────────────────
-    nav_data = _get_all_values(ws, f'A{_SEC_B_ROW + 1}', 500)
-    # find first empty row in section B (after header)
+    # Read from first data row (skip header at _SEC_B_ROW+1) so nav_data[i] == sheet row _SEC_B_ROW+2+i
+    nav_data = _get_all_values(ws, f'A{_SEC_B_ROW + 2}', 500)
     next_nav_row = _SEC_B_ROW + 2
     for i, row in enumerate(nav_data):
         if not any(cell for cell in row):
@@ -250,7 +250,8 @@ def write_strategy_tab(
                     f'write_theses_{profile}')
 
     # ── Section D: append run log row ─────────────────────────────────────────
-    run_data = _get_all_values(ws, f'A{_SEC_D_ROW + 1}', 200)
+    # Read from first data row (skip header at _SEC_D_ROW+1) so run_data[i] == sheet row _SEC_D_ROW+2+i
+    run_data = _get_all_values(ws, f'A{_SEC_D_ROW + 2}', 200)
     next_run_row = _SEC_D_ROW + 2
     for i, row in enumerate(run_data):
         if not any(cell for cell in row):
