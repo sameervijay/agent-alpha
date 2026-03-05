@@ -253,6 +253,232 @@ EVENTS: list[dict] = [
         "note": "CRWV post-IPO (IPO March 28 2025) — included",
         "exclude_tickers": [],
     },
+    # ── 10 new events (2021-2025) ──────────────────────────────────────────────
+    {
+        "id": "tsmc_q1_2021_capex_surge",
+        "name": "TSMC Q1 2021 Earnings — $100B Capex Commitment, Shortage Peak",
+        "event_date": "2021-04-15",
+        "description": (
+            "TSMC reports Q1 2021 earnings on April 15, 2021: revenue NT$362.4B (+25.4% YoY), "
+            "gross margin 52.4%. CEO C.C. Wei raises FY2021 capex guidance to $25-28B and commits "
+            "to spending $100B over the next three years — the largest capex program in semiconductor "
+            "history at that time. Wei explicitly cites the global semiconductor shortage: auto, "
+            "smartphone, HPC, and IoT demand simultaneously at record levels, supply structurally "
+            "insufficient. TSMC is the only manufacturer capable of high-volume production at N5 "
+            "and below. N3 (3nm) proceeding as planned for 2022. The super-capex commitment is a "
+            "direct acceleration of EUV tool orders: ASML is the sole EUV supplier globally, and "
+            "TSMC is its largest customer. CDNS EDA tool demand follows foundry design complexity. "
+            "NVIDIA data center supply capacity benefits from TSMC's foundry expansion — H100 "
+            "roadmap is now viable at scale. The announcement inaugurates the semiconductor capex "
+            "supercycle narrative that drives equipment and EDA stocks for the next three years."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "chips_act_signing",
+        "name": "CHIPS and Science Act Signed — $52.7B US Semiconductor Subsidies",
+        "event_date": "2022-08-09",
+        "description": (
+            "President Biden signs the CHIPS and Science Act on August 9, 2022: $52.7B in direct "
+            "funding for US semiconductor manufacturing and R&D, plus a 25% investment tax credit "
+            "for qualifying capital equipment purchases. TSMC Arizona fabs receive critical economic "
+            "support — TSMC ultimately awarded $6.6B in direct grants. Intel expected to receive "
+            "$8.5B. US-based EDA and chip design activity set to increase with domestic fab expansion: "
+            "CDNS as the dominant US EDA vendor is a structural beneficiary of increased US chip "
+            "design complexity. ASML EUV systems installed in US fabs qualify for ITC treatment, "
+            "reducing effective cost for US-based operators. NVIDIA benefits from a more resilient "
+            "domestic supply chain over the medium term, reducing geopolitical single-point-of-failure "
+            "risk at TSMC Taiwan. The act also includes guardrails restricting Chinese semiconductor "
+            "subsidies and accelerating US-China technology bifurcation. Semiconductor ETF (SOXX) "
+            "rallies ~4% on signing day as investors price in long-duration structural capex uplift."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvda_q1fy24_first_ai_blowout",
+        "name": "NVIDIA Q1 FY2024 — Largest Guidance Beat in Semiconductor History",
+        "event_date": "2023-05-25",
+        "description": (
+            "NVIDIA reports Q1 FY2024 (April quarter) after market close May 24, 2023: revenue $7.19B "
+            "vs $6.52B consensus, data center $4.28B vs $3.9B consensus. The shock: Q2 FY2024 guidance "
+            "of $11.0B ± 2% vs $7.15B consensus — the largest absolute guidance beat in semiconductor "
+            "history, implying near-doubling of revenue in one quarter. CEO Jensen Huang: 'A new "
+            "computing era has begun — companies worldwide are racing to transition from general-purpose "
+            "to accelerated computing and generative AI.' Microsoft Azure, Google, Meta, and Amazon all "
+            "cited as active H100 buyers. TSMC N4 H100 supply becomes the binding constraint on the "
+            "entire AI buildout — TSMC must accelerate N4 expansion. ASML EUV tool deliveries for N4 "
+            "and N3 are on the critical path for H100/H200 capacity expansion. CDNS EDA tools are "
+            "essential as hyperscalers accelerate proprietary AI ASIC programs alongside H100 purchases. "
+            "NVIDIA stock surges 24% on May 25, 2023. The full semiconductor value chain rerate begins "
+            "— the most important print of the AI infrastructure supercycle."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvda_q4fy24_blowout",
+        "name": "NVIDIA Q4 FY2024 — $22B Revenue, Third Consecutive Beat-and-Raise",
+        "event_date": "2024-02-22",
+        "description": (
+            "NVIDIA reports Q4 FY2024 (January quarter) after close February 21, 2024: revenue $22.1B "
+            "vs $20.4B consensus (+265% YoY), data center $18.4B (+409% YoY). Q1 FY2025 guidance "
+            "$24.0B ± 2% vs $21.9B consensus. Gross margin 76.7% — highest in company history. Third "
+            "consecutive blowout quarter. CEO Jensen Huang teases Blackwell B200 architecture for H2 "
+            "2024 and announces H200 (HBM3e upgrade). The print establishes that AI infrastructure "
+            "spending is durable: hyperscaler 2024 combined capex commitments exceed $165B, translating "
+            "directly into NVDA data center revenue. TSMC N4 utilization near 100% for H100/H200 "
+            "manufacturing. ASML bookings for EUV tools accelerating as TSMC announces N2 capacity "
+            "expansion to meet anticipated Blackwell demand in H2 2024. CDNS chiplet EDA and "
+            "AI-driven verification tools gaining traction at hyperscaler ASIC programs. CoreWeave "
+            "(pre-IPO) GPU fleet near 100% utilization, approaching $1B annual revenue run-rate. "
+            "NVDA stock rises 16% after hours February 21, opens strongly February 22."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvidia_gtc_blackwell_launch",
+        "name": "NVIDIA GTC 2024 — Blackwell B200 / GB200 NVL72 Unveiled",
+        "event_date": "2024-03-19",
+        "description": (
+            "NVIDIA GTC 2024 keynote (March 18-21, San Jose): Jensen Huang unveils Blackwell GPU "
+            "architecture — B200 GPU and GB200 NVL72 rack system. B200 delivers 4x training and 30x "
+            "inference throughput versus H100, with 5th-gen NVLink. Introduces NIM (NVIDIA Inference "
+            "Microservices) for enterprise AI deployment. Blackwell production set for H2 2024, with "
+            "hyperscaler allocations already oversubscribed. GB200 NVL72 rack requires CoWoS-S advanced "
+            "packaging at TSMC — TSMC must double CoWoS capacity. Each GB200 NVL72 uses 72 B200 GPUs "
+            "manufactured on TSMC N4P. ASML EUV tools are required for N4P node; Blackwell demand "
+            "extends ASML order visibility through 2025-2026. CDNS EDA tools essential for Blackwell "
+            "chiplet co-design and verification. Inference compute identified as the next demand wave: "
+            "inference at scale requires 10-30x more GPU hours than training. Microsoft, Google, "
+            "Amazon, and Oracle commit to GB200 deployments. The keynote resets hyperscaler capex "
+            "forecasts upward and establishes TSMC CoWoS packaging as the binding constraint for "
+            "the AI GPU ecosystem going into 2025."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvda_q2fy25_beats_blackwell_delay",
+        "name": "NVIDIA Q2 FY2025 — Revenue Beat but Blackwell CoWoS Delay Emerges",
+        "event_date": "2024-08-29",
+        "description": (
+            "NVIDIA reports Q2 FY2025 (July quarter) after close August 28, 2024: revenue $30.04B "
+            "vs $28.7B consensus (+122% YoY), data center $26.3B. Q3 FY2025 guidance $32.5B ± 2% "
+            "vs $31.7B consensus. Beats on revenue but gross margin guide for Q3 of 74.6% misses "
+            "75.5% consensus. Media reports emerge post-earnings of Blackwell GB200 overheating and "
+            "CoWoS-S packaging yield issues at TSMC causing a 4-8 week rack delivery slip. NVIDIA CFO "
+            "acknowledges Blackwell supply will be 'very tight' through Q1 FY2026 due to CoWoS "
+            "packaging constraints. After-hours: stock initially +5% on revenue beat, then retreats "
+            "to flat/slightly negative as Blackwell delay concerns dominate. TSMC CoWoS capacity is "
+            "identified as the binding constraint for the entire AI GPU ecosystem — not NVDA design, "
+            "not ASML lithography. CDNS verification tools experiencing higher demand as Blackwell "
+            "complexity creates more design iterations. CoreWeave (pre-IPO) Blackwell delivery "
+            "timeline extends into 2025, pressuring planned fleet expansion. The market must now "
+            "reconcile strong Hopper revenue with Blackwell ramp uncertainty and margin compression."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "asml_q3_2024_booking_shock",
+        "name": "ASML Q3 2024 — Largest Booking Miss in Company History, -16% Single Day",
+        "event_date": "2024-10-15",
+        "description": (
+            "ASML Holding accidentally publishes Q3 2024 earnings on October 14 (evening European "
+            "time) ahead of the official October 15 release. Net bookings €2.63B versus €5.39B "
+            "consensus — the largest booking miss in ASML history. EUV bookings only €1.4B. "
+            "Management attributes the miss to 'customer order lumpiness,' memory capex caution "
+            "(Intel and Samsung both delaying EUV orders), and uncertainty around Chinese DUV "
+            "export restrictions. Q4 2024 guidance maintained but credibility questioned. "
+            "ASML stock falls 16% intraday on October 15 — worst single-day decline in 26 years. "
+            "The shock reverberates across the semiconductor value chain: TSM falls 3% in sympathy "
+            "as investors question TSMC capex commitment if equipment delivery timelines slip; "
+            "NVDA falls 4% on concern that future Blackwell supply capacity may be at risk if TSMC "
+            "cannot secure sufficient EUV tools for N2/N3P; CDNS falls 2% on weaker tape-out outlook. "
+            "The market debates whether this is isolated lumpiness or the leading edge of an equipment "
+            "capex cycle downturn, one day before TSMC Q3 2024 results."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "tsmc_q3_2024_hpc_majority",
+        "name": "TSMC Q3 2024 — HPC Crosses 50% Revenue, Massive Q4 Raise",
+        "event_date": "2024-10-17",
+        "description": (
+            "TSMC reports Q3 2024 (September quarter) on October 17, 2024: revenue NT$759.7B "
+            "(+36.0% YoY), exceeding consensus. Q4 2024 guidance NT$868-888B — massive sequential "
+            "raise implying ~40% YoY growth. Gross margin 57.8%, guidance 57-59%. Historic milestone: "
+            "HPC (high-performance computing / AI) segment crosses 50% of total revenue for the first "
+            "time, driven entirely by AI GPU and custom ASIC demand. N3 capacity fully sold out through "
+            "2025. N2 ramp on track for H2 2025. AI-related revenue growing at 3x YoY pace. CoWoS "
+            "advanced packaging capacity being doubled again in response to Blackwell demand. TSMC "
+            "raises 2024 capex to ~$32B. CEO C.C. Wei: 'AI-related demand continues to be very "
+            "strong.' ASML EUV bookings for N2/N3P node expected to recover in early 2025 after Q3 "
+            "lumpiness. CDNS chiplet EDA tools benefiting from N2/N3 volume ramp and increasing "
+            "design complexity. The results serve as a partial antidote to ASML's booking shock one "
+            "day prior — the underlying AI end-demand signal is unambiguously strong."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "nvda_q4fy25_post_deepseek",
+        "name": "NVIDIA Q4 FY2025 — $39B Post-DeepSeek, Blackwell $11B, Hyperscaler Reaffirm",
+        "event_date": "2025-02-27",
+        "description": (
+            "NVIDIA reports Q4 FY2025 (January 2025 quarter) after close February 26, 2025 — the "
+            "first major earnings print after DeepSeek R1 disruption (January 27, 2025). Revenue "
+            "$39.3B vs $38.1B consensus, data center $35.6B. Q1 FY2026 guidance $43.0B ± 2% vs "
+            "$42.3B consensus. Blackwell GPU revenue $11B in Q4 alone — fastest product ramp in "
+            "company history. Gross margin 73.5% vs 73.9% guidance midpoint, slightly below on "
+            "Blackwell ramp costs. CEO Jensen Huang: 'The more efficient AI becomes, the more it "
+            "will be used — DeepSeek validates accelerated computing, not threatens it.' Jevons "
+            "paradox framing for AI compute demand. All four major hyperscalers reaffirm 2025 capex: "
+            "Microsoft $80B, Meta $65B, Google $75B, Amazon $105B (combined $325B). The print "
+            "definitively refutes demand destruction narrative from DeepSeek. TSMC N4/N3 fully "
+            "allocated to Blackwell; N2 ramp accelerating. ASML EUV order recovery expected as "
+            "TSMC and Samsung accelerate 2nm capex. CDNS AI-native chip design tools accelerating. "
+            "CoreWeave pre-IPO Blackwell allocation commitments secured for H1 2025 deployments."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV pre-IPO (IPO March 28 2025) — excluded; weight redistributed to remaining tickers",
+        "exclude_tickers": ["CRWV"],
+    },
+    {
+        "id": "tsmc_q1_2025_ai_surge",
+        "name": "TSMC Q1 2025 — HPC 59%, AI Revenue 3x YoY, N3 Sold Out Through 2026",
+        "event_date": "2025-04-17",
+        "description": (
+            "TSMC reports Q1 2025 (March quarter) on April 17, 2025: revenue NT$839.3B (+35.3% YoY), "
+            "beating consensus. Q2 2025 guidance NT$955-975B (+38% YoY) — massive raise. HPC segment "
+            "now 59% of total revenue (vs 46% one year prior), driven entirely by AI GPU and custom "
+            "ASIC demand. AI revenue grew more than 3x YoY. N3 node fully booked through 2026. N2 "
+            "ramp exceeding expectations. Gross margin 58.8%. TSMC raises 2025 capex to $38-42B. "
+            "CEO C.C. Wei: 'AI-related demand remains very strong and exceeds our most optimistic "
+            "projections.' CoWoS advanced packaging capacity expanded 3x versus 2024 levels. "
+            "ASML EUV tool orders for TSMC N2 and A16 (1.6nm) nodes generating record EUV backlog — "
+            "order visibility extends through 2026-2027. CDNS N2/N3 design complexity driving "
+            "EDA spending and advanced simulation tool adoption. CoreWeave (post-IPO, IPO March 28 "
+            "2025): GPU fleet expansion directly enabled by TSMC capacity surge; CRWV inference "
+            "capacity expansion plans become more feasible as CoWoS supply eases. The print "
+            "reconfirms that the AI infrastructure buildout has multiple years of strong growth runway."
+        ),
+        "holding_days": [5, 10, 20],
+        "note": "CRWV post-IPO (IPO March 28 2025) — included",
+        "exclude_tickers": [],
+    },
 ]
 
 HOLDING_DAYS = [5, 10, 20]
@@ -322,8 +548,11 @@ def pct_return(prices: dict[int, float], holding: int) -> float | None:
 
 # ── Pipeline runner ────────────────────────────────────────────────────────────
 
-def run_pipeline(event_desc: str, debate_rounds: int, budget: float) -> dict:
-    """Invoke the LangGraph graph and return the result dict."""
+def run_pipeline(event_desc: str, debate_rounds: int, budget: float, event_id: str = "") -> dict:
+    """Invoke the LangGraph graph and return the result dict.
+
+    Passes LangSmith run metadata so each benchmark run is traceable in the UI.
+    """
     from langgraph_pipeline import graph  # import here to avoid slow load at module level
     state = {
         "event": event_desc,
@@ -331,7 +560,12 @@ def run_pipeline(event_desc: str, debate_rounds: int, budget: float) -> dict:
         "budget": budget,
         "debate_rounds": debate_rounds,
     }
-    out = graph.invoke(state)
+    lc_config = {
+        "run_name": f"sim_{event_id}_dr{debate_rounds}" if event_id else None,
+        "tags": ["benchmark", f"dr:{debate_rounds}"] + ([f"event:{event_id}"] if event_id else []),
+        "metadata": {"event_id": event_id, "debate_rounds": debate_rounds, "benchmark": True},
+    }
+    out = graph.invoke(state, config=lc_config)
     return out.get("result", {})
 
 
@@ -348,7 +582,7 @@ def load_or_run(
         with open(cache) as f:
             return json.load(f)
     print(f"  [sim] Running pipeline — event={event['id']}, debate_rounds={debate_rounds}")
-    result = run_pipeline(event["description"], debate_rounds, budget)
+    result = run_pipeline(event["description"], debate_rounds, budget, event_id=event["id"])
     with open(cache, "w") as f:
         json.dump(result, f, indent=2, default=str)
     print(f"  [sim] Saved → {cache.name}")
@@ -492,6 +726,17 @@ def print_event_report(
     if score_parts:
         print(f"\n  Conv×Upside: {' | '.join(score_parts)}")
 
+    # ── Debate gate status ──
+    for m in sorted_modes:
+        if m == 0:
+            continue
+        bm = mode_results[m].get("benchmark", {})
+        mad = bm.get("analyst_disagreement_mad")
+        gated = bm.get("debate_gated")
+        if mad is not None:
+            gate_str = "GATED — analysts agreed, debate skipped" if gated else "RAN"
+            print(f"  Debate dr={m}: {gate_str} | MAD={mad:.3f}")
+
     # ── Build structured result ──
     result = {
         "event_id":   event["id"],
@@ -503,6 +748,8 @@ def print_event_report(
                 "rets":          mode_rets[m],
                 "alpha_vs_spy":  mode_alpha_spy[m],
                 "alloc":         mode_results[m].get("allocation_dollars", {}),
+                "debate_gated":  mode_results[m].get("benchmark", {}).get("debate_gated"),
+                "mad":           mode_results[m].get("benchmark", {}).get("analyst_disagreement_mad"),
             }
             for m in sorted_modes
         },
@@ -517,6 +764,67 @@ def print_event_report(
         json.dump(result, f, indent=2, default=str)
     print(f"\n  Report saved → {report_path.relative_to(_ROOT)}")
     return result
+
+
+def _print_threshold_sweep(results: list[dict], sorted_modes: list[int]) -> None:
+    """Retrospective debate gate threshold sweep using saved analyst_disagreement_mad values.
+
+    For each MAD threshold t:
+      - Events where MAD < t  → debate would have been GATED → use dr=0 return
+      - Events where MAD >= t → debate RUNS               → use dr=2 return
+    Shows which threshold maximises avg alpha at T+20 vs SPY.
+    """
+    if 0 not in sorted_modes or 2 not in sorted_modes:
+        return  # need both modes to sweep
+
+    eligible = [
+        r for r in results
+        if 0 in r.get("modes", {}) and 2 in r.get("modes", {})
+        and r["spy"].get(20) is not None
+    ]
+    if not eligible:
+        return
+
+    print(f"\n  DEBATE GATE THRESHOLD SWEEP (retrospective, T+20 alpha vs SPY)")
+    print(f"  MAD < threshold → One-shot | MAD ≥ threshold → 2-round debate")
+    print(f"  {'Strategy':<28}  {'Gated':>8}  {'Avg α T+20':>12}  {'Beat-rate':>10}")
+    print(f"  {'─'*64}")
+
+    def _row(label: str, use_dr0_fn) -> None:
+        n_gated, alphas, beats = 0, [], 0
+        for r in eligible:
+            mad = r["modes"][2].get("mad")
+            spy_t20 = r["spy"].get(20)
+            dr0 = r["modes"][0]["rets"].get(20)
+            dr2 = r["modes"][2]["rets"].get(20)
+            if use_dr0_fn(mad):
+                n_gated += 1
+                ret = dr0
+            else:
+                ret = dr2
+            if ret is None or spy_t20 is None:
+                continue
+            a = ret - spy_t20
+            alphas.append(a)
+            if a > 0:
+                beats += 1
+        n = len(alphas)
+        avg_a = sum(alphas) / n if n else None
+        br = f"{beats}/{n} ({beats/n:.0%})" if n else "N/A"
+        gate_str = f"{n_gated}/{len(eligible)}"
+        print(f"  {label:<28}  {gate_str:>8}  {_fp(avg_a):>12}  {br:>10}")
+
+    _row("Always One-shot (no debate)", lambda _: True)
+    _row("Always 2-round (always debate)", lambda _: False)
+    print(f"  {'─'*64}")
+
+    for t in [0.05, 0.08, 0.10, 0.12, 0.15, 0.18, 0.20]:
+        flag = " ◄" if abs(t - config.DEBATE_DISAGREEMENT_THRESHOLD) < 0.001 else ""
+        label = f"thresh={t:.2f}{flag}"
+        _row(label, lambda mad, t=t: mad is not None and mad < t)
+
+    print(f"  (◄ = current config.DEBATE_DISAGREEMENT_THRESHOLD = "
+          f"{config.DEBATE_DISAGREEMENT_THRESHOLD:.2f})")
 
 
 def print_summary(results: list[dict], sorted_modes: list[int]) -> None:
@@ -591,6 +899,8 @@ def print_summary(results: list[dict], sorted_modes: list[int]) -> None:
     for rank, (m, avg_a) in enumerate(rankings, 1):
         print(f"    #{rank}  {_mode_label(m):<20}: avg α = {avg_a:+.2%}")
     print()
+
+    _print_threshold_sweep(results, sorted_modes)
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────

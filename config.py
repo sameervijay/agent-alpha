@@ -154,3 +154,19 @@ GOOGLE_SHEET_IDS = {
 # across all analyst briefs. If MAD < threshold, analysts broadly agree on
 # the event's near-term direction and debate would just add noise.
 DEBATE_DISAGREEMENT_THRESHOLD = 0.12  # ~12pp avg spread triggers debate
+
+# ── Live Trading Experiment ──────────────────────────────────
+# Four frequency strategies, each with its own virtual $1000 portfolio.
+# lookback_hours controls the news scanning window for each pipeline run.
+# interval_hours / interval_weeks controls the rebalance cadence (APScheduler).
+LIVE_PERFORMANCE_SHEET_ID = os.getenv('LIVE_PERFORMANCE_SHEET_ID', '')
+
+LIVE_STRATEGIES = {
+    'live_1h':  {'lookback_hours': 1,   'interval_hours': 1,  'label': 'Hourly'},
+    'live_4h':  {'lookback_hours': 4,   'interval_hours': 4,  'label': '4-Hourly'},
+    'live_24h': {'lookback_hours': 24,  'interval_hours': 24, 'label': 'Daily'},
+    'live_7d':  {'lookback_hours': 168, 'interval_weeks': 1,  'label': 'Weekly'},
+}
+
+BENCHMARKS_DIR = DATA_DIR / 'benchmarks'
+BENCHMARKS_DIR.mkdir(parents=True, exist_ok=True)

@@ -24,6 +24,7 @@ dependencies = [
     "slack-bolt>=1.18",
     "gspread>=6.0",
     "tavily-python>=0.3",
+    "apscheduler>=3.10",
 ]
 
 [tool.setuptools]

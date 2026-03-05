@@ -104,6 +104,8 @@ class PipelineState(TypedDict, total=False):
     allocation_pct: dict[str, float]
     result: Optional[dict[str, Any]]
     error: Optional[str]
+    # Live experiment (optional — set by cron jobs on LangGraph Platform)
+    profile: Optional[str]  # e.g. 'live_1h'; triggers portfolio update + Sheets write
 
 
 def _initialize(state: PipelineState) -> PipelineState:
@@ -1226,6 +1228,121 @@ def _persist_analyst_views(briefs: list[dict], dcf_vals: dict[str, dict]) -> Non
             pass
 
 
+def _record_live(state: PipelineState) -> PipelineState:
+    """
+    Terminal node: update live portfolio in Google Sheets and refresh Dashboard.
+
+    Runs only when `profile` is set in state (triggered by LangGraph Platform crons).
+    Uses Google Sheets as the persistent state store so this works in ephemeral
+    cloud containers — no local CSV files needed.
+    """
+    profile = state.get("profile")
+    if not profile or not config.LIVE_PERFORMANCE_SHEET_ID:
+        return {}
+
+    import yfinance as yf
+    from eval.live_performance_sheets import (
+        read_current_holdings, write_strategy_tab, write_dashboard,
+    )
+
+    result = state.get("result", {})
+    allocation = result.get("allocation_dollars", {})
+    rationale = result.get("rationale", "")
+
+    if not allocation:
+        print(f"  [record_live] No allocation for {profile} — skipping Sheets write")
+        return {}
+
+    # Fetch current prices
+    prices: dict[str, float] = {}
+    for ticker in COMPANY_TICKERS:
+        try:
+            hist = yf.Ticker(ticker).history(period='2d')
+            if not hist.empty:
+                prices[ticker] = float(hist['Close'].iloc[-1])
+        except Exception:
+            pass
+
+    # Read current portfolio from Sheets to compute mark-to-market NAV
+    current = read_current_holdings(profile)
+    old_holdings = current['holdings']  # dict[ticker -> shares]
+    old_nav = sum(old_holdings.get(t, 0) * prices.get(t, 0) for t in COMPANY_TICKERS)
+    # Fall back to stored value if prices unavailable
+    portfolio_value = old_nav if old_nav > 0 else current['portfolio_value'] or 1000.0
+    return_pct = (portfolio_value / 1000.0 - 1) * 100
+
+    # Compute new holdings from allocation_dollars / current prices
+    new_holdings: dict[str, float] = {}
+    for ticker, dollars in allocation.items():
+        price = prices.get(ticker, 0)
+        new_holdings[ticker] = round(dollars / price, 6) if price > 0 else 0.0
+
+    run_number = current['run_count'] + 1
+
+    # Build theses from company_briefs_raw
+    briefs = state.get("company_briefs_raw", [])
+    theses = []
+    for b in briefs:
+        theses.append({
+            'ticker': b.get('ticker', ''),
+            'conviction': b.get('conviction', 0),
+            'st_event_conv': b.get('short_term_event_conviction', 0),
+            'thesis': b.get('thesis', ''),
+            'key_events': ', '.join(
+                e.get('headline', '') for e in b.get('routed_events', [])[:3]
+            ),
+        })
+
+    nav_row = {
+        'holdings': new_holdings,
+        'portfolio_value': round(portfolio_value, 2),
+        'return_pct': round(return_pct, 4),
+        'cash': 0.0,
+    }
+
+    try:
+        write_strategy_tab(
+            profile=profile,
+            nav_row=nav_row,
+            allocation=allocation,
+            theses=theses,
+            rationale=rationale,
+            prices=prices,
+            run_number=run_number,
+        )
+    except Exception as e:
+        print(f"  [record_live] write_strategy_tab failed: {e}")
+
+    # Refresh Dashboard
+    try:
+        all_nav = {}
+        for p in config.LIVE_STRATEGIES:
+            ph = read_current_holdings(p)
+            if ph['portfolio_value'] > 0:
+                ph_prices = prices if p == profile else {}
+                nav_val = sum(ph['holdings'].get(t, 0) * prices.get(t, 0)
+                              for t in COMPANY_TICKERS) or ph['portfolio_value']
+                all_nav[p] = {
+                    'portfolio_value': nav_val,
+                    'return_pct': (nav_val / 1000.0 - 1),
+                    'trades_count': ph['run_count'],
+                    'last_date': '',
+                }
+        spy_val = None
+        try:
+            hist = yf.Ticker('SPY').history(period='2d')
+            if not hist.empty:
+                spy_price = float(hist['Close'].iloc[-1])
+                spy_val = spy_price  # placeholder; real value requires stored shares
+        except Exception:
+            pass
+        write_dashboard(all_nav, spy_value=spy_val)
+    except Exception as e:
+        print(f"  [record_live] write_dashboard failed: {e}")
+
+    return {}
+
+
 def build_graph():
     """Build and compile PM-led portfolio-allocation graph for LangSmith Cloud."""
     graph = StateGraph(PipelineState)
@@ -1247,9 +1364,10 @@ def build_graph():
     graph.add_node("analyze_tsm", _analyze_tsm)
     graph.add_node("analyze_asml", _analyze_asml)
 
-    # PM finalization
+    # PM finalization + live recording
     graph.add_node("pm_debate_and_allocate", _pm_debate_and_allocate)
     graph.add_node("finalize", _finalize)
+    graph.add_node("record_live", _record_live)
 
     # Fan out to domain scouts
     graph.add_edge(START, "initialize")
@@ -1281,7 +1399,8 @@ def build_graph():
     graph.add_edge("analyze_asml", "pm_debate_and_allocate")
 
     graph.add_edge("pm_debate_and_allocate", "finalize")
-    graph.add_edge("finalize", END)
+    graph.add_edge("finalize", "record_live")
+    graph.add_edge("record_live", END)
     return graph.compile()
 
 

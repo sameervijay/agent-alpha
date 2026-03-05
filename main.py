@@ -96,6 +96,18 @@ def main():
         '--init-portfolios', action='store_true',
         help='With --ablation: initialize/rebalance a portfolio for each condition'
     )
+    parser.add_argument(
+        '--init-live', action='store_true',
+        help='Create the live performance Google Sheet and initialize all 4 strategy portfolios'
+    )
+    parser.add_argument(
+        '--sheet-id', type=str, default=None,
+        help='With --init-live: use an existing Sheet ID instead of creating a new one'
+    )
+    parser.add_argument(
+        '--live-status', action='store_true',
+        help='Print current NAV and return for all live strategy profiles + SPY'
+    )
 
     args = parser.parse_args()
 
@@ -108,7 +120,7 @@ def main():
         args.event = None
         args.debate_rounds = 0
 
-    if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc and not args.ablation:
+    if not args.event and not args.backtest and not args.request_update and not args.langgraph_alloc and not args.ablation and not args.init_live and not args.live_status:
         parser.print_help()
         print("\nExample:")
         print('  python main.py --event "US Bureau of Industry and Security '
@@ -121,6 +133,102 @@ def main():
         print("Error: OPENAI_API_KEY not set.")
         print("Create a .env file in Final_Project/ with: OPENAI_API_KEY=sk-...")
         sys.exit(1)
+
+    # ── Live experiment: init ──────────────────────────────────────────────────
+    if args.init_live:
+        from eval.live_performance_sheets import create_performance_sheet, get_sheet_url
+        from eval.pm_portfolio import init_portfolio, _trades_path
+
+        print('\n' + '=' * 70)
+        print('  INITIALIZING LIVE TRADING EXPERIMENT')
+        print('=' * 70)
+
+        # Create or reuse the performance Sheet
+        provided_id = getattr(args, 'sheet_id', None)
+        if not config.LIVE_PERFORMANCE_SHEET_ID:
+            if provided_id:
+                print(f'  Scaffolding existing sheet {provided_id}...')
+                from eval.live_performance_sheets import scaffold_existing_sheet
+                sheet_id = scaffold_existing_sheet(provided_id)
+            else:
+                print('  Creating Google Sheet...')
+                sheet_id = create_performance_sheet()
+            # Persist to .env
+            env_path = Path(__file__).parent / '.env'
+            with open(env_path, 'a') as f:
+                f.write(f'\nLIVE_PERFORMANCE_SHEET_ID={sheet_id}\n')
+            # Also set in-process so subsequent calls work
+            import os as _os
+            _os.environ['LIVE_PERFORMANCE_SHEET_ID'] = sheet_id
+            config.LIVE_PERFORMANCE_SHEET_ID = sheet_id
+            print(f'  Sheet ID saved to .env')
+        else:
+            print(f'  Using existing sheet: {get_sheet_url()}')
+
+        # Initialize each strategy portfolio with equal-weight allocation
+        default_alloc = {'NVDA': 400, 'TSM': 300, 'ASML': 200, 'CDNS': 50, 'CRWV': 50}
+        for profile in config.LIVE_STRATEGIES:
+            if _trades_path(profile).exists():
+                print(f'  [{profile}] Portfolio already exists — skipping init')
+            else:
+                print(f'  [{profile}] Initializing with {default_alloc}...')
+                try:
+                    init_portfolio(default_alloc, profile)
+                    print(f'  [{profile}] OK')
+                except Exception as e:
+                    print(f'  [{profile}] ERROR: {e}')
+
+        print(f'\n  Sheet URL: {get_sheet_url()}')
+        print('  Run the scheduler with:')
+        print('    python eval/live_scheduler.py')
+        print('=' * 70 + '\n')
+        return
+
+    # ── Live experiment: status ────────────────────────────────────────────────
+    if args.live_status:
+        from eval.pm_portfolio import get_portfolio_status, _trades_path
+
+        print('\n' + '=' * 70)
+        print('  LIVE TRADING STATUS')
+        print('=' * 70)
+
+        # SPY
+        try:
+            spy_path = Path(config.DATA_DIR) / 'benchmarks' / 'spy_shares.txt'
+            if spy_path.exists():
+                import yfinance as yf
+                shares = float(spy_path.read_text().strip())
+                hist = yf.Ticker('SPY').history(period='2d')
+                spy_price = float(hist['Close'].iloc[-1]) if not hist.empty else 0
+                spy_val = round(shares * spy_price, 2)
+                spy_ret = round((spy_val / 1000 - 1) * 100, 2)
+                print(f'  {"SPY (benchmark)":<20}  ${spy_val:>8.2f}  ({spy_ret:+.2f}%)')
+            else:
+                print(f'  {"SPY (benchmark)":<20}  not initialized (run --init-live first)')
+        except Exception as e:
+            print(f'  SPY: error ({e})')
+
+        for profile, cfg in config.LIVE_STRATEGIES.items():
+            if not _trades_path(profile).exists():
+                print(f'  {profile:<20}  not initialized')
+                continue
+            try:
+                s = get_portfolio_status(profile)
+                val = s.get('portfolio_value', 0)
+                ret = s.get('return_pct', 0) * 100
+                n = s.get('trades_count', 0)
+                last = s.get('last_date', '—')
+                print(f'  {profile:<20}  ${val:>8.2f}  ({ret:+.2f}%)  '
+                      f'{n} trades  last: {last}')
+            except Exception as e:
+                print(f'  {profile:<20}  error ({e})')
+
+        from eval.live_performance_sheets import get_sheet_url
+        url = get_sheet_url()
+        if url:
+            print(f'\n  Sheets: {url}')
+        print('=' * 70 + '\n')
+        return
 
     # Debate ablation experiment
     if args.ablation:
