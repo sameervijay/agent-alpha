@@ -410,9 +410,20 @@ def read_current_holdings(profile: str) -> dict:
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _get_all_values(ws: gspread.Worksheet, start: str, max_rows: int) -> list:
-    """Read a block of cells starting at `start` for up to max_rows rows."""
+    """Read a block of cells starting at `start` for up to max_rows rows.
+
+    ws.get('A12') fetches only cell A12 in gspread — must pass an explicit
+    end range like 'A12:Z512' to retrieve all rows from row 12 onwards.
+    """
     try:
-        return ws.get(start) or []
+        import re
+        m = re.match(r'([A-Z]+)(\d+)', start)
+        if m:
+            start_row = int(m.group(2))
+            end_range = f'{start}:Z{start_row + max_rows}'
+        else:
+            end_range = start
+        return ws.get(end_range) or []
     except Exception:
         return []
 
