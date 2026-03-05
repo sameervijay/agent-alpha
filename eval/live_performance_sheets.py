@@ -125,6 +125,7 @@ def _scaffold_dashboard(ws: gspread.Worksheet) -> None:
     ws.batch_update([
         {'range': 'A1', 'values': [['Agent Alpha — Live Performance']]},
         {'range': 'A2', 'values': [['Last updated:', '']]},
+        {'range': 'J2', 'values': [['SPY Base ($)', '']]},  # col J=base price, K=value
         {'range': 'A4', 'values': [_DASHBOARD_HEADER]},
         {'range': 'A5', 'values': summary_rows},
         {'range': f'A{_DASHBOARD_TIMESERIES_HEADER_ROW}', 'values': [_TIMESERIES_COLS]},
@@ -296,10 +297,30 @@ def write_dashboard(all_nav: dict, spy_value: Optional[float] = None) -> None:
     # Update "Last updated" cell
     _with_retry(lambda: ws.update('B2', [[now_str]]), 'dashboard_timestamp')
 
+    # ── SPY: compute $1000-scaled portfolio value ─────────────────────────────
+    # K2 stores the base SPY price recorded at experiment start.
+    # spy_value here is the raw current SPY price (from yfinance).
+    spy_portfolio_value: Optional[float] = None
+    spy_ret: float | str = ''
+    if spy_value:
+        try:
+            raw_k2 = ws.acell('K2').value
+            base = float(str(raw_k2).replace(',', '.')) if raw_k2 else None
+        except Exception:
+            base = None
+
+        if not base:
+            # First run — record current price as base; return = 0%
+            base = spy_value
+            _with_retry(lambda: ws.update('K2', [[round(base, 4)]]), 'set_spy_base')
+
+        spy_portfolio_value = round((spy_value / base) * 1000, 2)
+        spy_ret = round((spy_portfolio_value / 1000 - 1) * 100, 4)
+
     # Update summary rows (A5 = SPY, A6-A9 = live strategies)
-    spy_ret = round((spy_value / 1000 - 1) * 100, 4) if spy_value else ''
     spy_row_vals = [['SPY', 'Buy & Hold', '—', 1000,
-                     round(spy_value, 2) if spy_value else '', spy_ret, '—', now_str]]
+                     spy_portfolio_value if spy_portfolio_value is not None else '',
+                     spy_ret, '—', now_str]]
     _with_retry(lambda: ws.update('A5', spy_row_vals), 'dashboard_spy_row')
 
     strategy_rows = []
@@ -330,7 +351,7 @@ def write_dashboard(all_nav: dict, spy_value: Optional[float] = None) -> None:
 
     ts_entry = [
         now_str,
-        round(spy_value, 2) if spy_value else '',
+        spy_portfolio_value if spy_portfolio_value is not None else '',
     ] + [
         round(all_nav.get(p, {}).get('portfolio_value', ''), 2)
         if all_nav.get(p, {}).get('portfolio_value') else ''
